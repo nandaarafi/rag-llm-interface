@@ -25,10 +25,19 @@ export const {
       async authorize({ email, password }: any) {
         const users = await getUser(email);
         if (users.length === 0) return null;
+        
+        const user = users[0];
+        
+        // Check if user has no password (OAuth-only user)
+        if (!user.password) {
+          console.log('User has no password (OAuth-only):', email);
+          return null; // Reject credentials login for OAuth-only users
+        }
+        
         // biome-ignore lint: Forbidden non-null assertion.
-        const passwordsMatch = await compare(password, users[0].password!);
+        const passwordsMatch = await compare(password, user.password!);
         if (!passwordsMatch) return null;
-        return users[0] as any;
+        return user as any;
       },
     }),
     GoogleProvider({
@@ -50,6 +59,7 @@ export const {
       if (account?.provider === 'google') {
         try {
           console.log('Processing Google OAuth sign in for user:', user.email);
+          console.log('User image from Google:', user.image);
           
           // Check if user exists in your database
           const existingUsers = await getUser(user.email!);
@@ -68,8 +78,14 @@ export const {
             user.id = newUser.id;
           } else {
             console.log('User already exists:', user.email);
+            // Update existing user's image if it has changed
+            const existingUser = existingUsers[0];
+            if (existingUser.image !== user.image) {
+              console.log('Updating user image:', { old: existingUser.image, new: user.image });
+              await updateUser(existingUser.id, { image: user.image });
+            }
             // Update the user object with the database user ID
-            user.id = existingUsers[0].id;
+            user.id = existingUser.id;
           }
           
           return true;
@@ -89,27 +105,37 @@ export const {
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, account }) {
       if (user) {
         console.log('JWT callback - user:', user);
+        console.log('JWT callback - account:', account);
+        
         token.id = user.id;
         token.email = user.email;
         
-        // For credentials login, fetch user data from database to get image
-        try {
-          const [dbUser] = await getUser(user.email!);
-          if (dbUser) {
-            token.image = dbUser.image;
-            // Set name from email if not provided
+        // Handle OAuth vs Credentials differently
+        if (account?.provider === 'google') {
+          // For OAuth: use data from OAuth provider
+          token.image = user.image;
+          token.name = user.name;
+          console.log('JWT OAuth: Set image from OAuth provider:', user.image);
+        } else {
+          // For credentials login: fetch user data from database
+          try {
+            const [dbUser] = await getUser(user.email!);
+            if (dbUser) {
+              token.image = dbUser.image;
+              token.name = user.name || user.email!.split('@')[0];
+              console.log('JWT Credentials: Set image from database:', dbUser.image);
+            }
+          } catch (error) {
+            console.error('Failed to fetch user data in JWT callback:', error);
             token.name = user.name || user.email!.split('@')[0];
+            token.image = null;
           }
-        } catch (error) {
-          console.error('Failed to fetch user data in JWT callback:', error);
-          // Fallback: set name from email
-          token.name = user.name || user.email!.split('@')[0];
         }
       }
-      console.log('JWT callback - token:', token);
+      console.log('JWT callback - final token:', token);
       return token;
     },
     async session({

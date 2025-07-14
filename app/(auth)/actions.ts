@@ -12,7 +12,7 @@ const authFormSchema = z.object({
 });
 
 export interface LoginActionState {
-  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data';
+  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data' | 'oauth_only';
 }
 
 export const login = async (
@@ -24,6 +24,12 @@ export const login = async (
       email: formData.get('email'),
       password: formData.get('password'),
     });
+
+    // Check if user exists and is OAuth-only before attempting sign in
+    const users = await getUser(validatedData.email);
+    if (users.length > 0 && !users[0].password) {
+      return { status: 'oauth_only' };
+    }
 
     await signIn('credentials', {
       email: validatedData.email,

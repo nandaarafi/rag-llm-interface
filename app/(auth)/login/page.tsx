@@ -49,6 +49,11 @@ export default function Page() {
         type: 'error',
         description: 'Failed validating your submission!',
       });
+    } else if (state.status === 'oauth_only') {
+      toast({
+        type: 'error',
+        description: 'This email is linked to Google. Please use "Continue with Google" or register with a different email.',
+      });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
       router.refresh();
