@@ -3,7 +3,7 @@ import NextAuth, { type User, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 // eslint-disable-next-line import/no-unresolved
-import { getUser, createUserOauth } from '@/lib/db/queries';
+import { getUser, createUserOauth, updateUser } from '@/lib/db/queries';
 
 import { authConfig } from './auth.config';
 
@@ -54,7 +54,12 @@ export const {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('NextAuth signIn callback:', { user, account, profile });
+      console.log('NextAuth signIn callback:', { 
+        userEmail: user.email, 
+        userImage: user.image, 
+        provider: account?.provider,
+        userId: user.id 
+      });
       
       if (account?.provider === 'google') {
         try {
@@ -80,9 +85,15 @@ export const {
             console.log('User already exists:', user.email);
             // Update existing user's image if it has changed
             const existingUser = existingUsers[0];
-            if (existingUser.image !== user.image) {
+            if (existingUser.image !== user.image && user.image) {
               console.log('Updating user image:', { old: existingUser.image, new: user.image });
-              await updateUser(existingUser.id, { image: user.image });
+              try {
+                await updateUser(existingUser.id, { image: user.image });
+                console.log('User image updated successfully');
+              } catch (updateError) {
+                console.error('Failed to update user image:', updateError);
+                // Continue anyway - don't fail the login
+              }
             }
             // Update the user object with the database user ID
             user.id = existingUser.id;
@@ -91,10 +102,16 @@ export const {
           return true;
         } catch (error) {
           console.error('Error during Google sign in:', error);
+          console.error('Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined,
+            userEmail: user.email
+          });
           return false;
         }
       }
       
+      console.log('SignIn callback completed successfully for provider:', account?.provider || 'credentials');
       return true;
     },
     async redirect({ url, baseUrl }) {

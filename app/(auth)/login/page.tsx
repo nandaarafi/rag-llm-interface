@@ -30,15 +30,26 @@ export default function Page() {
     const error = searchParams.get('error');
     if (error) {
       console.error('OAuth error:', error);
+      let errorMessage = 'Authentication error occurred';
+      
+      if (error === 'AccessDenied') {
+        errorMessage = 'Access denied. Please try signing in again.';
+      } else if (error === 'Configuration') {
+        errorMessage = 'Authentication configuration error. Please contact support.';
+      } else {
+        errorMessage = `Authentication error: ${error}`;
+      }
+      
       toast({
         type: 'error',
-        description: `Authentication error: ${error}`,
+        description: errorMessage,
       });
     }
   }, [searchParams]);
 
 
   useEffect(() => {
+    // Only show toasts for actual form submissions, not initial state
     if (state.status === 'failed') {
       toast({
         type: 'error',
@@ -58,7 +69,7 @@ export default function Page() {
       setIsSuccessful(true);
       router.refresh();
     }
-  }, [state.status]);
+  }, [state.status, router]);
 
   const handleSubmit = (formData: FormData) => {
     setEmail(formData.get('email') as string);
@@ -69,6 +80,8 @@ export default function Page() {
     e.preventDefault();
     try {
       console.log("google sign in");
+      // Clear any previous form state when starting Google OAuth
+      window.history.replaceState({}, '', '/login');
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
       console.error('Google sign-in error:', error);
