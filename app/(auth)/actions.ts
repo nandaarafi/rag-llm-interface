@@ -20,6 +20,13 @@ export const login = async (
   formData: FormData,
 ): Promise<LoginActionState> => {
   try {
+    const isOAuth = formData.get('isOAuth') === 'true';
+    
+    if (isOAuth) {
+      // Handle OAuth sign-in
+      await signIn('google', { callbackUrl: '/' });
+      return { status: 'in_progress' };
+    }
     const validatedData = authFormSchema.parse({
       email: formData.get('email'),
       password: formData.get('password'),

@@ -15,6 +15,14 @@ export const user = pgTable('User', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   email: varchar('email', { length: 64 }).notNull(),
   password: varchar('password', { length: 64 }),
+  customerId: varchar('customerId', { length: 64 }),
+
+  // Adding new fields based on your image
+  image: text('image'),
+  variantId: varchar('variant_id', { length: 64 }),
+  hasAccess: boolean('has_access').default(false),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
 });
 
 export type User = InferSelectModel<typeof user>;

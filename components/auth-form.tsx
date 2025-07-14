@@ -52,6 +52,7 @@ export function AuthForm({
           type="password"
           required
         />
+        
       </div>
 
       {children}

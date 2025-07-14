@@ -15,7 +15,7 @@ import {
 } from 'react';
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
-
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import { Button } from './ui/button';
@@ -23,6 +23,7 @@ import { Textarea } from './ui/textarea';
 import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
+import { Images } from 'lucide-react'
 
 function PureMultimodalInput({
   chatId,
@@ -286,6 +287,8 @@ function PureAttachmentsButton({
   status: UseChatHelpers['status'];
 }) {
   return (
+    <Tooltip>
+          <TooltipTrigger asChild>
     <Button
       data-testid="attachments-button"
       className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
@@ -296,8 +299,14 @@ function PureAttachmentsButton({
       disabled={status !== 'ready'}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      <Images size={14} />
     </Button>
+    </TooltipTrigger>
+          <TooltipContent side="top">
+            <p className="font-semibold">Upload Images</p>
+            <p className="text-xs">Less than 5 MB per file</p>
+          </TooltipContent>
+        </Tooltip>
   );
 }
 

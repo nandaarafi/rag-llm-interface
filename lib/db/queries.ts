@@ -37,6 +37,15 @@ import type { ArtifactKind } from '@/components/artifact';
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
 
+export async function updateUser(userId: string, data: Partial<User>) {
+  try {
+    return await db.update(user).set(data).where(eq(user.id, userId));
+  } catch (error) {
+    console.error('Failed to update user in database');
+    throw error;
+  }
+}
+
 export async function getUser(email: string): Promise<Array<User>> {
   try {
     return await db.select().from(user).where(eq(user.email, email));
@@ -56,6 +65,24 @@ export async function createUser(email: string, password: string) {
     console.error('Failed to create user in database');
     throw error;
   }
+}
+export async function createUserOauth(userData: {
+  email: string;
+  name: string;
+  image?: string;
+  provider?: string;
+  providerId?: string;
+}): Promise<User> {
+  const [newUser] = await db
+    .insert(user)
+    .values({
+      ...userData,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    })
+    .returning(); // This returns the inserted record(s)
+  
+  return newUser;
 }
 
 export async function saveChat({

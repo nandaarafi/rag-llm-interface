@@ -1,7 +1,7 @@
 'use client';
 
 import type { User } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 
 import { PlusIcon } from '@/components/icons';
 import { SidebarHistory } from '@/components/sidebar-history';
@@ -13,18 +13,28 @@ import {
   SidebarFooter,
   SidebarHeader,
   SidebarMenu,
+  SidebarMenuItem,
+  SidebarMenuButton,
   useSidebar,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import SidebarCredit from './sidebar-credit';
+import { MessageSquareText, FileText } from 'lucide-react';
+const NAVIGATION_ITEMS = [
+  { id: 'library', label: 'Library', icon: FileText },
+];
 
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
-
+  const pathname = usePathname();
+  // console.log(user)
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>
+        
+   
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <Link
@@ -35,7 +45,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Chatbot
+                Mindscribe
               </span>
             </Link>
             <Tooltip>
@@ -55,13 +65,36 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               </TooltipTrigger>
               <TooltipContent align="end">New Chat</TooltipContent>
             </Tooltip>
+            
           </div>
+          
         </SidebarMenu>
+        <SidebarMenu>
+            {NAVIGATION_ITEMS.map(({ id, label, icon: Icon }) => (
+              <SidebarMenuItem key={id}>
+                <Link href={id === 'home' ? '/chat' : `/${id}`} className="w-full">
+                  <SidebarMenuButton
+                    isActive={pathname === `/${id}`} // Check if the current route matches
+                    className={pathname === `/${id}` ? 'bg-gray-200 hover:bg-gray-300' : ''}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{label}</span>
+                  </SidebarMenuButton>
+                </Link>
+              </SidebarMenuItem>
+            ))}
+          </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
         <SidebarHistory user={user} />
       </SidebarContent>
-      <SidebarFooter>{user && <SidebarUserNav user={user} />}</SidebarFooter>
+      <SidebarContent>
+      </SidebarContent>
+      {/* <SidebarCredit /> */}
+      <SidebarFooter>
+        {/* <SidebarCredit hasAccess={user?.hasAccess === true} /> */}
+        {user && <SidebarUserNav user={user} />}
+      </SidebarFooter>
     </Sidebar>
   );
 }

@@ -1,8 +1,9 @@
 import { compare } from 'bcrypt-ts';
 import NextAuth, { type User, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
-
-import { getUser } from '@/lib/db/queries';
+import GoogleProvider from 'next-auth/providers/google';
+// eslint-disable-next-line import/no-unresolved
+import { getUser, createUserOauth } from '@/lib/db/queries';
 
 import { authConfig } from './auth.config';
 
@@ -29,8 +30,45 @@ export const {
         return users[0] as any;
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECRET,
+      authorization: {
+        params: {
+          prompt: "consent",
+          access_type: "offline",
+          response_type: "code"
+        }
+      }
+    })
   ],
   callbacks: {
+    async signIn({ user, account, profile }) {
+      if (account?.provider === 'google') {
+        try {
+          // Check if user exists in your database
+          const existingUsers = await getUser(user.email!);
+          
+          if (existingUsers.length === 0) {
+            // Create new user if doesn't exist
+            await createUserOauth({
+              email: user.email!,
+              name: user.name!,
+              image: user.image,
+              provider: 'google',
+              providerId: user.id
+            });
+          }
+          
+          return true;
+        } catch (error) {
+          console.error('Error during Google sign in:', error);
+          return false;
+        }
+      }
+      
+      return true;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
