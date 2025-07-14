@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 import { toast } from '@/components/toast';
 import { AuthForm } from '@/components/auth-form';
@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 
 export default function Page() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -23,6 +24,18 @@ export default function Page() {
       status: 'idle',
     },
   );
+
+  // Check for OAuth errors in URL parameters
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      console.error('OAuth error:', error);
+      toast({
+        type: 'error',
+        description: `Authentication error: ${error}`,
+      });
+    }
+  }, [searchParams]);
 
 
   useEffect(() => {
@@ -50,7 +63,8 @@ export default function Page() {
   const handleGoogleSignIn = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
-      await signIn('google', { callbackUrl: '/' });
+      console.log("google sign in");
+      await signIn('google', { callbackUrl: '/library' });
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast({

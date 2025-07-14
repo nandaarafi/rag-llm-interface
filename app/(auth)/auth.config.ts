@@ -5,6 +5,7 @@ export const authConfig = {
   pages: {
     signIn: '/login',
     newUser: '/',
+    error: '/login', // Redirect errors back to login page
   },
   providers: [
 
@@ -17,6 +18,12 @@ export const authConfig = {
       const isOnChat = nextUrl.pathname.startsWith('/');
       const isOnRegister = nextUrl.pathname.startsWith('/register');
       const isOnLogin = nextUrl.pathname.startsWith('/login');
+      const isOnAuth = nextUrl.pathname.startsWith('/api/auth');
+
+      // Always allow access to NextAuth API routes
+      if (isOnAuth) {
+        return true;
+      }
 
       if (isLoggedIn && (isOnLogin || isOnRegister)) {
         return Response.redirect(new URL('/', nextUrl as unknown as URL));
