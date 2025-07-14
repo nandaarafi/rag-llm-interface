@@ -73,16 +73,25 @@ export async function createUserOauth(userData: {
   provider?: string;
   providerId?: string;
 }): Promise<User> {
-  const [newUser] = await db
-    .insert(user)
-    .values({
-      ...userData,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    })
-    .returning(); // This returns the inserted record(s)
-  
-  return newUser;
+  try {
+    console.log('Creating OAuth user with data:', userData);
+    
+    const [newUser] = await db
+      .insert(user)
+      .values({
+        email: userData.email,
+        image: userData.image,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })
+      .returning(); // This returns the inserted record(s)
+    
+    console.log('OAuth user created successfully:', newUser);
+    return newUser;
+  } catch (error) {
+    console.error('Failed to create OAuth user:', error);
+    throw error;
+  }
 }
 
 export async function saveChat({

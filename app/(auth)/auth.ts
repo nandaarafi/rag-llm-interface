@@ -57,15 +57,19 @@ export const {
           if (existingUsers.length === 0) {
             console.log('Creating new user for:', user.email);
             // Create new user if doesn't exist
-            await createUserOauth({
+            const newUser = await createUserOauth({
               email: user.email!,
               name: user.name!,
               image: user.image,
               provider: 'google',
               providerId: user.id
             });
+            // Update the user object with the database user ID
+            user.id = newUser.id;
           } else {
             console.log('User already exists:', user.email);
+            // Update the user object with the database user ID
+            user.id = existingUsers[0].id;
           }
           
           return true;
@@ -87,9 +91,25 @@ export const {
     },
     async jwt({ token, user }) {
       if (user) {
+        console.log('JWT callback - user:', user);
         token.id = user.id;
+        token.email = user.email;
+        
+        // For credentials login, fetch user data from database to get image
+        try {
+          const [dbUser] = await getUser(user.email!);
+          if (dbUser) {
+            token.image = dbUser.image;
+            // Set name from email if not provided
+            token.name = user.name || user.email!.split('@')[0];
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data in JWT callback:', error);
+          // Fallback: set name from email
+          token.name = user.name || user.email!.split('@')[0];
+        }
       }
-
+      console.log('JWT callback - token:', token);
       return token;
     },
     async session({
@@ -99,10 +119,14 @@ export const {
       session: ExtendedSession;
       token: any;
     }) {
+      console.log('Session callback - token:', token);
       if (session.user) {
+        // Use data from JWT token (which already fetched from database)
         session.user.id = token.id as string;
+        session.user.image = token.image as string;
+        session.user.name = token.name as string;
       }
-
+      console.log('Session callback - final session:', session);
       return session;
     },
   },

@@ -55,29 +55,43 @@ export async function POST(request: Request) {
     const chat = await getChatById({ id });
 
     if (!chat) {
-      const title = await generateTitleFromUserMessage({
-        message: userMessage,
-      });
+      try {
+        const title = await generateTitleFromUserMessage({
+          message: userMessage,
+        });
 
-      await saveChat({ id, userId: session.user.id, title });
+        console.log('Saving new chat:', { id, userId: session.user.id, title });
+        await saveChat({ id, userId: session.user.id, title });
+        console.log('Chat saved successfully');
+      } catch (saveError) {
+        console.error('Failed to save chat in database:', saveError);
+        throw saveError;
+      }
     } else {
       if (chat.userId !== session.user.id) {
         return new Response('Unauthorized', { status: 401 });
       }
     }
 
-    await saveMessages({
-      messages: [
-        {
-          chatId: id,
-          id: userMessage.id,
-          role: 'user',
-          parts: userMessage.parts,
-          attachments: userMessage.experimental_attachments ?? [],
-          createdAt: new Date(),
-        },
-      ],
-    });
+    try {
+      console.log('Saving user message:', { chatId: id, messageId: userMessage.id });
+      await saveMessages({
+        messages: [
+          {
+            chatId: id,
+            id: userMessage.id,
+            role: 'user',
+            parts: userMessage.parts,
+            attachments: userMessage.experimental_attachments ?? [],
+            createdAt: new Date(),
+          },
+        ],
+      });
+      console.log('User message saved successfully');
+    } catch (messageError) {
+      console.error('Failed to save user message:', messageError);
+      throw messageError;
+    }
 
     return createDataStreamResponse({
       execute: (dataStream) => {
@@ -137,8 +151,8 @@ export async function POST(request: Request) {
                     },
                   ],
                 });
-              } catch (_) {
-                console.error('Failed to save chat');
+              } catch (error) {
+                console.error('Failed to save chat', error);
               }
             }
           },
@@ -159,8 +173,9 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
+    console.error('Chat API error:', error);
     return new Response('An error occurred while processing your request!', {
-      status: 404,
+      status: 500,
     });
   }
 }

@@ -64,7 +64,7 @@ export default function Page() {
     e.preventDefault();
     try {
       console.log("google sign in");
-      await signIn('google', { callbackUrl: '/library' });
+      await signIn('google', { callbackUrl: '/' });
     } catch (error) {
       console.error('Google sign-in error:', error);
       toast({
