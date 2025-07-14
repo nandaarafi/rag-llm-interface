@@ -24,6 +24,7 @@ export default function Page() {
     },
   );
 
+
   useEffect(() => {
     if (state.status === 'failed') {
       toast({
@@ -47,9 +48,16 @@ export default function Page() {
   };
 
   const handleGoogleSignIn = async (e: React.MouseEvent) => {
-    const formData = new FormData();
-    formData.append('isOAuth', 'true');
-    await login({ status: 'idle' }, formData);
+    e.preventDefault();
+    try {
+      await signIn('google', { callbackUrl: '/' });
+    } catch (error) {
+      console.error('Google sign-in error:', error);
+      toast({
+        type: 'error',
+        description: 'Failed to sign in with Google. Please try again.',
+      });
+    }
   };
 
   return (
