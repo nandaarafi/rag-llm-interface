@@ -16,10 +16,8 @@ build
 # misc
 .DS_Store
 *.pem
-RULES.md
-TODO.md
 OAUTH_JWT_AUTHENTICATION_FIX.md
-CLAUDE.md
+
 settings.local.json
 # debug
 npm-debug.log*
