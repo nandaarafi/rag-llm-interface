@@ -15,6 +15,8 @@ import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 import { unstable_serialize } from 'swr/infinite';
 import { getChatHistoryPaginationKey } from './sidebar-history';
+import { Paywall } from './paywall';
+import { useState as useStateReact } from 'react';
 
 export function Chat({
   id,
@@ -51,8 +53,12 @@ export function Chat({
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
-    onError: () => {
-      toast.error('An error occurred, please try again!');
+    onError: (error: any) => {
+      if (error?.message?.includes('Payment required') || error?.status === 402) {
+        setShowPaywall(true);
+      } else {
+        toast.error('An error occurred, please try again!');
+      }
     },
   });
 
@@ -62,7 +68,12 @@ export function Chat({
   );
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
+  const [showPaywall, setShowPaywall] = useState(false);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+
+  if (showPaywall) {
+    return <Paywall />;
+  }
 
   return (
     <>

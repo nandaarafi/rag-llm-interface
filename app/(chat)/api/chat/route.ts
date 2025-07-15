@@ -12,6 +12,7 @@ import {
   getChatById,
   saveChat,
   saveMessages,
+  getUserById,
 } from '@/lib/db/queries';
 import {
   generateUUID,
@@ -46,6 +47,21 @@ export async function POST(request: Request) {
       return new Response('Unauthorized', { status: 401 });
     }
 
+    // Check if user has paid access
+    const user = await getUserById(session.user.id);
+    if (!user) {
+      return new Response('User not found', { status: 404 });
+    }
+
+    if (!user.hasAccess) {
+      return new Response('Payment required. Please upgrade to continue using the chat.', { 
+        status: 402,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+    }
+
     const userMessage = getMostRecentUserMessage(messages);
 
     if (!userMessage) {
@@ -60,9 +76,9 @@ export async function POST(request: Request) {
           message: userMessage,
         });
 
-        console.log('Saving new chat:', { id, userId: session.user.id, title });
+        // console.log('Saving new chat:', { id, userId: session.user.id, title });
         await saveChat({ id, userId: session.user.id, title });
-        console.log('Chat saved successfully');
+        // console.log('Chat saved successfully');
       } catch (saveError) {
         console.error('Failed to save chat in database:', saveError);
         throw saveError;
@@ -74,7 +90,7 @@ export async function POST(request: Request) {
     }
 
     try {
-      console.log('Saving user message:', { chatId: id, messageId: userMessage.id });
+      // console.log('Saving user message:', { chatId: id, messageId: userMessage.id });
       await saveMessages({
         messages: [
           {
@@ -87,7 +103,7 @@ export async function POST(request: Request) {
           },
         ],
       });
-      console.log('User message saved successfully');
+      // console.log('User message saved successfully');
     } catch (messageError) {
       console.error('Failed to save user message:', messageError);
       throw messageError;

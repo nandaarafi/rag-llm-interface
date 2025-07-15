@@ -3,6 +3,8 @@ High Priority:
   components/document.tsx) but need to enhance it
   2. FastAPI + Qdrant Integration - Requires backend integration for vector search
   3. Google SignIn Fix - Authentication issue that needs debugging
+  4. Integrate Payment Integration
+  5. Integrate user who pay and not
 
   Medium Priority:
   4. Document Mentions UI - Chat interface enhancements
