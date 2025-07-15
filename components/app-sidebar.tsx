@@ -92,7 +92,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
       </SidebarContent>
       {/* <SidebarCredit /> */}
       <SidebarFooter>
-        {/* <SidebarCredit hasAccess={user?.hasAccess === true} /> */}
+        {user && <SidebarCredit hasAccess={user?.hasAccess === true} />}
         {user && <SidebarUserNav user={user} />}
       </SidebarFooter>
     </Sidebar>

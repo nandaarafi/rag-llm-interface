@@ -79,7 +79,6 @@ export default function Page() {
   const handleGoogleSignIn = async (e: React.MouseEvent) => {
     e.preventDefault();
     try {
-      console.log("google sign in");
       // Clear any previous form state when starting Google OAuth
       window.history.replaceState({}, '', '/login');
       await signIn('google', { callbackUrl: '/' });

@@ -30,7 +30,7 @@ export const {
         
         // Check if user has no password (OAuth-only user)
         if (!user.password) {
-          console.log('User has no password (OAuth-only):', email);
+          // console.log('User has no password (OAuth-only):', email);
           return null; // Reject credentials login for OAuth-only users
         }
         
@@ -54,23 +54,23 @@ export const {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      console.log('NextAuth signIn callback:', { 
-        userEmail: user.email, 
-        userImage: user.image, 
-        provider: account?.provider,
-        userId: user.id 
-      });
+      // console.log('NextAuth signIn callback:', { 
+      //   userEmail: user.email, 
+      //   userImage: user.image, 
+      //   provider: account?.provider,
+      //   userId: user.id 
+      // });
       
       if (account?.provider === 'google') {
         try {
-          console.log('Processing Google OAuth sign in for user:', user.email);
-          console.log('User image from Google:', user.image);
+          // console.log('Processing Google OAuth sign in for user:', user.email);
+          // console.log('User image from Google:', user.image);
           
           // Check if user exists in your database
           const existingUsers = await getUser(user.email!);
           
           if (existingUsers.length === 0) {
-            console.log('Creating new user for:', user.email);
+            // console.log('Creating new user for:', user.email);
             // Create new user if doesn't exist
             const newUser = await createUserOauth({
               email: user.email!,
@@ -82,14 +82,14 @@ export const {
             // Update the user object with the database user ID
             user.id = newUser.id;
           } else {
-            console.log('User already exists:', user.email);
+            // console.log('User already exists:', user.email);
             // Update existing user's image if it has changed
             const existingUser = existingUsers[0];
             if (existingUser.image !== user.image && user.image) {
-              console.log('Updating user image:', { old: existingUser.image, new: user.image });
+              // console.log('Updating user image:', { old: existingUser.image, new: user.image });
               try {
                 await updateUser(existingUser.id, { image: user.image });
-                console.log('User image updated successfully');
+                // console.log('User image updated successfully');
               } catch (updateError) {
                 console.error('Failed to update user image:', updateError);
                 // Continue anyway - don't fail the login
@@ -111,31 +111,54 @@ export const {
         }
       }
       
-      console.log('SignIn callback completed successfully for provider:', account?.provider || 'credentials');
+      // console.log('SignIn callback completed successfully for provider:', account?.provider || 'credentials');
       return true;
     },
     async redirect({ url, baseUrl }) {
-      console.log('NextAuth redirect callback:', { url, baseUrl });
+      // console.log('NextAuth redirect callback:', { url, baseUrl });
       // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`
       // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url
       return baseUrl
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger }) {
+      // Always refresh hasAccess from database for existing sessions
+      if (!user && token.email) {
+        try {
+          const [dbUser] = await getUser(token.email as string);
+          if (dbUser) {
+            token.hasAccess = dbUser.hasAccess;
+            token.image = dbUser.image;
+          }
+        } catch (error) {
+          console.error('Failed to refresh user data in JWT callback:', error);
+        }
+      }
+      
       if (user) {
-        console.log('JWT callback - user:', user);
-        console.log('JWT callback - account:', account);
+        // console.log('JWT callback - user:', user);
+        // console.log('JWT callback - account:', account);
         
         token.id = user.id;
         token.email = user.email;
         
         // Handle OAuth vs Credentials differently
         if (account?.provider === 'google') {
-          // For OAuth: use data from OAuth provider
+          // For OAuth: use data from OAuth provider and fetch hasAccess from database
           token.image = user.image;
           token.name = user.name;
-          console.log('JWT OAuth: Set image from OAuth provider:', user.image);
+          
+          // Get hasAccess from database for OAuth users
+          try {
+            const [dbUser] = await getUser(user.email!);
+            token.hasAccess = dbUser?.hasAccess || false;
+          } catch (error) {
+            console.error('Failed to fetch hasAccess for OAuth user:', error);
+            token.hasAccess = false;
+          }
+          
+          // console.log('JWT OAuth: Set image from OAuth provider:', user.image);
         } else {
           // For credentials login: fetch user data from database
           try {
@@ -143,16 +166,18 @@ export const {
             if (dbUser) {
               token.image = dbUser.image;
               token.name = user.name || user.email!.split('@')[0];
-              console.log('JWT Credentials: Set image from database:', dbUser.image);
+              token.hasAccess = dbUser.hasAccess;
+              // console.log('JWT Credentials: Set image from database:', dbUser.image);
             }
           } catch (error) {
             console.error('Failed to fetch user data in JWT callback:', error);
             token.name = user.name || user.email!.split('@')[0];
             token.image = null;
+            token.hasAccess = false;
           }
         }
       }
-      console.log('JWT callback - final token:', token);
+      // console.log('JWT callback - final token:', token);
       return token;
     },
     async session({
@@ -162,14 +187,15 @@ export const {
       session: ExtendedSession;
       token: any;
     }) {
-      console.log('Session callback - token:', token);
+      // console.log('Session callback - token:', token);
       if (session.user) {
         // Use data from JWT token (which already fetched from database)
         session.user.id = token.id as string;
         session.user.image = token.image as string;
         session.user.name = token.name as string;
+        (session.user as any).hasAccess = token.hasAccess as boolean;
       }
-      console.log('Session callback - final session:', session);
+      // console.log('Session callback - final session:', session);
       return session;
     },
   },
