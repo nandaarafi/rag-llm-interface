@@ -94,12 +94,6 @@ artifacts/           # Artifact type handlers (code, text, image, sheet)
 - kebab-case for component filenames
 - Maximum 100 character line length
 
-### Development Workflow
-1. Authentication debugging is a known priority (Google SignIn issues)
-2. Document library enhancement is in progress
-3. FastAPI/Qdrant integration planned for vector search
-4. Uses conventional commits (feat:, fix:, docs:, etc.)
-5. Branch naming: feature/, bugfix/, hotfix/, chore/
 
 ### Testing Strategy
 - Playwright E2E tests in tests/ directory
@@ -119,3 +113,39 @@ artifacts/           # Artifact type handlers (code, text, image, sheet)
 - Uses Vercel for deployment and environment management
 - Database migrations run automatically on build
 - Supports both development and production AI providers
+
+### 🔧 Production Setup Requirements
+
+#### Email Service (Resend)
+```env
+RESEND_API_KEY=your_resend_api_key
+RESEND_FROM_EMAIL=noreply@yourdomain.com
+```
+
+#### Authentication
+```env
+NEXTAUTH_URL=https://yourdomain.com
+NEXTAUTH_SECRET=your_secret_key_here
+GOOGLE_ID=your_google_oauth_client_id
+GOOGLE_SECRET=your_google_oauth_client_secret
+```
+
+#### Database
+```env
+POSTGRES_URL=your_database_connection_string
+```
+
+#### Payment Processing (LemonSqueezy)
+```env
+LEMONSQUEEZY_API_KEY=your_lemonsqueezy_api_key
+LEMONSQUEEZY_STORE_ID=your_store_id
+LEMONSQUEEZY_SIGNING_SECRET=your_webhook_signing_secret
+```
+
+### 🎯 Features Implemented
+- ✅ NextAuth.js with Google OAuth and credentials
+- ✅ Password reset via email (Resend integration)
+- ✅ Welcome and payment confirmation emails
+- ✅ LemonSqueezy payment processing
+- ✅ User access management and session handling
+- ✅ Database schema with password reset tokens

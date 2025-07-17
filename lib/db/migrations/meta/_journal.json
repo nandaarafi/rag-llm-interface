@@ -50,6 +50,13 @@
       "when": 1752380194227,
       "tag": "0006_perfect_sway",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1752709622934,
+      "tag": "0007_absurd_carnage",
+      "breakpoints": true
     }
   ]
 }

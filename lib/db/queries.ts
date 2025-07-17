@@ -104,6 +104,74 @@ export async function createUserOauth(userData: {
   }
 }
 
+// Password Reset Functions
+export async function createPasswordResetToken(email: string): Promise<string> {
+  try {
+    const resetToken = crypto.randomUUID();
+    const expiry = new Date(Date.now() + 3600000); // 1 hour from now
+    
+    await db
+      .update(user)
+      .set({
+        resetToken,
+        resetTokenExpiry: expiry,
+        updatedAt: new Date(),
+      })
+      .where(eq(user.email, email));
+    
+    return resetToken;
+  } catch (error) {
+    console.error('Failed to create password reset token');
+    throw error;
+  }
+}
+
+export async function getUserByResetToken(token: string): Promise<User | null> {
+  try {
+    const result = await db
+      .select()
+      .from(user)
+      .where(
+        and(
+          eq(user.resetToken, token),
+          gt(user.resetTokenExpiry, new Date())
+        )
+      );
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Failed to get user by reset token');
+    throw error;
+  }
+}
+
+export async function resetPassword(token: string, newPassword: string): Promise<boolean> {
+  try {
+    const salt = genSaltSync(10);
+    const hash = hashSync(newPassword, salt);
+    
+    const result = await db
+      .update(user)
+      .set({
+        password: hash,
+        resetToken: null,
+        resetTokenExpiry: null,
+        updatedAt: new Date(),
+      })
+      .where(
+        and(
+          eq(user.resetToken, token),
+          gt(user.resetTokenExpiry, new Date())
+        )
+      );
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to reset password');
+    throw error;
+  }
+}
+
 export async function saveChat({
   id,
   userId,

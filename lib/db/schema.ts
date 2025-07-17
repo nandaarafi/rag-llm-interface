@@ -21,6 +21,13 @@ export const user = pgTable('User', {
   image: text('image'),
   variantId: varchar('variant_id', { length: 64 }),
   hasAccess: boolean('has_access').default(false),
+  
+  // Password reset functionality
+  resetToken: varchar('reset_token', { length: 255 }),
+  resetTokenExpiry: timestamp('reset_token_expiry'),
+  emailVerified: boolean('email_verified').default(false),
+  emailVerificationToken: varchar('email_verification_token', { length: 255 }),
+  
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').defaultNow(),
 });

@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 // eslint-disable-next-line import/no-unresolved
 import { updateUser, getUser } from "@/lib/db/queries";
+import { sendPaymentConfirmationEmail } from "@/lib/resend";
 // eslint-disable-next-line import/no-unresolved
 import { user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
@@ -110,6 +111,17 @@ export async function POST(req: NextRequest) {
           updatedAt: new Date(),
         });
         console.log("🔥 USER UPDATED SUCCESSFULLY");
+        
+        // Send payment confirmation email (non-blocking)
+        try {
+          const amount = payload.data.attributes.total_formatted || "your payment";
+          const name = foundUser.email?.split('@')[0] || "Customer";
+          await sendPaymentConfirmationEmail(foundUser.email, name, amount);
+          console.log("🔥 PAYMENT CONFIRMATION EMAIL SENT");
+        } catch (emailError) {
+          console.error("🔥 FAILED TO SEND PAYMENT CONFIRMATION EMAIL:", emailError);
+          // Don't fail the webhook if email fails
+        }
         
         // Trigger session refresh for this user
         console.log("🔥 PAYMENT SUCCESS - User should refresh session");

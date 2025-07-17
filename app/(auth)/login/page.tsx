@@ -142,6 +142,14 @@ export default function Page() {
         <AuthForm action={handleSubmit} defaultEmail={email}>
           <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
           <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
+            <Link
+              href="/forgot-password"
+              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
+            >
+              Forgot your password?
+            </Link>
+          </p>
+          <p className="text-center text-sm text-gray-600 dark:text-zinc-400">
             {"Don't have an account? "}
             <Link
               href="/register"
