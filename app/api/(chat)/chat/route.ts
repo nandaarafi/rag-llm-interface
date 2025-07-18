@@ -21,7 +21,7 @@ import {
   getMostRecentUserMessage,
   getTrailingMessageId,
 } from '@/lib/utils';
-import { generateTitleFromUserMessage } from '../../actions';
+import { generateTitleFromUserMessage } from '../actions';
 import { createDocument } from '@/lib/ai/tools/create-document';
 import { updateDocument } from '@/lib/ai/tools/update-document';
 import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
@@ -49,23 +49,21 @@ export async function POST(request: Request) {
       return new Response('Unauthorized', { status: 401 });
     }
 
-    // Check if user has credits
+    // Check if user has access or credits
     const user = await getUserById(session.user.id);
     if (!user) {
       return new Response('User not found', { status: 404 });
     }
 
-    const userCredits = await getUserCredits(session.user.id);
-    if (userCredits <= 0) {
-      return new Response(JSON.stringify({ 
-        error: 'Insufficient credits. Please upgrade your plan to continue using the chat.',
-        credits: userCredits 
-      }), { 
-        status: 402,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    // If user has access (paid plan), allow chat
+    if (user.hasAccess) {
+      // Continue with chat processing
+    } else {
+      // For free users, check credits
+      const userCredits = await getUserCredits(session.user.id);
+      if (userCredits <= 0) {
+        throw new Error('Payment required: Insufficient credits. Please upgrade your plan to continue using the chat.');
+      }
     }
 
     const userMessage = getMostRecentUserMessage(messages);
@@ -174,9 +172,11 @@ export async function POST(request: Request) {
                   ],
                 });
 
-                // Deduct 1 credit for successful AI response
-                await deductCredits(session.user.id, 1);
-                console.log('Credit deducted for user:', session.user.id);
+                // Deduct 1 credit for successful AI response (only for free users)
+                if (!user.hasAccess) {
+                  await deductCredits(session.user.id, 1);
+                  console.log('Credit deducted for user:', session.user.id);
+                }
               } catch (error) {
                 console.error('Failed to save chat', error);
               }

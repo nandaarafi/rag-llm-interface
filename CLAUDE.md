@@ -41,7 +41,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```
 app/
 ├── (auth)/          # Authentication pages and logic
-├── (chat)/          # Main chat interface and API routes
+├── chat/          # Main chat interface and API routes
 ├── (payments)/      # Payment processing (LemonSqueezy)
 └── layout.tsx       # Root layout with theme provider
 
@@ -132,7 +132,7 @@ GOOGLE_SECRET=your_google_oauth_client_secret
 
 #### Database
 ```env
-POSTGRES_URL=your_database_connection_string
+DATABASE_URL=your_database_connection_string
 ```
 
 #### Payment Processing (LemonSqueezy)

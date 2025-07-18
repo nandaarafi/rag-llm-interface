@@ -11,7 +11,7 @@ Create these in your Vercel dashboard under Settings > Environment Variables:
 
 ```env
 # Database
-POSTGRES_URL=your_database_connection_string
+DATABASE_URL=your_database_connection_string
 
 # Authentication
 NEXTAUTH_URL=https://yourdomain.com
@@ -41,12 +41,12 @@ GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
 #### Option A: Vercel Postgres
 1. Go to your Vercel dashboard
 2. Navigate to Storage > Create Database > Postgres
-3. Copy the connection string to `POSTGRES_URL`
+3. Copy the connection string to `DATABASE_URL`
 
 #### Option B: Neon.tech
 1. Create account at neon.tech
 2. Create a new project
-3. Copy the connection string to `POSTGRES_URL`
+3. Copy the connection string to `DATABASE_URL`
 
 ### 3. Email Service Setup (Resend)
 
@@ -150,7 +150,7 @@ Test these critical flows:
 
 ### Common Issues
 
-1. **Database Connection**: Check POSTGRES_URL format
+1. **Database Connection**: Check DATABASE_URL format
 2. **Email Not Sending**: Verify Resend domain and API key
 3. **OAuth Errors**: Check redirect URLs and credentials
 4. **Payment Issues**: Verify LemonSqueezy webhook URL and signing secret

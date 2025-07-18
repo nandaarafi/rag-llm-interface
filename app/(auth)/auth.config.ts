@@ -4,7 +4,7 @@ export const authConfig = {
 
   pages: {
     signIn: '/login',
-    newUser: '/',
+    newUser: '/chat',
     error: '/login', // Redirect errors back to login page
   },
   providers: [
@@ -15,20 +15,26 @@ export const authConfig = {
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
+      const isOnChat = nextUrl.pathname.startsWith('/chat');
       const isOnRegister = nextUrl.pathname.startsWith('/register');
       const isOnForgotPassword = nextUrl.pathname.startsWith('/forgot-password');
       const isOnResetPassword = nextUrl.pathname.startsWith('/reset-password');
       const isOnLogin = nextUrl.pathname.startsWith('/login');
       const isOnAuth = nextUrl.pathname.startsWith('/api/auth');
+      const isOnRoot = nextUrl.pathname === '/';
 
       // Always allow access to NextAuth API routes
       if (isOnAuth) {
         return true;
       }
 
+      // Allow access to root (marketing page) for everyone
+      if (isOnRoot) {
+        return true;
+      }
+
       if (isLoggedIn && (isOnLogin || isOnRegister || isOnForgotPassword || isOnResetPassword)) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
+        return Response.redirect(new URL('/chat', nextUrl as unknown as URL));
       }
 
       if (isOnRegister || isOnLogin || isOnForgotPassword || isOnResetPassword) {
@@ -38,10 +44,6 @@ export const authConfig = {
       if (isOnChat) {
         if (isLoggedIn) return true;
         return false; // Redirect unauthenticated users to login page
-      }
-
-      if (isLoggedIn) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
       }
 
       return true;

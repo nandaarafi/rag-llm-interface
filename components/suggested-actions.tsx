@@ -28,9 +28,9 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
       action: `Help me write an essay about silicon valley`,
     },
     {
-      title: 'What is the weather',
-      label: 'in San Francisco?',
-      action: 'What is the weather in San Francisco?',
+      title: 'Help me to generate a PPT',
+      label: 'about AI',
+      action: 'Help me to generate a PPT about AI',
     },
   ];
 

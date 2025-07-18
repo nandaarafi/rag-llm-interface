@@ -1,5 +1,9 @@
 'use client';
-import { ChevronUp } from 'lucide-react';
+import { ChevronUp , PanelLeftClose, PanelLeftOpen, MessageSquareText, Settings,   CreditCard, 
+  LogOut,  
+  Star, 
+  Bell,  
+  FileText} from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -19,11 +23,7 @@ import {
 } from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { PanelLeftClose, PanelLeftOpen, MessageSquareText, Settings,   CreditCard, 
-  LogOut,  
-  Star, 
-  Bell,  
-  FileText} from "lucide-react"
+
 import { useRouter } from 'next/navigation';
 
 export function SidebarUserNav({ user }: { user: User }) {
@@ -48,7 +48,7 @@ export function SidebarUserNav({ user }: { user: User }) {
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-3">
               {!user.image ? (
-                <div className="h-9 w-9 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden">
+                <div className="size-9 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden">
                   <span className="text-xs font-medium text-white">
                     {user.name?.charAt(0).toUpperCase()}
                   </span>
@@ -70,14 +70,14 @@ export function SidebarUserNav({ user }: { user: User }) {
                   <span className="text-xs text-muted-foreground">{user.email}</span>
                 </div>
             </div>
-            <Settings className="h-4 w-4 opacity-50" />
+            <Settings className="size-4 opacity-50" />
           </div>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56" align="start" side="top">
         <div className="flex items-center gap-3 p-2">
           {!user.image ? (
-            <div className="h-9 w-9 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden">
+            <div className="size-9 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden">
               <span className="text-xs font-medium text-white">
                 {user.name?.charAt(0).toUpperCase()}
               </span>
@@ -101,11 +101,11 @@ export function SidebarUserNav({ user }: { user: User }) {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem onClick={handleUpgradeToPro}>
-            <Star className="mr-2 h-4 w-4" />
+            <Star className="mr-2 size-4" />
             <span>Upgrade to Pro</span>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Settings className="mr-2 h-4 w-4" />
+            <Settings className="mr-2 size-4" />
             <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
@@ -114,7 +114,7 @@ export function SidebarUserNav({ user }: { user: User }) {
           onClick={handleSignOut}
           className="text-red-400 hover:!bg-red-400/20 hover:!text-red-400 focus:!bg-red-400/20 focus:!text-red-400"
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 size-4" />
           <span>Log out</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

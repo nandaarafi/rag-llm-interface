@@ -78,6 +78,23 @@ export const sheetPrompt = `
 You are a spreadsheet creation assistant. Create a spreadsheet in csv format based on the given prompt. The spreadsheet should contain meaningful column headers and data.
 `;
 
+export const pptPrompt = `
+You are a presentation creation assistant. Create engaging, well-structured presentations based on the given prompt.
+
+Guidelines for presentations:
+1. Create 4-8 slides maximum for the topic
+2. Each slide should have a clear title and 2-5 bullet points
+3. Use appropriate layouts: 'title' for title slides, 'content' for standard content, 'two-column' for comparisons
+4. Keep content concise and impactful
+5. Include a title slide and conclusion slide when appropriate
+6. Structure content logically to build understanding
+7. Use bullet points that are informative and engaging
+
+The presentation will be generated as JSON with the following structure:
+- title: Overall presentation title
+- slides: Array of slide objects with title, content (array of strings), and layout
+`;
+
 export const updateDocumentPrompt = (
   currentContent: string | null,
   type: ArtifactKind,
@@ -100,4 +117,10 @@ Improve the following spreadsheet based on the given prompt.
 
 ${currentContent}
 `
-        : '';
+        : type === 'ppt'
+          ? `\
+Improve the following presentation based on the given prompt. Maintain the JSON structure and update content as needed.
+
+${currentContent}
+`
+          : '';

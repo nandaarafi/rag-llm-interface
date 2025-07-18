@@ -19,8 +19,8 @@ export function Paywall() {
     <div className="flex items-center justify-center min-h-[60vh] p-4">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="text-center">
-          <div className="mx-auto mb-4 w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
-            <Crown className="w-6 h-6 text-white" />
+          <div className="mx-auto mb-4 size-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+            <Crown className="size-6 text-white" />
           </div>
           <CardTitle className="text-2xl">Upgrade to Pro</CardTitle>
           <CardDescription>
@@ -31,15 +31,15 @@ export function Paywall() {
         <CardContent>
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <MessageSquare className="w-5 h-5 text-blue-500" />
+              <MessageSquare className="size-5 text-blue-500" />
               <span className="text-sm">Unlimited chat messages</span>
             </div>
             <div className="flex items-center gap-3">
-              <Zap className="w-5 h-5 text-yellow-500" />
+              <Zap className="size-5 text-yellow-500" />
               <span className="text-sm">Access to all AI models</span>
             </div>
             <div className="flex items-center gap-3">
-              <Crown className="w-5 h-5 text-purple-500" />
+              <Crown className="size-5 text-purple-500" />
               <span className="text-sm">Priority support</span>
             </div>
           </div>

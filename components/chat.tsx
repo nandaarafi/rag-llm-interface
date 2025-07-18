@@ -2,7 +2,7 @@
 
 import type { Attachment, UIMessage } from 'ai';
 import { useChat } from '@ai-sdk/react';
-import { useState } from 'react';
+import { useState , useState as useStateReact } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
@@ -16,7 +16,7 @@ import { toast } from 'sonner';
 import { unstable_serialize } from 'swr/infinite';
 import { getChatHistoryPaginationKey } from './sidebar-history';
 import { Paywall } from './paywall';
-import { useState as useStateReact } from 'react';
+
 import { useCredits } from '@/contexts/credit-context';
 
 export function Chat({
@@ -33,7 +33,7 @@ export function Chat({
   isReadonly: boolean;
 }) {
   const { mutate } = useSWRConfig();
-  const { decrementCredit, refetchCredits } = useCredits();
+  const { decrementCredit, refetchCredits, credits, planType, loading } = useCredits();
 
   const {
     messages,
@@ -60,7 +60,9 @@ export function Chat({
       setTimeout(() => refetchCredits(), 1000);
     },
     onError: (error: any) => {
-      if (error?.message?.includes('Payment required') || error?.status === 402) {
+      if (error?.message?.includes('Payment required') || 
+          error?.message?.includes('Insufficient credits') || 
+          error?.status === 402) {
         setShowPaywall(true);
       } else {
         toast.error('An error occurred, please try again!');
@@ -77,7 +79,8 @@ export function Chat({
   const [showPaywall, setShowPaywall] = useState(false);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  if (showPaywall) {
+  // Show paywall if user has no credits and is on free plan
+  if (showPaywall || (credits === 0 && planType === 'free' && !loading)) {
     return <Paywall />;
   }
 

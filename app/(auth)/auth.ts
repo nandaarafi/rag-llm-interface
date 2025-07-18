@@ -120,7 +120,8 @@ export const {
       if (url.startsWith("/")) return `${baseUrl}${url}`
       // Allows callback URLs on the same origin
       else if (new URL(url).origin === baseUrl) return url
-      return baseUrl
+      // Default redirect to chat after login
+      return `${baseUrl}/chat`
     },
     async jwt({ token, user, account, trigger }) {
       // Always refresh hasAccess from database for existing sessions

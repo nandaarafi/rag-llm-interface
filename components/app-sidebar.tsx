@@ -38,7 +38,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <Link
-              href="/"
+              href="/chat"
               onClick={() => {
                 setOpenMobile(false);
               }}
@@ -56,7 +56,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push('/chat');
                     router.refresh();
                   }}
                 >
@@ -72,12 +72,12 @@ export function AppSidebar({ user }: { user: User | undefined }) {
         <SidebarMenu>
             {NAVIGATION_ITEMS.map(({ id, label, icon: Icon }) => (
               <SidebarMenuItem key={id}>
-                <Link href={id === 'home' ? '/chat' : `/${id}`} className="w-full">
+                <Link href={id === 'library' ? '/chat/library' : `/${id}`} className="w-full">
                   <SidebarMenuButton
                     isActive={pathname === `/${id}`} // Check if the current route matches
                     className={pathname === `/${id}` ? 'bg-gray-200 hover:bg-gray-300' : ''}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="size-4" />
                     <span>{label}</span>
                   </SidebarMenuButton>
                 </Link>

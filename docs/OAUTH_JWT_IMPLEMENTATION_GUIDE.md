@@ -421,7 +421,7 @@ GOOGLE_ID=your-google-client-id
 GOOGLE_SECRET=your-google-client-secret
 
 # Database
-POSTGRES_URL=your-database-url
+DATABASE_URL=your-database-url
 ```
 
 ## 🎯 Implementation Checklist

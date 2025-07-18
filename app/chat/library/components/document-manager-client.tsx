@@ -2,11 +2,11 @@
 
 import React, { useState, useMemo } from 'react';
 import { Search, Download, Share2, Eye, FileText, Calendar } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '../../../../components/ui/card';
-import { Input } from '../../../../components/ui/input';
-import { Button } from '../../../../components/ui/button';
-import { Badge } from '../../../../components/ui/badge';
-import type { Document } from '../../../../lib/db/schema';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import type { Document } from '@/lib/db/schema';
 
 type DocumentWithFormatted = Document & {
   formattedDate: string;
@@ -104,7 +104,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
       {/* Search and Upload */}
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <Input
             type="search"
             placeholder="Search documents..."
@@ -138,7 +138,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
                 <CardContent className="pt-0">
                   <div className="flex items-center justify-between text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="size-4" />
                       <span>{doc.formattedDate}</span>
                     </div>
                   </div>
@@ -162,7 +162,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
           </div>
         ) : (
           <Card className="text-center p-8">
-            <FileText className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+            <FileText className="mx-auto size-12 text-muted-foreground mb-4" />
             <h3 className="text-lg font-medium">No documents found</h3>
             <p className="text-muted-foreground mt-2">
               {searchTerm ? 'Try a different search term' : 'Create your first document in a chat to get started'}
@@ -170,7 +170,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
             {!searchTerm && (
               <Button asChild className="mt-4">
                 <a href="/">
-                  <FileText className="h-4 w-4 mr-2" />
+                  <FileText className="size-4 mr-2" />
                   Start New Chat
                 </a>
               </Button>

@@ -1,9 +1,9 @@
 import React from 'react';
-import { Card } from '../../../components/ui/card';
-import { Button } from '../../../components/ui/button';
-import { auth } from '../../(auth)/auth';
-import { getDocumentsByUserId } from '../../../lib/db/queries';
-import type { Document } from '../../../lib/db/schema';
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { auth } from '@/app/(auth)/auth';
+import { getDocumentsByUserId } from '@/lib/db/queries';
+import type { Document } from '@/lib/db/schema';
 import { DocumentManagerClient } from './components/document-manager-client';
 
 type DocumentWithFormatted = Document & {
