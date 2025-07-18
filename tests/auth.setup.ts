@@ -10,7 +10,6 @@ setup('authenticate', async ({ page }) => {
   const testPassword = generateId(16);
 
   await page.goto('http://localhost:3000/register');
-  await page.goto('http://localhost:3000/forgot-password');
   await page.getByPlaceholder('user@acme.com').click();
   await page.getByPlaceholder('user@acme.com').fill(testEmail);
   await page.getByLabel('Password').click();

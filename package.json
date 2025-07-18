@@ -16,7 +16,7 @@
     "db:pull": "drizzle-kit pull",
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
-    "test": "export PLAYWRIGHT=True && pnpm exec playwright test --workers=4"
+    "test": "cross-env PLAYWRIGHT=true playwright test --workers=4"
   },
   "dependencies": {
     "@ai-sdk/google": "^1.2.10",
@@ -101,6 +101,7 @@
     "@types/pdf-parse": "^1.1.4",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "cross-env": "^7.0.3",
     "drizzle-kit": "^0.25.0",
     "eslint": "^8.57.0",
     "eslint-config-next": "14.2.5",

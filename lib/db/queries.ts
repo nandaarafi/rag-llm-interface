@@ -556,3 +556,90 @@ export async function updateChatVisiblityById({
     throw error;
   }
 }
+
+// Credit management functions
+export async function getUserCredits(userId: string): Promise<number> {
+  try {
+    const [userRecord] = await db
+      .select({ credits: user.credits })
+      .from(user)
+      .where(eq(user.id, userId));
+    
+    return userRecord?.credits || 0;
+  } catch (error) {
+    console.error('Failed to get user credits from database');
+    throw error;
+  }
+}
+
+export async function deductCredits(userId: string, amount: number = 1): Promise<boolean> {
+  try {
+    const userRecord = await getUserById(userId);
+    if (!userRecord || userRecord.credits < amount) {
+      return false; // Insufficient credits
+    }
+
+    await db
+      .update(user)
+      .set({ credits: userRecord.credits - amount })
+      .where(eq(user.id, userId));
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to deduct credits from database');
+    throw error;
+  }
+}
+
+export async function resetMonthlyCredits(): Promise<void> {
+  try {
+    const now = new Date();
+    
+    // Reset Pro users to 300 credits
+    await db
+      .update(user)
+      .set({ 
+        credits: 300,
+        lastCreditReset: now
+      })
+      .where(eq(user.planType, 'pro'));
+
+    // Reset Ultra users to 1000 credits  
+    await db
+      .update(user)
+      .set({ 
+        credits: 1000,
+        lastCreditReset: now
+      })
+      .where(eq(user.planType, 'ultra'));
+  } catch (error) {
+    console.error('Failed to reset monthly credits');
+    throw error;
+  }
+}
+
+export async function updateUserPlan(userId: string, planType: 'free' | 'pro' | 'ultra'): Promise<void> {
+  try {
+    const now = new Date();
+    let credits = 3; // Default for free
+    
+    if (planType === 'pro') {
+      credits = 300;
+    } else if (planType === 'ultra') {
+      credits = 1000;
+    }
+
+    await db
+      .update(user)
+      .set({ 
+        planType,
+        credits,
+        lastCreditReset: now,
+        hasAccess: planType !== 'free'
+      })
+      .where(eq(user.id, userId));
+  } catch (error) {
+    console.error('Failed to update user plan');
+    throw error;
+  }
+}

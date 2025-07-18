@@ -24,8 +24,12 @@ test.beforeAll(async ({ browser }) => {
 });
 
 test.afterAll(async () => {
-  await adaContext.context.close();
-  await babbageContext.context.close();
+  if (adaContext?.context) {
+    await adaContext.context.close();
+  }
+  if (babbageContext?.context) {
+    await babbageContext.context.close();
+  }
 });
 
 test.describe

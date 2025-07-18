@@ -18,6 +18,7 @@ function getKindLabel(kind: string): string {
     case 'code': return 'Code';
     case 'image': return 'Image';
     case 'sheet': return 'Sheet';
+    case 'ppt': return 'Presentation';
     default: return 'Document';
   }
 }
@@ -28,6 +29,7 @@ function getKindColor(kind: string): string {
     case 'code': return 'bg-green-100 text-green-800 hover:bg-green-200';
     case 'image': return 'bg-purple-100 text-purple-800 hover:bg-purple-200';
     case 'sheet': return 'bg-orange-100 text-orange-800 hover:bg-orange-200';
+    case 'ppt': return 'bg-red-100 text-red-800 hover:bg-red-200';
     default: return 'bg-gray-100 text-gray-800 hover:bg-gray-200';
   }
 }

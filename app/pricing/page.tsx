@@ -65,7 +65,7 @@ const tiers = [
         "20x usage on all OpenAI, Claude, Gemini models.",
         "Priority access to new features.",
         "Unlimited access to all models."
-    ],    buttons: [{ text: 'Get Ultra', variant: 'default', onClick: () => handlePayment('818286') }],
+    ],    buttons: [{ text: 'Get Ultra', variant: 'default', onClick: () => handlePayment('905815') }],
     proGlow: false,
   },
 ];

@@ -2,6 +2,7 @@ import Form from 'next/form';
 
 import { Input } from './ui/input';
 import { Label } from './ui/label';
+import Link from 'next/link';
 
 export function AuthForm({
   action,
@@ -35,15 +36,24 @@ export function AuthForm({
           autoFocus
           defaultValue={defaultEmail}
         />
+
       </div>
 
       <div className="flex flex-col gap-2">
-        <Label
-          htmlFor="password"
-          className="text-zinc-600 font-normal dark:text-zinc-400"
-        >
-          Password
-        </Label>
+        <div className="flex justify-between items-center">
+          <Label
+            htmlFor="password"
+            className="text-zinc-600 font-normal dark:text-zinc-400"
+          >
+            Password
+          </Label>
+          <Link
+            href="/forgot-password"
+            className="text-xs text-gray-600 hover:underline dark:text-zinc-400"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
         <Input
           id="password"

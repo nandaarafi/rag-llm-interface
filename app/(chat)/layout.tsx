@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { auth } from '../(auth)/auth';
 import Script from 'next/script';
 import { SessionRefresher } from '@/components/session-refresher';
+import { CreditProvider } from '@/contexts/credit-context';
 
 export const experimental_ppr = true;
 
@@ -23,11 +24,13 @@ export default async function Layout({
         strategy="beforeInteractive"
       />
       <SidebarProvider defaultOpen={!isCollapsed}>
-        <AppSidebar user={session?.user} />
-        <SidebarInset>
-          <SessionRefresher />
-          {children}
-        </SidebarInset>
+        <CreditProvider userId={session?.user?.id}>
+          <AppSidebar user={session?.user} />
+          <SidebarInset>
+            <SessionRefresher />
+            {children}
+          </SidebarInset>
+        </CreditProvider>
       </SidebarProvider>
     </>
   );

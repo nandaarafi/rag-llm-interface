@@ -13,6 +13,8 @@ import {
   saveChat,
   saveMessages,
   getUserById,
+  getUserCredits,
+  deductCredits,
 } from '@/lib/db/queries';
 import {
   generateUUID,
@@ -47,14 +49,18 @@ export async function POST(request: Request) {
       return new Response('Unauthorized', { status: 401 });
     }
 
-    // Check if user has paid access
+    // Check if user has credits
     const user = await getUserById(session.user.id);
     if (!user) {
       return new Response('User not found', { status: 404 });
     }
 
-    if (!user.hasAccess) {
-      return new Response('Payment required. Please upgrade to continue using the chat.', { 
+    const userCredits = await getUserCredits(session.user.id);
+    if (userCredits <= 0) {
+      return new Response(JSON.stringify({ 
+        error: 'Insufficient credits. Please upgrade your plan to continue using the chat.',
+        credits: userCredits 
+      }), { 
         status: 402,
         headers: {
           'Content-Type': 'application/json'
@@ -167,6 +173,10 @@ export async function POST(request: Request) {
                     },
                   ],
                 });
+
+                // Deduct 1 credit for successful AI response
+                await deductCredits(session.user.id, 1);
+                console.log('Credit deducted for user:', session.user.id);
               } catch (error) {
                 console.error('Failed to save chat', error);
               }

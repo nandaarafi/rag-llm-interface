@@ -3,7 +3,7 @@ import crypto from "crypto";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 // eslint-disable-next-line import/no-unresolved
-import { updateUser, getUser } from "@/lib/db/queries";
+import { updateUser, getUser, updateUserPlan } from "@/lib/db/queries";
 import { sendPaymentConfirmationEmail } from "@/lib/resend";
 // eslint-disable-next-line import/no-unresolved
 import { user } from "@/lib/db/schema";
@@ -14,6 +14,26 @@ import postgres from 'postgres';
 // Create database connection
 const client = postgres(process.env.POSTGRES_URL!);
 const db = drizzle(client);
+
+// Helper function to determine plan type from variant ID
+function getPlanTypeFromVariantId(variantId: string): 'pro' | 'ultra' {
+  // You should map your actual LemonSqueezy variant IDs here
+  // For now, using a simple heuristic - you can configure this based on your actual variant IDs
+  // For example: 'pro' plan variant IDs vs 'ultra' plan variant IDs
+  
+  // Actual variant IDs from LemonSqueezy
+  const proVariants = ['818286']; // Pro plan variant ID
+  const ultraVariants = ['818288']; // Ultra plan variant ID
+  
+  if (proVariants.includes(variantId)) {
+    return 'pro';
+  } else if (ultraVariants.includes(variantId)) {
+    return 'ultra';
+  }
+  
+  // Default to pro if variant not found in mapping
+  return 'pro';
+}
 
 // This is where we receive Lemon Squeezy webhook events
 // It used to update the user data, send emails, etc...
@@ -81,6 +101,9 @@ export async function POST(req: NextRequest) {
         const variantId = payload.data.attributes.first_order_item?.variant_id.toString();
         const userId = payload.meta?.custom_data?.userId;
 
+        // Determine plan type from variant ID
+        const planType = getPlanTypeFromVariantId(variantId);
+        
         // Find or create user
         let foundUser;
         if (userId) {
@@ -88,7 +111,7 @@ export async function POST(req: NextRequest) {
         } else if (email) {
           foundUser = (await getUser(email))[0];
           if (!foundUser) {
-            // Create new user if not exists
+            // Create new user if not exists - will be updated below with plan details
             foundUser = (await db.insert(user).values({
               email,
               customerId,
@@ -102,15 +125,21 @@ export async function POST(req: NextRequest) {
           return new Response("User not found", { status: 404 });
         }
 
-        // Update user with subscription details
-        console.log("🔥 UPDATING USER:", foundUser.id, "with hasAccess: true");
+        // Update user with subscription details and plan
+        console.log("🔥 UPDATING USER:", foundUser.id, "with plan:", planType);
+        
+        // Update basic user info
         await updateUser(foundUser.id, {
           customerId,
           variantId,
           hasAccess: true,
           updatedAt: new Date(),
         });
-        console.log("🔥 USER UPDATED SUCCESSFULLY");
+        
+        // Update user plan and credits
+        await updateUserPlan(foundUser.id, planType);
+        
+        console.log("🔥 USER UPDATED SUCCESSFULLY with plan:", planType);
         
         // Send payment confirmation email (non-blocking)
         try {

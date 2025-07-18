@@ -106,15 +106,7 @@ export function SidebarUserNav({ user }: { user: User }) {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Account</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <CreditCard className="mr-2 h-4 w-4" />
-            <span>Billing</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Bell className="mr-2 h-4 w-4" />
-            <span>Notifications</span>
+            <span>Settings</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />

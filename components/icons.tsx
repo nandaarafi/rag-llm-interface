@@ -1172,3 +1172,20 @@ export const WarningIcon = ({ size = 16 }: { size?: number }) => {
     </svg>
   );
 };
+
+export const PresentationIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M2 2.5C2 1.67157 2.67157 1 3.5 1H12.5C13.3284 1 14 1.67157 14 2.5V10.5C14 11.3284 13.3284 12 12.5 12H8.75V13.5H10.25H11V15H10.25H5.75H5V13.5H5.75H7.25V12H3.5C2.67157 12 2 11.3284 2 10.5V2.5ZM3.5 2.5V10.5H12.5V2.5H3.5Z"
+      fill="currentColor"
+    />
+  </svg>
+);

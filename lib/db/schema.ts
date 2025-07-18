@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  integer,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -21,6 +22,11 @@ export const user = pgTable('User', {
   image: text('image'),
   variantId: varchar('variant_id', { length: 64 }),
   hasAccess: boolean('has_access').default(false),
+  
+  // Credit system
+  credits: integer('credits').default(3).notNull(),
+  planType: varchar('plan_type', { enum: ['free', 'pro', 'ultra'] }).default('free').notNull(),
+  lastCreditReset: timestamp('last_credit_reset').defaultNow(),
   
   // Password reset functionality
   resetToken: varchar('reset_token', { length: 255 }),
@@ -124,7 +130,7 @@ export const document = pgTable(
     createdAt: timestamp('createdAt').notNull(),
     title: text('title').notNull(),
     content: text('content'),
-    kind: varchar('text', { enum: ['text', 'code', 'image', 'sheet'] })
+    kind: varchar('text', { enum: ['text', 'code', 'image', 'sheet', 'ppt'] })
       .notNull()
       .default('text'),
     userId: uuid('userId')

@@ -17,6 +17,7 @@ import { unstable_serialize } from 'swr/infinite';
 import { getChatHistoryPaginationKey } from './sidebar-history';
 import { Paywall } from './paywall';
 import { useState as useStateReact } from 'react';
+import { useCredits } from '@/contexts/credit-context';
 
 export function Chat({
   id,
@@ -32,6 +33,7 @@ export function Chat({
   isReadonly: boolean;
 }) {
   const { mutate } = useSWRConfig();
+  const { decrementCredit, refetchCredits } = useCredits();
 
   const {
     messages,
@@ -52,6 +54,10 @@ export function Chat({
     generateId: generateUUID,
     onFinish: () => {
       mutate(unstable_serialize(getChatHistoryPaginationKey));
+      // Update credits immediately for better UX, then refetch to ensure accuracy
+      decrementCredit();
+      // Refetch credits from server to ensure sync (in case of any discrepancies)
+      setTimeout(() => refetchCredits(), 1000);
     },
     onError: (error: any) => {
       if (error?.message?.includes('Payment required') || error?.status === 402) {
