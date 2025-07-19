@@ -24,7 +24,6 @@ export function CreditProvider({
   const [planType, setPlanType] = useState<'free' | 'pro' | 'ultra'>('free');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const refetchCredits = useCallback(async () => {
     if (!userId) {
       setLoading(false);
