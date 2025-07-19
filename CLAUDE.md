@@ -3,7 +3,35 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Development Commands
+## Commit Message Convention
 
+This website follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+
+Commit message will be checked using [husky and commit lint](https://theodorusclarence.com/library/husky-commitlint-prettier), you can't commit if not using the proper convention below.
+
+### Format
+
+`<type>(optional scope): <description>`
+Example: `feat(pre-event): add speakers section`
+
+### 1. Type
+
+Available types are:
+
+- feat → Changes about addition or removal of a feature. Ex: `feat: add table on landing page`, `feat: remove table from landing page`
+- fix → Bug fixing, followed by the bug. Ex: `fix: illustration overflows in mobile view`
+- docs → Update documentation (README.md)
+- style → Updating style, and not changing any logic in the code (reorder imports, fix whitespace, remove comments)
+- chore → Installing new dependencies, or bumping deps
+- refactor → Changes in code, same output, but different approach
+- ci → Update github workflows, husky
+- test → Update testing suite, cypress files
+- revert → when reverting commits
+- perf → Fixing something regarding performance (deriving state, using memo, callback)
+- vercel → Blank commit to trigger vercel deployment. Ex: `vercel: trigger deployment`
+
+## GIT
+- After You make a lot of changes, use git add . and and git commit -m "feat: ..." use the commit message rules above
 ### Package Management
 - Use `pnpm` for package management (configured in package.json)
 - Install dependencies: `pnpm install`

@@ -12,27 +12,6 @@
 - [Git Workflow](#git-workflow)
 - [Documentation](#documentation)
 
-## Project Structure
-
-```
-/
-├── app/                    # App router pages and API routes
-│   └── (chat)/            # Chat feature routes
-│       ├── library/       # Library page
-│       └── ...
-├── components/            # Reusable UI components
-│   ├── ui/                # Base UI components
-│   ├── app-sidebar.tsx    # Main application sidebar
-│   └── ...
-├── lib/                   # Core business logic
-│   ├── db/               # Database related code
-│   │   ├── queries.ts    # Database queries
-│   │   └── schema.ts     # Database schemas
-│   └── ...
-├── public/               # Static assets
-├── tests/                # Test files
-└── ...
-```
 
 ## Code Style
 
@@ -150,24 +129,6 @@
    - Write end-to-end tests for critical user flows
    - Use Playwright for browser automation
    - Test across different viewports
-
-## Git Workflow
-
-1. **Branch Naming**
-   - `feature/` for new features
-   - `bugfix/` for bug fixes
-   - `hotfix/` for critical production fixes
-   - `chore/` for maintenance tasks
-
-2. **Commit Messages**
-   - Use conventional commits format:
-     - `feat:` for new features
-     - `fix:` for bug fixes
-     - `docs:` for documentation changes
-     - `style:` for formatting changes
-     - `refactor:` for code refactoring
-     - `test:` for test files
-     - `chore:` for build/configuration updates
 
 ## Documentation
 
