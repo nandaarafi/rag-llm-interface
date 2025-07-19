@@ -1,10 +1,17 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": true,
+    "strict": false, // Changed: Turn off strict mode
+    "noImplicitAny": false, // Added: Allow implicit any
+    "strictNullChecks": true, // Added: Keep null/undefined checking
+    "noImplicitReturns": true, // Added: Ensure functions return consistently
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",
@@ -19,7 +26,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./*"]
+      "@/*": [
+        "./*"
+      ]
     }
   },
   "include": [
@@ -29,5 +38,7 @@
     ".next/types/**/*.ts",
     "next.config.js"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }

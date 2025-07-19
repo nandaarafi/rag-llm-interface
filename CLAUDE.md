@@ -45,6 +45,7 @@ Available types are:
 - Lint and fix: `pnpm lint:fix` (runs Next.js lint and Biome)
 - Format code: `pnpm format` (uses Biome formatter)
 - Quick lint: `pnpm lint`
+- Lint for Production: `pnpm tsc --noEmit`
 
 ### Database Operations
 - Generate migrations: `pnpm db:generate`

@@ -64,6 +64,7 @@ export const components: MDXComponents = {
         'font-medium underline underline-offset-4 hover:no-underline',
         className
       )}
+      href={props.href || ''}
       {...props}
     />
   ),

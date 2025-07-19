@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useActionState, useEffect, useState, Suspense } from 'react';
 import { toast } from '@/components/toast';
 import { AuthForm } from '@/components/auth-form';
 import { SubmitButton } from '@/components/submit-button';
@@ -11,7 +11,7 @@ import { signIn } from 'next-auth/react';
 import { login, type LoginActionState } from '../actions';
 import { Button } from '@/components/ui/button';
 
-export default function Page() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -157,5 +157,13 @@ export default function Page() {
         </AuthForm>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <LoginForm />
+    </Suspense>
   );
 }

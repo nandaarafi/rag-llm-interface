@@ -534,6 +534,7 @@ export async function deleteMessagesByChatIdAfterTimestamp({
           and(eq(message.chatId, chatId), inArray(message.id, messageIds)),
         );
     }
+    return undefined;
   } catch (error) {
     console.error(
       'Failed to delete messages by id after timestamp from database',

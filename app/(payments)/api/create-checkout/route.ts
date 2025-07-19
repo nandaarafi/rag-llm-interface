@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
     const { variantId, redirectUrl } = body;
     // console.log(redirectUrl)
 
-    const profile = await getUser(session.user.email);
+    const profiles = await getUser(session.user.email!);
+    const profile = profiles[0];
     const checkoutURL = await createLemonSqueezyCheckout({
       variantId,
       redirectUrl,
@@ -49,6 +50,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ url: checkoutURL });
   } catch (e) {
     console.error(e);
-    return NextResponse.json({ error: e?.message }, { status: 500 });
+    return NextResponse.json({ error: (e as Error)?.message || 'Unknown error' }, { status: 500 });
   }
 }

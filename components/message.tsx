@@ -212,6 +212,7 @@ const PurePreviewMessage = ({
                   );
                 }
               }
+              return null;
             })}
 
             {!isReadonly && (

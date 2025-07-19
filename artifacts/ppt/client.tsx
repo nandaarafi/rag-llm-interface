@@ -25,6 +25,7 @@ export const pptArtifact = new Artifact<'ppt', Metadata>({
       }));
     }
   },
+  toolbar: [],
   content: ({
     content,
     currentVersionIndex,
@@ -68,12 +69,12 @@ export const pptArtifact = new Artifact<'ppt', Metadata>({
     {
       icon: <DownloadIcon size={18} />,
       description: 'Download as JSON',
-      onClick: ({ content, title }) => {
+      onClick: ({ content }) => {
         const blob = new Blob([content], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${title}.json`;
+        a.download = 'presentation.json';
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

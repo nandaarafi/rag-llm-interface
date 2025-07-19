@@ -69,7 +69,7 @@ export function Chat({
         console.log('💳 Credit error detected, showing paywall and stopping any ongoing requests');
         
         // Stop any ongoing streaming/generation
-        if (status === 'streaming' || status === 'loading') {
+        if (status === 'streaming') {
           console.log('🛑 Stopping ongoing chat request due to credit error');
           stop();
         }
@@ -116,7 +116,7 @@ export function Chat({
       console.log('✅ Setting showPaywall to false and marking as dismissed');
       
       // Stop any ongoing streaming/generation when modal is closed
-      if (status === 'streaming' || status === 'loading') {
+      if (status === 'streaming') {
         console.log('🛑 Stopping ongoing chat request due to modal close');
         stop();
       }

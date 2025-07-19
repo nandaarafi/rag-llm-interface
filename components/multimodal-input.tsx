@@ -166,12 +166,14 @@ function PureMultimodalInput({
           name: pathname,
           contentType: contentType,
         };
+      } else {
+        const { error } = await response.json();
+        toast.error(error);
       }
-      const { error } = await response.json();
-      toast.error(error);
     } catch (error) {
       toast.error('Failed to upload file, please try again!');
     }
+    return null;
   };
 
   const handleFileChange = useCallback(
@@ -184,8 +186,8 @@ function PureMultimodalInput({
         const uploadPromises = files.map((file) => uploadFile(file));
         const uploadedAttachments = await Promise.all(uploadPromises);
         const successfullyUploadedAttachments = uploadedAttachments.filter(
-          (attachment) => attachment !== undefined,
-        );
+          (attachment) => attachment !== null && attachment !== undefined,
+        ) as Attachment[];
 
         setAttachments((currentAttachments) => [
           ...currentAttachments,
@@ -267,7 +269,7 @@ function PureMultimodalInput({
           ) {
             event.preventDefault();
 
-            if (status === 'streaming' || status === 'loading') {
+            if (status === 'streaming') {
               toast.error('Please wait for the model to finish its response!');
             } else {
               submitForm();
@@ -384,13 +386,13 @@ function PureSendButton({
       className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
       onClick={(event) => {
         event.preventDefault();
-        if (status === 'streaming' || status === 'loading') {
+        if (status === 'streaming') {
           toast.error('Please wait for the model to finish its response!');
         } else {
           submitForm();
         }
       }}
-      disabled={input.length === 0 || uploadQueue.length > 0 || status === 'streaming' || status === 'loading'}
+      disabled={input.length === 0 || uploadQueue.length > 0 || status === 'streaming'}
     >
       <ArrowUpIcon size={14} />
     </Button>

@@ -75,7 +75,7 @@ export const {
             const newUser = await createUserOauth({
               email: user.email!,
               name: user.name!,
-              image: user.image,
+              image: user.image || undefined,
               provider: 'google',
               providerId: user.id
             });

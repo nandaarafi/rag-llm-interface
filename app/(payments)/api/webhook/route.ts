@@ -59,13 +59,13 @@ export async function POST(req: NextRequest) {
     signingSecret
   );
   const digest = Buffer.from(hmac.update(text).digest("hex"), "utf8");
-  const signature = Buffer.from(headers().get("x-signature") || "", "utf8");
+  const signature = Buffer.from((await headers()).get("x-signature") || "", "utf8");
 
   // Verify the signature
   console.log("🔥 SIGNATURE VERIFICATION:");
   console.log("🔥 Expected digest:", digest.toString('hex'));
   console.log("🔥 Received signature:", signature.toString('hex'));
-  console.log("🔥 X-Signature header:", headers().get("x-signature"));
+  console.log("🔥 X-Signature header:", (await headers()).get("x-signature"));
   
   if (!crypto.timingSafeEqual(
     new Uint8Array(digest),
