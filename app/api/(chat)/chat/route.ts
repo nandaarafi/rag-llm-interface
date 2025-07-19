@@ -56,13 +56,22 @@ export async function POST(request: Request) {
     }
 
     // If user has access (paid plan), allow chat
-    if (user.hasAccess) {
-      // Continue with chat processing
-    } else {
+    if (!user.hasAccess) {
       // For free users, check credits
       const userCredits = await getUserCredits(session.user.id);
       if (userCredits <= 0) {
-        throw new Error('Payment required: Insufficient credits. Please upgrade your plan to continue using the chat.');
+        return new Response(
+          JSON.stringify({
+            error: 'insufficient_credits',
+            message: 'You have reached your free plan limit. Please upgrade to continue chatting.',
+            credits: userCredits,
+            planType: 'free'
+          }),
+          { 
+            status: 402,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
       }
     }
 

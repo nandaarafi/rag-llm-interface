@@ -38,6 +38,10 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
+  credits,
+  planType,
+  hasAccess,
+  onShowPaywall,
 }: {
   chatId: string;
   input: UseChatHelpers['input'];
@@ -51,6 +55,10 @@ function PureMultimodalInput({
   append: UseChatHelpers['append'];
   handleSubmit: UseChatHelpers['handleSubmit'];
   className?: string;
+  credits: number;
+  planType: string;
+  hasAccess?: boolean;
+  onShowPaywall: () => void;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -105,6 +113,14 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
+    // Check credits/access before submitting
+    if (!hasAccess && planType === 'free' && credits <= 0) {
+      console.log('🚫 Blocking submission: insufficient credits', { credits, planType, hasAccess });
+      onShowPaywall();
+      return;
+    }
+
+    console.log('✅ Submitting message with credits:', { credits, planType, hasAccess });
     window.history.replaceState({}, '', `/chat/${chatId}`);
 
     handleSubmit(undefined, {
@@ -125,6 +141,10 @@ function PureMultimodalInput({
     setLocalStorageInput,
     width,
     chatId,
+    credits,
+    planType,
+    hasAccess,
+    onShowPaywall,
   ]);
 
   const uploadFile = async (file: File) => {
@@ -185,7 +205,14 @@ function PureMultimodalInput({
       {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
-          <SuggestedActions append={append} chatId={chatId} />
+          <SuggestedActions 
+            append={append} 
+            chatId={chatId}
+            credits={credits}
+            planType={planType}
+            hasAccess={hasAccess}
+            onShowPaywall={onShowPaywall}
+          />
         )}
 
       <input
@@ -240,7 +267,7 @@ function PureMultimodalInput({
           ) {
             event.preventDefault();
 
-            if (status !== 'ready') {
+            if (status === 'streaming' || status === 'loading') {
               toast.error('Please wait for the model to finish its response!');
             } else {
               submitForm();
@@ -261,6 +288,7 @@ function PureMultimodalInput({
             input={input}
             submitForm={submitForm}
             uploadQueue={uploadQueue}
+            status={status}
           />
         )}
       </div>
@@ -274,6 +302,9 @@ export const MultimodalInput = memo(
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.status !== nextProps.status) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
+    if (prevProps.credits !== nextProps.credits) return false;
+    if (prevProps.planType !== nextProps.planType) return false;
+    if (prevProps.hasAccess !== nextProps.hasAccess) return false;
 
     return true;
   },
@@ -340,10 +371,12 @@ function PureSendButton({
   submitForm,
   input,
   uploadQueue,
+  status,
 }: {
   submitForm: () => void;
   input: string;
   uploadQueue: Array<string>;
+  status: UseChatHelpers['status'];
 }) {
   return (
     <Button
@@ -351,9 +384,13 @@ function PureSendButton({
       className="rounded-full p-1.5 h-fit border dark:border-zinc-600"
       onClick={(event) => {
         event.preventDefault();
-        submitForm();
+        if (status === 'streaming' || status === 'loading') {
+          toast.error('Please wait for the model to finish its response!');
+        } else {
+          submitForm();
+        }
       }}
-      disabled={input.length === 0 || uploadQueue.length > 0}
+      disabled={input.length === 0 || uploadQueue.length > 0 || status === 'streaming' || status === 'loading'}
     >
       <ArrowUpIcon size={14} />
     </Button>
@@ -364,5 +401,6 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
   if (prevProps.input !== nextProps.input) return false;
+  if (prevProps.status !== nextProps.status) return false;
   return true;
 });

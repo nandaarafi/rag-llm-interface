@@ -8,9 +8,20 @@ import { UseChatHelpers } from '@ai-sdk/react';
 interface SuggestedActionsProps {
   chatId: string;
   append: UseChatHelpers['append'];
+  credits: number;
+  planType: string;
+  hasAccess?: boolean;
+  onShowPaywall: () => void;
 }
 
-function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
+function PureSuggestedActions({ 
+  chatId, 
+  append, 
+  credits, 
+  planType, 
+  hasAccess, 
+  onShowPaywall 
+}: SuggestedActionsProps) {
   const suggestedActions = [
     {
       title: 'What are the advantages',
@@ -51,6 +62,14 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
           <Button
             variant="ghost"
             onClick={async () => {
+              // Check credits/access before appending suggested action
+              if (!hasAccess && planType === 'free' && credits <= 0) {
+                console.log('🚫 Blocking suggested action: insufficient credits', { credits, planType, hasAccess });
+                onShowPaywall();
+                return;
+              }
+
+              console.log('✅ Executing suggested action with credits:', { credits, planType, hasAccess });
               window.history.replaceState({}, '', `/chat/${chatId}`);
 
               append({
@@ -71,4 +90,9 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   );
 }
 
-export const SuggestedActions = memo(PureSuggestedActions, () => true);
+export const SuggestedActions = memo(PureSuggestedActions, (prevProps, nextProps) => {
+  if (prevProps.credits !== nextProps.credits) return false;
+  if (prevProps.planType !== nextProps.planType) return false;
+  if (prevProps.hasAccess !== nextProps.hasAccess) return false;
+  return true;
+});

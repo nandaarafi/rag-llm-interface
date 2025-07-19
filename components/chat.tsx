@@ -15,7 +15,7 @@ import { useArtifactSelector } from '@/hooks/use-artifact';
 import { toast } from 'sonner';
 import { unstable_serialize } from 'swr/infinite';
 import { getChatHistoryPaginationKey } from './sidebar-history';
-import { Paywall } from './paywall';
+import { PaywallModal } from './paywall-modal';
 
 import { useCredits } from '@/contexts/credit-context';
 
@@ -60,11 +60,26 @@ export function Chat({
       setTimeout(() => refetchCredits(), 1000);
     },
     onError: (error: any) => {
-      if (error?.message?.includes('Payment required') || 
-          error?.message?.includes('Insufficient credits') || 
-          error?.status === 402) {
+      console.log('💥 Chat Error:', error);
+      // Check for structured credit error response
+      if (error?.status === 402 || 
+          error?.message?.includes('Payment required') || 
+          error?.message?.includes('Insufficient credits') ||
+          error?.message?.includes('free plan limit')) {
+        console.log('💳 Credit error detected, showing paywall and stopping any ongoing requests');
+        
+        // Stop any ongoing streaming/generation
+        if (status === 'streaming' || status === 'loading') {
+          console.log('🛑 Stopping ongoing chat request due to credit error');
+          stop();
+        }
+        
         setShowPaywall(true);
+        setPaywallDismissed(false); // Reset dismissed state when user tries to send message
+        // Refetch credits to ensure UI is in sync
+        refetchCredits();
       } else {
+        console.log('⚠️ Other error:', error);
         toast.error('An error occurred, please try again!');
       }
     },
@@ -77,12 +92,45 @@ export function Chat({
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [paywallDismissed, setPaywallDismissed] = useState(false);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  // Show paywall if user has no credits and is on free plan
-  if (showPaywall || (credits === 0 && planType === 'free' && !loading)) {
-    return <Paywall />;
-  }
+  // Check if should show paywall modal
+  // Only auto-show if credits are 0, user is free, not loading, and user hasn't manually dismissed it
+  const shouldShowPaywall = showPaywall || (credits === 0 && planType === 'free' && !loading && !paywallDismissed);
+
+  // Debug logging
+  console.log('🔍 Chat Component State:', {
+    showPaywall,
+    paywallDismissed,
+    credits,
+    planType,
+    loading,
+    shouldShowPaywall,
+    chatStatus: status
+  });
+
+  const handlePaywallClose = (open: boolean) => {
+    console.log('🔧 handlePaywallClose called with:', open);
+    if (!open) {
+      console.log('✅ Setting showPaywall to false and marking as dismissed');
+      
+      // Stop any ongoing streaming/generation when modal is closed
+      if (status === 'streaming' || status === 'loading') {
+        console.log('🛑 Stopping ongoing chat request due to modal close');
+        stop();
+      }
+      
+      setShowPaywall(false);
+      setPaywallDismissed(true);
+    }
+  };
+
+  const handleShowPaywall = () => {
+    console.log('🎭 Showing paywall from UI-level check');
+    setShowPaywall(true);
+    setPaywallDismissed(false);
+  };
 
   return (
     <>
@@ -119,6 +167,10 @@ export function Chat({
               messages={messages}
               setMessages={setMessages}
               append={append}
+              credits={credits}
+              planType={planType}
+              hasAccess={planType === 'pro' || planType === 'ultra'}
+              onShowPaywall={handleShowPaywall}
             />
           )}
         </form>
@@ -139,6 +191,11 @@ export function Chat({
         reload={reload}
         votes={votes}
         isReadonly={isReadonly}
+      />
+
+      <PaywallModal 
+        open={shouldShowPaywall} 
+        onOpenChange={handlePaywallClose} 
       />
     </>
   );
