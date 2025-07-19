@@ -15,6 +15,7 @@ import {
   getUserById,
   getUserCredits,
   deductCredits,
+  updateUser,
 } from '@/lib/db/queries';
 import {
   generateUUID,
@@ -55,24 +56,21 @@ export async function POST(request: Request) {
       return new Response('User not found', { status: 404 });
     }
 
-    // If user has access (paid plan), allow chat
-    if (!user.hasAccess) {
-      // For free users, check credits
-      const userCredits = await getUserCredits(session.user.id);
-      if (userCredits <= 0) {
-        return new Response(
-          JSON.stringify({
-            error: 'insufficient_credits',
-            message: 'You have reached your free plan limit. Please upgrade to continue chatting.',
-            credits: userCredits,
-            planType: 'free'
-          }),
-          { 
-            status: 402,
-            headers: { 'Content-Type': 'application/json' }
-          }
-        );
-      }
+    // Check credits for all users
+    const userCredits = await getUserCredits(session.user.id);
+    if (userCredits <= 0) {
+      return new Response(
+        JSON.stringify({
+          error: 'insufficient_credits',
+          message: 'You have reached your credit limit. Please upgrade to continue chatting.',
+          credits: userCredits,
+          planType: user.planType || 'free'
+        }),
+        { 
+          status: 402,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
     }
 
     const userMessage = getMostRecentUserMessage(messages);
@@ -181,10 +179,17 @@ export async function POST(request: Request) {
                   ],
                 });
 
-                // Deduct 1 credit for successful AI response (only for free users)
-                if (!user.hasAccess) {
-                  await deductCredits(session.user.id, 1);
-                  console.log('Credit deducted for user:', session.user.id);
+                // Deduct 1 credit for successful AI response
+                console.log('User hasAccess:', user.hasAccess, 'User credits:', user.credits);
+                const deducted = await deductCredits(session.user.id, 1);
+                console.log('Credit deduction result:', deducted, 'for user:', session.user.id);
+                
+                // Update hasAccess based on remaining credits
+                const remainingCredits = await getUserCredits(session.user.id);
+                const newHasAccess = remainingCredits > 0;
+                if (user.hasAccess !== newHasAccess) {
+                  await updateUser(session.user.id, { hasAccess: newHasAccess });
+                  console.log('Updated hasAccess to:', newHasAccess, 'Credits remaining:', remainingCredits);
                 }
               } catch (error) {
                 console.error('Failed to save chat', error);
