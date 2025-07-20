@@ -28,7 +28,12 @@ export const authConfig = {
         return true;
       }
 
-      // Allow access to root (marketing page) for everyone
+      // Redirect logged-in users from root to chat
+      if (isOnRoot && isLoggedIn) {
+        return Response.redirect(new URL('/chat', nextUrl as unknown as URL));
+      }
+
+      // Allow access to root (marketing page) for unauthenticated users
       if (isOnRoot) {
         return true;
       }

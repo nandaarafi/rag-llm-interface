@@ -91,6 +91,9 @@
    - Use `useSWR` or `@tanstack/react-query` for client-side data
    - Implement proper loading and error states
    - Cache responses when appropriate
+3. **Data Fetching in Server Components**
+   - when still loading the data there is a default state, instead of default state can you make it to be a skeleton  
+   instead for waiting the data from database  
 
 ## TypeScript
 

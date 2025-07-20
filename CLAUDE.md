@@ -106,10 +106,11 @@ artifacts/           # Artifact type handlers (code, text, image, sheet)
 - Chat visibility controls (private/public)
 
 **AI Integration** (lib/ai/):
-- Provider abstraction supporting multiple models
+- Provider abstraction supporting multiple models (Gemini default, OpenRouter optional)
 - Streaming responses with structured outputs
 - Tool calling capabilities for artifacts and documents
 - Reasoning model support with custom middleware
+- OpenRouter integration for access to GPT-4, Claude, and other models
 
 **Authentication Flow**:
 - Routes: `/login`, `/register` with NextAuth
@@ -165,6 +166,15 @@ NEXTAUTH_URL=https://yourdomain.com
 NEXTAUTH_SECRET=your_secret_key_here
 GOOGLE_ID=your_google_oauth_client_id
 GOOGLE_SECRET=your_google_oauth_client_secret
+```
+
+#### AI Providers
+```env
+# Default provider (Gemini)
+GOOGLE_GENERATIVE_AI_API_KEY=your_google_ai_api_key
+
+# Optional OpenRouter integration (for GPT-4, Claude, etc.)
+OPENROUTER_API_KEY=your_openrouter_api_key
 ```
 
 #### Database

@@ -2,10 +2,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Progress } from "./ui/progress";
 import { Button } from "./ui/button";
 import { Badge } from "./ui/badge";
+import { Skeleton } from "./ui/skeleton";
 import { useCredits } from "@/contexts/credit-context";
 
 export default function CreditProgress() {
-  const { credits, planType, error } = useCredits();
+  const { credits, planType, loading, error } = useCredits();
   const getMaxCredits = (plan: string) => {
     switch (plan) {
       case 'pro': return 300;
@@ -30,6 +31,27 @@ export default function CreditProgress() {
     }
   };
 
+
+  if (loading) {
+    return (
+      <div className="p-4 space-y-3">
+        {/* Plan Badge Skeleton */}
+        <Skeleton className="h-6 w-20" />
+        
+        {/* Credits Display Skeleton */}
+        <div className="space-y-2">
+          <div className="flex justify-between items-center">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-12" />
+          </div>
+          
+          <Skeleton className="h-2 w-full" />
+          
+          <Skeleton className="h-3 w-24" />
+        </div>
+      </div>
+    );
+  }
 
   if (error) {
     return (

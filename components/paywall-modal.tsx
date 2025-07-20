@@ -54,7 +54,7 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
   const tiers = [
     {
       name: 'Pro',
-      price: { monthly: '$20', yearly: '$16' },
+      price: { monthly: '$9', yearly: '$7' },
       description: 'Everything in Hobby, plus',
       features: [
         '200 access requests to OpenAI GPT-4.1, Claude, etc.',
@@ -69,7 +69,7 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
     },
     {
       name: 'Ultra',
-      price: { monthly: '$200', yearly: '$160' },
+      price: { monthly: '$20', yearly: '$16' },
       description: 'Everything in Pro, plus',
       features: [
         '20x usage on all OpenAI, Claude, Gemini models',

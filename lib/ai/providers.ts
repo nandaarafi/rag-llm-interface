@@ -2,8 +2,11 @@ import {
   customProvider,
   extractReasoningMiddleware,
   wrapLanguageModel,
+
 } from 'ai';
 import { google } from "@ai-sdk/google"
+import { openai } from "@ai-sdk/openai"
+import { createOpenAI } from "@ai-sdk/openai"
 import { isTestEnvironment } from '../constants';
 import {
   artifactModel,
@@ -11,6 +14,12 @@ import {
   reasoningModel,
   titleModel,
 } from './models.test';
+
+// OpenRouter provider configuration using OpenAI provider with custom baseURL
+const openRouter = createOpenAI({
+  baseURL: 'https://openrouter.ai/api/v1',
+  apiKey: process.env.OPENROUTER_API_KEY || '',
+});
 
 export const myProvider = isTestEnvironment
   ? customProvider({
