@@ -63,8 +63,16 @@ Available types are:
 - **AI SDK** by Vercel for LLM integration with streaming
 - **Drizzle ORM** with PostgreSQL (Vercel Postgres/Neon)
 - **NextAuth** for authentication (Google OAuth + credentials)
+## CoreUI
 - **Tailwind CSS** + **shadcn/ui** for styling
+- **https://tweakcn.com/editor/theme** for theme shadcn UI
+- https://www.kibo-ui.com/ Code-block, Image Crop, Color Picker, Markdown Editor, KBDkey, Sandbox code, VideoPlayer
+- https://blocks.mvp-subha.me/docs/basic/loaders MVPBlocks for loader UI and Landing Page
+- https://originui.com/
 - **Biome** for linting and formatting
+
+## Landing Page UI reference
+- **https://skiper-ui.com/** for theme skiper
 
 ### Project Structure
 ```
