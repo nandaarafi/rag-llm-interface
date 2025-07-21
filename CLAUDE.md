@@ -72,7 +72,8 @@ Available types are:
 - **Biome** for linting and formatting
 
 ## Landing Page UI reference
-- **https://skiper-ui.com/** for theme skiper
+- **https://skiper-ui.com/** for components
+- **https://ui.aceternity.com/** for component
 
 ### Project Structure
 ```

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import NavBar from './navbar';
+import Header from './header';
 
 export default function MarketingLayout({
   children,
@@ -8,12 +8,8 @@ export default function MarketingLayout({
 }) {
   return (
     <div className="min-h-screen bg-background">
-      <header>
-        <div className="container mx-auto p-4">
-          <NavBar />
-        </div>
-      </header>
-      <main>{children}</main>
+      <Header />
+      <main className="pt-16">{children}</main>
     </div>
   );
 }

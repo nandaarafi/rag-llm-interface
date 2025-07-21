@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import {
   NavigationMenu,
@@ -10,7 +12,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import Logo, { LogoWithName } from "./logo"
+import { LogoWithName } from "./logo"
+import { useEffect, useState } from "react"
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
   { href: "#", label: "Home", active: true },
@@ -18,10 +21,39 @@ const navigationLinks = [
   { href: "/blog", label: "Blog" },
 ]
 
-export default function NavBar() {
+export default function Header() {
+  const [isVisible, setIsVisible] = useState(true)
+  const [lastScrollY, setLastScrollY] = useState(0)
+
+  useEffect(() => {
+    const controlNavbar = () => {
+      if (typeof window !== 'undefined') {
+        if (window.scrollY > lastScrollY && window.scrollY > 100) {
+          // Scrolling down
+          setIsVisible(false)
+        } else {
+          // Scrolling up
+          setIsVisible(true)
+        }
+        setLastScrollY(window.scrollY)
+      }
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('scroll', controlNavbar)
+      return () => {
+        window.removeEventListener('scroll', controlNavbar)
+      }
+    }
+    return undefined
+  }, [lastScrollY])
+
   return (
-    <header className="border-b px-4 md:px-6">
-      <div className="flex h-16 items-center justify-between gap-4">
+    <header className={`fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6 transition-transform duration-300 ${
+      isVisible ? 'translate-y-0' : '-translate-y-full'
+    }`}>
+      <div className="flex h-16 items-center">
+        {/* Left side - Logo and Mobile Menu */}
         <div className="flex items-center gap-2">
           {/* Mobile menu trigger */}
           <Popover>
@@ -76,30 +108,36 @@ export default function NavBar() {
               </NavigationMenu>
             </PopoverContent>
           </Popover>
-          {/* Main nav */}
-          <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
-              <LogoWithName />
-            </a>
-            {/* Navigation menu */}
-            <NavigationMenu className="max-md:hidden">
-              <NavigationMenuList className="gap-2">
-                {navigationLinks.map((link, index) => (
-                  <NavigationMenuItem key={index}>
-                    <NavigationMenuLink
-                      active={link.active}
-                      href={link.href}
-                      className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-                    >
-                      {link.label}
-                    </NavigationMenuLink>
-                  </NavigationMenuItem>
-                ))}
-              </NavigationMenuList>
-            </NavigationMenu>
-          </div>
+          {/* Logo */}
+          <a href="#" className="text-primary hover:text-primary/90">
+            <LogoWithName />
+          </a>
         </div>
-        {/* Right side */}
+
+        {/* Center - Navigation menu */}
+        <div className="flex-1 flex justify-center">
+          <NavigationMenu className="max-md:hidden">
+            <NavigationMenuList className="gap-8">
+              {navigationLinks.map((link, index) => (
+                <NavigationMenuItem key={index}>
+                  <NavigationMenuLink
+                    active={link.active}
+                    href={link.href}
+                    className={`relative py-1.5 font-medium transition-colors hover:bg-transparent focus:bg-transparent data-[active]:hover:bg-transparent data-[active]:bg-transparent data-[active]:text-foreground ${
+                      link.active 
+                        ? 'text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary' 
+                        : 'text-muted-foreground hover:text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full'
+                    }`}
+                  >
+                    {link.label}
+                  </NavigationMenuLink>
+                </NavigationMenuItem>
+              ))}
+            </NavigationMenuList>
+          </NavigationMenu>
+        </div>
+
+        {/* Right side - Auth buttons */}
         <div className="flex items-center gap-2">
           <Button asChild size="sm" className="text-sm">
             <a href="/login">Login</a>
