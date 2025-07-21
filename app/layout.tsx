@@ -2,6 +2,7 @@ import { Toaster } from 'sonner';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
+import NextJSTopLoader from 'nextjs-toploader';
 
 import './globals.css';
 
@@ -69,6 +70,7 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
+        <NextJSTopLoader color='#000000' showSpinner={false} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"

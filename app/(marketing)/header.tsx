@@ -16,7 +16,7 @@ import { LogoWithName } from "./logo"
 import { useEffect, useState } from "react"
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
-  { href: "#", label: "Home", active: true },
+  { href: "/", label: "Home", active: false },
   { href: "/pricing", label: "Pricing" },
   { href: "/blog", label: "Blog" },
 ]
@@ -139,11 +139,11 @@ export default function Header() {
 
         {/* Right side - Auth buttons */}
         <div className="flex items-center gap-2">
-          <Button asChild size="sm" className="text-sm">
-            <a href="/login">Login</a>
+        <Button asChild variant="ghost" size="sm" className="text-sm">
+            <a href="/login">Sign In</a>
           </Button>
           <Button asChild size="sm" className="text-sm">
-            <a href="/register">Sign Up</a>
+            <a href="/register">Get Started Free</a>
           </Button>
         </div>
       </div>

@@ -74,6 +74,8 @@ Available types are:
 ## Landing Page UI reference
 - **https://skiper-ui.com/** for components
 - **https://ui.aceternity.com/** for component
+- **https://www.cult-ui.com/** card references
+- **https://ui.aceternity.com/** for more animated UI
 
 ### Project Structure
 ```

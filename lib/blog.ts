@@ -10,6 +10,8 @@ export interface BlogPost {
   author: string;
   readingTime?: number;
   content: string;
+  thumbnail?: string;
+  tags?: string[];
 }
 
 const postsDirectory = path.join(process.cwd(), 'content/blog');
@@ -35,6 +37,8 @@ export function getAllPosts(): BlogPost[] {
         publishedAt: data.publishedAt,
         author: data.author,
         readingTime: data.readingTime,
+        thumbnail: data.thumbnail,
+        tags: data.tags,
         content,
       } as BlogPost;
     });
