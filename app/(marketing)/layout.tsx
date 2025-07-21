@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import Header from './header';
+import Footer from './footer';
 
 export default function MarketingLayout({
   children,
@@ -10,6 +11,7 @@ export default function MarketingLayout({
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-16">{children}</main>
+      <Footer />
     </div>
   );
 }

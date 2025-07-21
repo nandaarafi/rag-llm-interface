@@ -20,7 +20,7 @@ export function TableOfContents({ content }: TableOfContentsProps) {
     // Extract headings from markdown content
     const headingRegex = /^(#{1,6})\s+(.+)$/gm
     const extractedHeadings: Heading[] = []
-    let match
+    let match: RegExpExecArray | null
 
     while ((match = headingRegex.exec(content)) !== null) {
       const level = match[1].length
@@ -45,27 +45,37 @@ export function TableOfContents({ content }: TableOfContentsProps) {
     // Track which heading is currently visible
     const observer = new IntersectionObserver(
       (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveId(entry.target.id)
-          }
-        })
+        const visibleEntries = entries.filter(entry => entry.isIntersecting)
+        
+        if (visibleEntries.length > 0) {
+          // Find the entry that's closest to the top of the viewport
+          const topEntry = visibleEntries.reduce((closest, entry) => {
+            const entryTop = entry.boundingClientRect.top
+            const closestTop = closest.boundingClientRect.top
+            return Math.abs(entryTop) < Math.abs(closestTop) ? entry : closest
+          })
+          
+          setActiveId(topEntry.target.id)
+        }
       },
       {
-        rootMargin: '-100px 0px -80% 0px',
-        threshold: 0
+        rootMargin: '-20% 0px -60% 0px',
+        threshold: [0, 0.25, 0.5, 0.75, 1]
       }
     )
 
-    // Observe all heading elements
-    headings.forEach(({ id }) => {
-      const element = document.getElementById(id)
-      if (element) {
-        observer.observe(element)
-      }
-    })
+    // Small delay to ensure DOM is ready
+    const timeoutId = setTimeout(() => {
+      headings.forEach(({ id }) => {
+        const element = document.getElementById(id)
+        if (element) {
+          observer.observe(element)
+        }
+      })
+    }, 100)
 
     return () => {
+      clearTimeout(timeoutId)
       observer.disconnect()
     }
   }, [headings])
@@ -73,9 +83,9 @@ export function TableOfContents({ content }: TableOfContentsProps) {
   const scrollToHeading = (id: string) => {
     const element = document.getElementById(id)
     if (element) {
-      const headerOffset = 100
-      const elementPosition = element.getBoundingClientRect().top
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset
+      const headerHeight = 80 // Account for fixed header
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset
+      const offsetPosition = elementPosition - headerHeight
 
       window.scrollTo({
         top: offsetPosition,

@@ -47,12 +47,6 @@ export function AuthForm({
           >
             Password
           </Label>
-          <Link
-            href="/forgot-password"
-            className="text-xs text-gray-600 hover:underline dark:text-zinc-400"
-          >
-            Forgot password?
-          </Link>
         </div>
 
         <Input
@@ -62,6 +56,12 @@ export function AuthForm({
           type="password"
           required
         />
+          <Link
+            href="/forgot-password"
+            className="text-md text-gray-600 dark:text-zinc-400 text-end hover:underline"
+          >
+            Forgot password?
+          </Link>
         
       </div>
 

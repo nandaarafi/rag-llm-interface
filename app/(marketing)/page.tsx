@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import {MinimalCardDemo}  from './features';
-import Footer from './footer';
 import { GoogleIcon } from "@/components/ui/google-icon";
 import { signIn } from 'next-auth/react';
 import { toast } from '@/components/toast';
@@ -86,7 +85,6 @@ export default function MarketingPage() {
       <CTA/>
       <FAQ/>
 
-      <Footer />
     </div>
   );
 }

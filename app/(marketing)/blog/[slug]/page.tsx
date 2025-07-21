@@ -55,13 +55,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   return (
     <div className="container max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <Link
+        {/* <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-6"
         >
           <ArrowLeft className="size-4" />
           Back to blog
-        </Link>
+        </Link> */}
         
         {/* Thumbnail Image */}
         {post.thumbnail && (
