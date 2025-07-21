@@ -3,8 +3,8 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import { TableOfContents } from '@/components/blog/table-of-contents';
+import { MarkdownWithHeadings } from '@/components/blog/markdown-with-headings';
 
 interface BlogPostPageProps {
   params: Promise<{
@@ -53,7 +53,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
   }
 
   return (
-    <div className="container max-w-4xl mx-auto px-4 py-8">
+    <div className="container max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <Link
           href="/blog"
@@ -63,10 +63,36 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           Back to blog
         </Link>
         
-        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
-        <p className="text-xl text-muted-foreground mb-6">{post.description}</p>
+        {/* Thumbnail Image */}
+        {post.thumbnail && (
+          <div className="mb-8 rounded-lg overflow-hidden">
+            <img 
+              src={post.thumbnail} 
+              alt={post.title}
+              className="w-full h-64 md:h-96 object-cover"
+            />
+          </div>
+        )}
         
-        <div className="flex items-center gap-4 text-sm text-muted-foreground border-b pb-6">
+        {/* Tags */}
+        {post.tags && post.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {post.tags.map((tag) => (
+              <span 
+                key={tag}
+                className="px-3 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+        )}
+        
+        {/* Title */}
+        <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+        
+        {/* Author and Published Date */}
+        <div className="flex items-center gap-4 text-sm text-muted-foreground mb-6">
           <span>By {post.author}</span>
           <time dateTime={post.publishedAt}>
             {new Date(post.publishedAt).toLocaleDateString('en-US', {
@@ -79,13 +105,23 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             <span>{post.readingTime} min read</span>
           )}
         </div>
+        
+        {/* Description */}
+        <p className="text-xl text-muted-foreground mb-6 border-b pb-6">{post.description}</p>
       </div>
       
-      <article className="prose prose-gray dark:prose-invert max-w-none">
-        <ReactMarkdown remarkPlugins={[remarkGfm]}>
-          {post.content}
-        </ReactMarkdown>
-      </article>
+      {/* Main content area with sidebar */}
+      <div className="flex gap-8">
+        {/* Article content */}
+        <article className="prose prose-gray dark:prose-invert max-w-none flex-1 min-w-0">
+          <MarkdownWithHeadings content={post.content} />
+        </article>
+        
+        {/* Table of Contents sidebar */}
+        <aside className="hidden lg:block w-64 flex-shrink-0">
+          <TableOfContents content={post.content} />
+        </aside>
+      </div>
     </div>
   );
 }

@@ -69,6 +69,8 @@ export function getPostBySlug(slug: string): BlogPost | null {
       publishedAt: data.publishedAt,
       author: data.author,
       readingTime: data.readingTime,
+      thumbnail: data.thumbnail,
+      tags: data.tags,
       content,
     } as BlogPost;
   } catch (error) {

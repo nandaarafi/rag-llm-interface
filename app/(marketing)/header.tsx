@@ -123,7 +123,7 @@ export default function Header() {
                   <NavigationMenuLink
                     active={link.active}
                     href={link.href}
-                    className={`relative py-1.5 font-medium transition-colors hover:bg-transparent focus:bg-transparent data-[active]:hover:bg-transparent data-[active]:bg-transparent data-[active]:text-foreground ${
+                    className={`relative py-1.5 text-md font-medium transition-colors hover:bg-transparent focus:bg-transparent data-[active]:hover:bg-transparent data-[active]:bg-transparent data-[active]:text-foreground ${
                       link.active 
                         ? 'text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-full after:bg-primary' 
                         : 'text-muted-foreground hover:text-foreground after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full'
@@ -139,10 +139,10 @@ export default function Header() {
 
         {/* Right side - Auth buttons */}
         <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm" className="text-sm">
+        <Button asChild variant="ghost" size="sm" className="text-md">
             <a href="/login">Sign In</a>
           </Button>
-          <Button asChild size="sm" className="text-sm">
+          <Button asChild size="sm" className="text-md">
             <a href="/register">Get Started Free</a>
           </Button>
         </div>
