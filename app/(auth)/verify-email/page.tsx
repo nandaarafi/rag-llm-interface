@@ -1,13 +1,13 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/toast';
 
-export default function VerifyEmailPage() {
+function VerifyEmailContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const token = searchParams.get('token');
@@ -129,5 +129,22 @@ export default function VerifyEmailPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function VerifyEmailPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
+        <div className="w-full max-w-md overflow-hidden rounded-2xl gap-6 flex flex-col">
+          <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <h3 className="text-xl font-semibold dark:text-zinc-50">Loading...</h3>
+          </div>
+        </div>
+      </div>
+    }>
+      <VerifyEmailContent />
+    </Suspense>
   );
 }
