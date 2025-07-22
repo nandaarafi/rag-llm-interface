@@ -9,8 +9,9 @@
 - [x] User registration and login flows
 - [x] Session management and middleware protection
 - [x] Password reset functionality
-- [] When free user signin I want to setup the credit more flexible too, should we add that the pricing plan too? the default right now is, free=3credit, pro=300credit, and the ultra plan have 1000 credit
-- [] How I can Setting the pricing more flexible, for the free, pro, and ultra plan
+- [x] When free user signin I want to setup the credit more flexible too, should we add that the pricing plan too? the default right now is, free=3credit, pro=300credit, and the ultra plan have 1000 credit
+- [x] How I can Setting the pricing more flexible, for the free, pro, and ultra plan
+- [x] Bug, when change the user to free plan the credit doesnt show up -> it because using maxCredit for the logic in sidebar-credit
 
 ### LemonSqueezy Local Test
 - ngrok http --url=informed-commonly-alpaca.ngrok-free.app 3000

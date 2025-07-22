@@ -68,7 +68,7 @@ export default function CreditProgress() {
 
       {/* Credits Display */}
       <div className="space-y-2">
-        {maxCredits === 0 ? (
+        {credits === 0 ? (
           <div className="text-center py-4">
             <div className="text-sm text-muted-foreground">No credits available</div>
             <div className="text-xs text-muted-foreground mt-1">Upgrade to get AI credits</div>
@@ -77,13 +77,17 @@ export default function CreditProgress() {
           <>
             <div className="flex justify-between items-center text-sm">
               <span className="text-muted-foreground">AI Credits</span>
-              <span className="font-medium">{credits} / {maxCredits}</span>
+              <span className="font-medium">
+                {maxCredits > 0 ? `${credits} / ${maxCredits}` : `${credits} remaining`}
+              </span>
             </div>
             
-            <Progress 
-              value={creditPercentage} 
-              className="h-2"
-            />
+            {maxCredits > 0 && (
+              <Progress 
+                value={creditPercentage} 
+                className="h-2"
+              />
+            )}
             
             <div className="text-xs text-muted-foreground">
               {planType === 'free' 
@@ -102,8 +106,8 @@ export default function CreditProgress() {
         </div>
       )}
       
-      {/* No credits warning for free plan with 0 max credits */}
-      {maxCredits === 0 && (
+      {/* No credits warning for free plan with 0 credits */}
+      {credits === 0 && (
         <div className="text-xs text-red-600 bg-red-50 p-2 rounded">
           🚫 No credits available. Upgrade to start chatting.
         </div>
