@@ -67,18 +67,21 @@ function PureSuggestedActions({
               const planConfig = getPlanConfig(planType as PlanType);
               const maxCredits = planConfig.credits;
               
-              // If plan has 0 max credits, always show paywall
-              if (maxCredits === 0) {
-                console.log('🚫 Blocking suggested action: plan has no credits', { credits, planType, maxCredits });
-                onShowPaywall();
-                return;
-              }
-              
-              // Standard credit check for plans with credits
-              if (credits <= 0) {
-                console.log('🚫 Blocking suggested action: insufficient credits', { credits, planType, hasAccess });
-                onShowPaywall();
-                return;
+              // For free plan users, check their actual credits rather than plan max credits
+              // This allows free users with credits to use suggested actions
+              if (planType === 'free') {
+                if (credits <= 0) {
+                  console.log('🚫 Blocking suggested action: free user with no credits', { credits, planType });
+                  onShowPaywall();
+                  return;
+                }
+              } else {
+                // For paid plans, check both plan max credits and current credits
+                if (maxCredits === 0 || credits <= 0) {
+                  console.log('🚫 Blocking suggested action: insufficient credits', { credits, planType, maxCredits });
+                  onShowPaywall();
+                  return;
+                }
               }
 
               console.log('✅ Executing suggested action with credits:', { credits, planType, hasAccess });

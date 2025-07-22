@@ -43,8 +43,8 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-muted-foreground hover:text-foreground transition-colors">
-                  Contact
+                <Link href="mailto:support@mindscribe.xyz" className="text-muted-foreground hover:text-foreground transition-colors">
+                  Support
                 </Link>
               </li>
             </ul>
@@ -74,14 +74,14 @@ export default function Footer() {
           <div className="text-sm text-muted-foreground">
             © {new Date().getFullYear()} Mindscribe. All rights reserved.
           </div>
-          <div className="flex items-center space-x-4 mt-4 md:mt-0">
+          {/* <div className="flex items-center space-x-4 mt-4 md:mt-0">
             <Link href="/support" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Support
             </Link>
             <Link href="/status" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Status
             </Link>
-          </div>
+          </div> */}
         </div>
       </div>
     </footer>

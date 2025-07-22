@@ -61,39 +61,59 @@ export async function POST(request: Request) {
     const userCredits = await getUserCredits(session.user.id);
     const planConfig = getPlanConfig((user.planType || 'free') as PlanType);
     const maxCredits = planConfig.credits;
+    const userPlanType = (user.planType || 'free') as PlanType;
     
-    // If plan has 0 max credits, deny access regardless of current credits
-    if (maxCredits === 0) {
-      return new Response(
-        JSON.stringify({
-          error: 'no_credits_plan',
-          message: 'Your current plan does not include AI credits. Please upgrade to continue chatting.',
-          credits: userCredits,
-          maxCredits: maxCredits,
-          planType: user.planType || 'free'
-        }),
-        { 
-          status: 402,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
-    
-    // Standard credit check for plans with credits
-    if (userCredits <= 0) {
-      return new Response(
-        JSON.stringify({
-          error: 'insufficient_credits',
-          message: 'You have reached your credit limit. Please upgrade to continue chatting.',
-          credits: userCredits,
-          maxCredits: maxCredits,
-          planType: user.planType || 'free'
-        }),
-        { 
-          status: 402,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
+    // For free plan users, check their actual credits rather than plan max credits
+    // This allows free users with credits to chat
+    if (userPlanType === 'free') {
+      if (userCredits <= 0) {
+        return new Response(
+          JSON.stringify({
+            error: 'insufficient_credits',
+            message: 'You have reached your credit limit. Please upgrade to continue chatting.',
+            credits: userCredits,
+            maxCredits: maxCredits,
+            planType: userPlanType
+          }),
+          { 
+            status: 402,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
+    } else {
+      // For paid plans, check both plan max credits and current credits
+      if (maxCredits === 0) {
+        return new Response(
+          JSON.stringify({
+            error: 'no_credits_plan',
+            message: 'Your current plan does not include AI credits. Please upgrade to continue chatting.',
+            credits: userCredits,
+            maxCredits: maxCredits,
+            planType: userPlanType
+          }),
+          { 
+            status: 402,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
+      
+      if (userCredits <= 0) {
+        return new Response(
+          JSON.stringify({
+            error: 'insufficient_credits',
+            message: 'You have reached your credit limit. Please upgrade to continue chatting.',
+            credits: userCredits,
+            maxCredits: maxCredits,
+            planType: userPlanType
+          }),
+          { 
+            status: 402,
+            headers: { 'Content-Type': 'application/json' }
+          }
+        );
+      }
     }
 
     const userMessage = getMostRecentUserMessage(messages);

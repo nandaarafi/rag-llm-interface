@@ -5,6 +5,7 @@ import GoogleProvider from 'next-auth/providers/google';
 // eslint-disable-next-line import/no-unresolved
 import { getUser, createUserOauth, updateUser } from '@/lib/db/queries';
 import { env } from '@/lib/env';
+import { authLogger } from '@/lib/logger';
 
 import { authConfig } from './auth.config';
 
@@ -12,38 +13,22 @@ interface ExtendedSession extends Session {
   user: User;
 }
 
-// Debug ALL environment variables
-console.error('All Environment Variables:', {
-  // Auth
-  authSecret: env.AUTH_SECRET ? 'SET' : 'MISSING',
-  nextauthUrl: env.NEXTAUTH_URL,
-  
-  // Google OAuth
-  googleId: env.GOOGLE_ID,
-  googleSecret: env.GOOGLE_SECRET ? 'SET' : 'MISSING',
-  
-  // AI API
-  googleAiKey: env.GOOGLE_GENERATIVE_AI_API_KEY ? 'SET' : 'MISSING',
-  openrouterKey: env.OPENROUTER_API_KEY ? 'SET' : 'NOT_SET',
-  
-  // Database
-  databaseUrl: env.DATABASE_URL ? 'SET' : 'MISSING',
-  
-  // Email
-  resendKey: env.RESEND_API_KEY ? 'SET' : 'MISSING',
-  resendFrom: env.RESEND_FROM_EMAIL,
-  
-  // Payments
-  lemonKey: env.LEMONSQUEEZY_API_KEY ? 'SET' : 'MISSING',
-  lemonStore: env.LEMONSQUEEZY_STORE_ID || 'NOT_SET',
-  lemonVariant: env.LEMONSQUEEZY_VARIANT_ID || 'NOT_SET',
-  lemonSecret: env.LEMONSQUEEZY_SIGNING_SECRET ? 'SET' : 'MISSING',
-  
-  // Files
-  uploadthingToken: env.UPLOADTHING_TOKEN ? 'SET' : 'MISSING',
-  
-  // Environment
-  nodeEnv: env.NODE_ENV
+// Log environment configuration on startup
+authLogger.info('Auth module initialized', {
+  environment: {
+    nodeEnv: env.NODE_ENV,
+    logLevel: env.LOG_LEVEL,
+    nextauthUrl: env.NEXTAUTH_URL,
+  },
+  providers: {
+    google: !!env.GOOGLE_ID,
+    credentials: true,
+  },
+  services: {
+    database: !!env.DATABASE_URL,
+    email: !!env.RESEND_API_KEY,
+    payments: !!env.LEMONSQUEEZY_API_KEY,
+  }
 });
 
 export const {
@@ -89,11 +74,11 @@ export const {
           response_type: "code"
         }
       },
-      // Add debug logging for production
+      // Profile processing with logging
       async profile(profile, tokens) {
-        console.error('Google OAuth Profile Debug:', {
-          hasProfile: !!profile,
+        authLogger.debug('Processing Google OAuth profile', {
           profileId: profile?.sub,
+          email: profile?.email,
           hasTokens: !!tokens,
           tokenType: tokens?.token_type
         });
@@ -117,14 +102,16 @@ export const {
       
       if (account?.provider === 'google') {
         try {
-          // console.log('Processing Google OAuth sign in for user:', user.email);
-          // console.log('User image from Google:', user.image);
+          authLogger.debug('Processing Google OAuth sign-in', { 
+            email: user.email,
+            providerId: user.id
+          });
           
           // Check if user exists in your database
           const existingUsers = await getUser(user.email!);
           
           if (existingUsers.length === 0) {
-            // console.log('Creating new user for:', user.email);
+            authLogger.info('Creating new OAuth user', { email: user.email });
             // Create new user if doesn't exist
             const newUser = await createUserOauth({
               email: user.email!,
@@ -136,16 +123,23 @@ export const {
             // Update the user object with the database user ID
             user.id = newUser.id;
           } else {
-            // console.log('User already exists:', user.email);
+            authLogger.debug('OAuth user already exists', { email: user.email });
             // Update existing user's image if it has changed
             const existingUser = existingUsers[0];
             if (existingUser.image !== user.image && user.image) {
-              // console.log('Updating user image:', { old: existingUser.image, new: user.image });
+              authLogger.debug('Updating user image', { 
+                email: user.email,
+                oldImage: existingUser.image,
+                newImage: user.image 
+              });
               try {
                 await updateUser(existingUser.id, { image: user.image });
-                // console.log('User image updated successfully');
+                authLogger.debug('User image updated successfully');
               } catch (updateError) {
-                console.error('Failed to update user image:', updateError);
+                authLogger.error('Failed to update user image', { 
+                  error: updateError,
+                  email: user.email 
+                });
                 // Continue anyway - don't fail the login
               }
             }
@@ -155,17 +149,20 @@ export const {
           
           return true;
         } catch (error) {
-          console.error('Error during Google sign in:', error);
-          console.error('Error details:', {
-            message: error instanceof Error ? error.message : 'Unknown error',
+          authLogger.error('Google sign-in failed', {
+            error: error instanceof Error ? error.message : 'Unknown error',
             stack: error instanceof Error ? error.stack : undefined,
-            userEmail: user.email
+            email: user.email,
+            provider: account?.provider
           });
           return false;
         }
       }
       
-      // console.log('SignIn callback completed successfully for provider:', account?.provider || 'credentials');
+      authLogger.debug('SignIn completed successfully', { 
+        provider: account?.provider || 'credentials',
+        email: user.email 
+      });
       return true;
     },
     async redirect({ url, baseUrl }) {
@@ -187,7 +184,10 @@ export const {
             token.image = dbUser.image;
           }
         } catch (error) {
-          console.error('Failed to refresh user data in JWT callback:', error);
+          authLogger.error('Failed to refresh user data in JWT callback', { 
+            error: error instanceof Error ? error.message : 'Unknown error',
+            email: token.email 
+          });
         }
       }
       
@@ -209,7 +209,10 @@ export const {
             const [dbUser] = await getUser(user.email!);
             token.hasAccess = dbUser?.hasAccess || false;
           } catch (error) {
-            console.error('Failed to fetch hasAccess for OAuth user:', error);
+            authLogger.error('Failed to fetch hasAccess for OAuth user', { 
+              error: error instanceof Error ? error.message : 'Unknown error',
+              email: user.email 
+            });
             token.hasAccess = false;
           }
           
@@ -225,7 +228,10 @@ export const {
               // console.log('JWT Credentials: Set image from database:', dbUser.image);
             }
           } catch (error) {
-            console.error('Failed to fetch user data in JWT callback:', error);
+            authLogger.error('Failed to fetch user data in JWT callback', { 
+              error: error instanceof Error ? error.message : 'Unknown error',
+              email: user.email 
+            });
             token.name = user.name || user.email?.split('@')[0];
             token.image = null;
             token.hasAccess = false;

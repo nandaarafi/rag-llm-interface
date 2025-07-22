@@ -33,6 +33,7 @@ export const env = createEnv({
     
     // Environment
     NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
+    LOG_LEVEL: z.enum(["trace", "debug", "info", "warn", "error", "fatal"]).default("info"),
   },
   client: {
     // Add client-side env vars here if needed
@@ -54,6 +55,7 @@ export const env = createEnv({
     LEMONSQUEEZY_SIGNING_SECRET: process.env.LEMONSQUEEZY_SIGNING_SECRET,
     UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
     NODE_ENV: process.env.NODE_ENV,
+    LOG_LEVEL: process.env.LOG_LEVEL,
     
     // Client (none currently)
   },
