@@ -120,6 +120,17 @@ export default function Page() {
             </Link>
             {' instead.'}
           </p>
+          
+          <p className="text-center text-xs text-gray-500 dark:text-zinc-500 mt-2">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="underline hover:text-gray-700 dark:hover:text-zinc-300">
+              Terms of Service
+            </Link>
+            {' and '}
+            <Link href="/privacy" className="underline hover:text-gray-700 dark:hover:text-zinc-300">
+              Privacy Policy
+            </Link>
+          </p>
         </AuthForm>
       </div>
     </div>

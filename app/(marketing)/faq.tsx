@@ -87,7 +87,7 @@ export default function FAQ() {
             <p className="text-muted-foreground">
               Still have questions?{" "}
               <a 
-                href="mailto:support@yourdomain.com" 
+                href="mailto:support@mindscribe.xyz" 
                 className="text-primary hover:underline font-medium"
               >
                 Contact our support team

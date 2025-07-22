@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function TermsOfService() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-       <Link 
+       {/* <Link 
           href="/" 
           className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-muted-foreground bg-muted/50 hover:bg-muted hover:text-foreground rounded-lg border border-border/50 hover:border-border transition-all duration-200 hover:shadow-sm"
         >
@@ -26,7 +26,7 @@ export default function TermsOfService() {
             />
           </svg>
           Back to Home
-        </Link>
+        </Link> */}
       <h1 className="text-3xl font-bold mb-8">Terms of Service</h1>
       
       <div className="prose prose-neutral dark:prose-invert max-w-none">
@@ -34,130 +34,74 @@ export default function TermsOfService() {
           <strong>Last updated:</strong> {new Date().toLocaleDateString()}
         </p>
 
-        <h2>1. Acceptance of Terms</h2>
+        <h2>1. Acknowledgment</h2>
         <p>
-          By accessing and using this AI chatbot service ("Service"), you accept and agree to be bound by the terms and provision of this agreement. 
-          If you do not agree to abide by the above, please do not use this Service.
+          By accessing or using the Mindscribe service operated by us, you acknowledge that you have read, understood, and agree to be bound by these Terms of Service. If you do not agree to these Terms, please do not use our Service.
         </p>
 
-        <h2>2. Description of Service</h2>
-        <p>
-          Our Service provides an AI-powered chatbot platform that allows users to interact with artificial intelligence models for various purposes including:
-        </p>
+        <h2>2. Definitions</h2>
+        <p>For the purposes of these Terms:</p>
         <ul>
-          <li>General conversation and assistance</li>
-          <li>Code generation and programming help</li>
-          <li>Document creation and editing</li>
-          <li>Data analysis and visualization</li>
-          <li>Creative content generation including presentations</li>
+          <li><strong>"Company"</strong> (referred to as "we", "us", or "our") refers to the operator of Mindscribe</li>
+          <li><strong>"Service"</strong> refers to the Mindscribe website and AI functionalities available at https://mindscribe.xyz</li>
+          <li><strong>"Website"</strong> refers to https://mindscribe.xyz</li>
+          <li><strong>"You"</strong> refers to the individual user accessing or using the Service</li>
         </ul>
 
         <h2>3. User Accounts</h2>
         <p>
-          To access certain features of the Service, you may be required to create an account. You are responsible for:
+          To use our Service, you must create an account by providing accurate and complete information, including your name and email address. You are responsible for all activities under your account and must keep your password confidential. You must notify us immediately of any unauthorized use of your account.
         </p>
+
+        <h2>4. Refund Policy</h2>
+        <p><strong>Eligibility:</strong> Refunds may be considered within 14 days of a credit package purchase, provided there has been minimal or no usage of the credits (less than 10% of purchased credits used). Refunds are also available for technical issues caused by the Company that cannot be resolved, or for accidental duplicate purchases.</p>
+        <p><strong>Request Process:</strong> To request a refund, email <a href="mailto:support@mindscribe.xyz?subject=Refund Request" className="text-primary hover:underline">support@mindscribe.xyz</a> with the subject "Refund Request" and include your account details and reason for the request.</p>
+        <p><strong>Non-Refundable Cases:</strong> Refunds are not available for partially used credit packages (more than 10% used), promotional offers, or if an account is terminated due to violation of these Terms.</p>
+
+        <h2>5. User Data and Privacy</h2>
+        <p>
+          We collect personal data such as your name, email, and payment information to provide our Service. We also use non-personal data like web cookies for functionality and analytics. Your privacy is important to us, and our collection and use of personal information is governed by our <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>, which is an integral part of these Terms.
+        </p>
+
+        <h2>6. Prohibited Activities</h2>
+        <p>You agree not to use the Service for:</p>
         <ul>
-          <li>Maintaining the confidentiality of your account credentials</li>
-          <li>All activities that occur under your account</li>
-          <li>Providing accurate and complete information</li>
-          <li>Promptly updating your account information</li>
+          <li>Illegal activities or violations of applicable laws</li>
+          <li>Attempting to reverse-engineer or compromise the Service</li>
+          <li>Infringing on intellectual property rights of others</li>
+          <li>Distributing harmful, abusive, or malicious content</li>
+          <li>Generating spam or unsolicited communications</li>
+          <li>Impersonating others or providing false information</li>
         </ul>
 
-        <h2>4. Payment Terms</h2>
+        <h2>7. Termination</h2>
         <p>
-          Our Service operates on a credit-based system with the following plans:
-        </p>
-        <ul>
-          <li><strong>Free Plan:</strong> 3 credits with daily reset</li>
-          <li><strong>Pro Plan:</strong> Enhanced credit allocation via subscription</li>
-          <li><strong>Ultra Plan:</strong> Premium credit allocation via subscription</li>
-        </ul>
-        <p>
-          Payments are processed through LemonSqueezy. All fees are non-refundable except as required by law. 
-          Subscription plans will automatically renew unless cancelled before the renewal date.
+          The Company reserves the right to terminate or suspend your account immediately, without prior notice, for any reason, especially for breach of these Terms. Upon termination, your right to use the Service will cease immediately.
         </p>
 
-        <h2>5. Acceptable Use Policy</h2>
-        <p>You agree not to use the Service to:</p>
-        <ul>
-          <li>Generate harmful, abusive, or illegal content</li>
-          <li>Violate any applicable laws or regulations</li>
-          <li>Infringe upon the rights of others</li>
-          <li>Attempt to reverse engineer or compromise the Service</li>
-          <li>Use the Service for commercial purposes beyond your subscription limits</li>
-          <li>Generate spam or unsolicited content</li>
-          <li>Impersonate others or provide false information</li>
-        </ul>
-
-        <h2>6. Intellectual Property</h2>
+        <h2>8. Limitation of Liability</h2>
         <p>
-          You retain ownership of content you create using the Service. However, you grant us a limited license to:
-        </p>
-        <ul>
-          <li>Process and store your content to provide the Service</li>
-          <li>Use anonymized and aggregated data to improve our Service</li>
-        </ul>
-        <p>
-          The Service itself, including all software, algorithms, and proprietary technology, remains our property.
+          To the maximum extent permitted by law, the Company shall not be liable for any indirect, incidental, or consequential damages. Our total liability to you shall not exceed the amount you paid to us in the last 12 months or $100, whichever is greater.
         </p>
 
-        <h2>7. Privacy and Data Protection</h2>
+        <h2>9. "AS IS" and "AS AVAILABLE" Disclaimer</h2>
         <p>
-          Your privacy is important to us. Our collection and use of personal information is governed by our Privacy Policy, 
-          which is incorporated into these Terms by reference.
+          The Service is provided "AS IS" and "AS AVAILABLE" without any warranties. The Company does not guarantee that the service will be error-free, uninterrupted, or that generated outputs will always be accurate or meet your specific needs.
         </p>
 
-        <h2>8. Service Availability</h2>
+        <h2>10. Changes to These Terms</h2>
         <p>
-          We strive to maintain high availability but do not guarantee uninterrupted access to the Service. 
-          We may modify, suspend, or discontinue the Service at any time with reasonable notice.
+          We reserve the right to modify these Terms at any time. Users will be notified of material changes via the email address associated with their account. Continued use of the service after changes become effective constitutes acceptance of the new terms.
         </p>
 
-        <h2>9. Limitation of Liability</h2>
+        <h2>11. Governing Law</h2>
         <p>
-          TO THE MAXIMUM EXTENT PERMITTED BY LAW, WE SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, 
-          SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES, INCLUDING WITHOUT LIMITATION, LOSS OF PROFITS, 
-          DATA, USE, GOODWILL, OR OTHER INTANGIBLE LOSSES.
+          These Terms are governed by and construed in accordance with the laws applicable to our location. Any disputes arising from these Terms shall be subject to the exclusive jurisdiction of the courts in our location.
         </p>
 
-        <h2>10. Disclaimer of Warranties</h2>
+        <h2>12. Contact Us</h2>
         <p>
-          THE SERVICE IS PROVIDED "AS IS" AND "AS AVAILABLE" WITHOUT WARRANTIES OF ANY KIND, 
-          EITHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO IMPLIED WARRANTIES OF MERCHANTABILITY, 
-          FITNESS FOR A PARTICULAR PURPOSE, OR NON-INFRINGEMENT.
-        </p>
-
-        <h2>11. Indemnification</h2>
-        <p>
-          You agree to indemnify and hold us harmless from any claims, damages, or expenses arising from 
-          your use of the Service or violation of these Terms.
-        </p>
-
-        <h2>12. Termination</h2>
-        <p>
-          We may terminate or suspend your account immediately, without prior notice, for conduct that we believe 
-          violates these Terms or is harmful to other users, us, or third parties.
-        </p>
-
-        <h2>13. Governing Law</h2>
-        <p>
-          These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], 
-          without regard to its conflict of law provisions.
-        </p>
-
-        <h2>14. Changes to Terms</h2>
-        <p>
-          We reserve the right to modify these Terms at any time. We will notify users of significant changes 
-          via email or through the Service. Continued use after changes constitutes acceptance of the new Terms.
-        </p>
-
-        <h2>15. Contact Information</h2>
-        <p>
-          If you have any questions about these Terms, please contact us at:
-        </p>
-        <p>
-          Email: [Your Contact Email]<br />
-          Address: [Your Business Address]
+          If you have any questions about these Terms, you can contact us by email: <a href="mailto:support@mindscribe.xyz" className="text-primary hover:underline">support@mindscribe.xyz</a>
         </p>
 
         <p className="text-sm text-muted-foreground mt-8">

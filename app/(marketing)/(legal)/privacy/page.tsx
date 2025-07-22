@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function PrivacyPolicy() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
-       <Link 
+       {/* <Link 
           href="/" 
           className="inline-flex items-center gap-2 px-4 py-2 mb-6 text-sm font-medium text-muted-foreground bg-muted/50 hover:bg-muted hover:text-foreground rounded-lg border border-border/50 hover:border-border transition-all duration-200 hover:shadow-sm"
         >
@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
             />
           </svg>
           Back to Home
-        </Link>
+        </Link> */}
       <h1 className="text-3xl font-bold mb-8">Privacy Policy</h1>
       
       <div className="prose prose-neutral dark:prose-invert max-w-none">
@@ -34,195 +34,78 @@ export default function PrivacyPolicy() {
           <strong>Last updated:</strong> {new Date().toLocaleDateString()}
         </p>
 
-        <h2>1. Introduction</h2>
+        <h2>Introduction</h2>
         <p>
-          This Privacy Policy describes how we collect, use, and protect your personal information when you use our AI chatbot service ("Service"). 
-          We are committed to protecting your privacy and ensuring the security of your personal data.
+          At <strong>Mindscribe</strong>, we are committed to protecting your privacy and being transparent about how we collect and use your information. This Privacy Policy explains our practices regarding your personal data when you use our AI agent platform that generates PPTs, reports, documents, and other intelligent content.
         </p>
 
-        <h2>2. Information We Collect</h2>
+        <h2>Information We Collect</h2>
         
-        <h3>2.1 Account Information</h3>
-        <p>When you create an account, we collect:</p>
+        <h3>Personal Data</h3>
+        <p>We collect the following personal information:</p>
         <ul>
-          <li>Email address</li>
-          <li>Password (encrypted)</li>
-          <li>Profile image (optional)</li>
-          <li>Account preferences and settings</li>
+          <li><strong>Name:</strong> To personalize your experience</li>
+          <li><strong>Email address:</strong> For account management and communication</li>
+          <li><strong>Payment information:</strong> Credit card details and billing address (processed securely by our payment processor)</li>
         </ul>
 
-        <h3>2.2 Usage Data</h3>
-        <p>We automatically collect information about how you use our Service:</p>
+        <h3>Usage Data</h3>
+        <p>We automatically collect non-personal data including:</p>
         <ul>
-          <li>Chat messages and conversations</li>
-          <li>Documents and artifacts you create</li>
-          <li>Usage patterns and feature interactions</li>
-          <li>Device information and IP address</li>
-          <li>Browser type and version</li>
-          <li>Access times and duration</li>
+          <li><strong>Web cookies:</strong> For website functionality and analytics</li>
+          <li>Usage patterns and interactions with our service</li>
+          <li>Device information and browser type</li>
         </ul>
 
-        <h3>2.3 Payment Information</h3>
+        <h2>How We Use Your Information</h2>
+        <p>We use your information for the following specific purposes:</p>
+        <ul>
+          <li><strong>Process orders and payments:</strong> To complete transactions and manage subscriptions</li>
+          <li><strong>Manage user accounts:</strong> To provide account access and personalized features</li>
+          <li><strong>Improve our service:</strong> To enhance functionality and user experience</li>
+          <li>Provide customer support and respond to inquiries</li>
+          <li>Send important service updates and notifications</li>
+        </ul>
+
+        <h2>Data Sharing and Third Parties</h2>
         <p>
-          Payment processing is handled by LemonSqueezy. We store:
+          We do <strong>not</strong> sell or share your data with third parties for marketing purposes. However, we do share your information with trusted service providers who help us operate our service:
         </p>
         <ul>
-          <li>Customer ID and subscription status</li>
-          <li>Plan type and credit allocation</li>
-          <li>Payment history and transaction records</li>
+          <li><strong>Payment processors:</strong> To securely process your payments and manage transactions</li>
+          <li><strong>AI service providers:</strong> To generate responses and create documents</li>
+          <li><strong>Email service providers:</strong> To send you important account and service notifications</li>
+          <li><strong>Cloud hosting providers:</strong> To store and secure your data</li>
         </ul>
         <p>
-          We do not store credit card numbers or sensitive payment information on our servers.
+          These service providers are contractually required to protect your information and use it only for the specific services they provide to us.
         </p>
 
-        <h3>2.4 Authentication Data</h3>
-        <p>When using third-party authentication (Google OAuth), we may receive:</p>
-        <ul>
-          <li>Basic profile information</li>
-          <li>Email address</li>
-          <li>Profile picture</li>
-        </ul>
-
-        <h2>3. How We Use Your Information</h2>
-        <p>We use your information to:</p>
-        <ul>
-          <li>Provide and maintain the Service</li>
-          <li>Process your requests and generate AI responses</li>
-          <li>Manage your account and subscriptions</li>
-          <li>Send important updates and security notifications</li>
-          <li>Improve our Service through analytics and usage patterns</li>
-          <li>Provide customer support</li>
-          <li>Comply with legal obligations</li>
-          <li>Prevent fraud and ensure security</li>
-        </ul>
-
-        <h2>4. Information Sharing and Disclosure</h2>
-        <p>We do not sell your personal information. We may share your information in these situations:</p>
-        
-        <h3>4.1 Service Providers</h3>
-        <ul>
-          <li><strong>AI Model Providers:</strong> Google AI for generating responses</li>
-          <li><strong>Payment Processing:</strong> LemonSqueezy for subscription management</li>
-          <li><strong>Email Services:</strong> Resend for transactional emails</li>
-          <li><strong>Database Hosting:</strong> Vercel Postgres for data storage</li>
-          <li><strong>File Storage:</strong> UploadThing for file uploads</li>
-        </ul>
-
-        <h3>4.2 Legal Requirements</h3>
-        <p>We may disclose your information if required by law or to:</p>
-        <ul>
-          <li>Comply with legal processes</li>
-          <li>Protect our rights and property</li>
-          <li>Ensure user safety</li>
-          <li>Investigate potential violations</li>
-        </ul>
-
-        <h2>5. Data Security</h2>
-        <p>We implement appropriate security measures to protect your information:</p>
-        <ul>
-          <li>Encryption of data in transit and at rest</li>
-          <li>Secure authentication systems</li>
-          <li>Regular security assessments</li>
-          <li>Access controls and monitoring</li>
-          <li>Password hashing using industry standards</li>
-        </ul>
-
-        <h2>6. Data Retention</h2>
-        <p>We retain your information for as long as necessary to:</p>
-        <ul>
-          <li>Provide the Service to you</li>
-          <li>Comply with legal obligations</li>
-          <li>Resolve disputes</li>
-          <li>Enforce our agreements</li>
-        </ul>
+        <h2>Data Security</h2>
         <p>
-          You may request deletion of your account and associated data at any time, 
-          subject to legal retention requirements.
+          We implement industry-standard security measures to protect your personal information, including encryption, secure authentication, and regular security assessments. While no method of transmission over the internet is 100% secure, we strive to use commercially acceptable means to protect your data.
         </p>
 
-        <h2>7. Your Rights and Choices</h2>
-        <p>Depending on your location, you may have the following rights:</p>
-        <ul>
-          <li><strong>Access:</strong> Request a copy of your personal data</li>
-          <li><strong>Correction:</strong> Update or correct inaccurate information</li>
-          <li><strong>Deletion:</strong> Request deletion of your personal data</li>
-          <li><strong>Portability:</strong> Receive your data in a portable format</li>
-          <li><strong>Objection:</strong> Object to certain processing activities</li>
-          <li><strong>Restriction:</strong> Request limitation of processing</li>
-        </ul>
-
-        <h2>8. Cookies and Tracking</h2>
-        <p>We use cookies and similar technologies to:</p>
-        <ul>
-          <li>Maintain your session and preferences</li>
-          <li>Provide authentication</li>
-          <li>Analyze usage patterns</li>
-          <li>Improve user experience</li>
-        </ul>
-        <p>You can control cookie settings through your browser preferences.</p>
-
-        <h2>9. Third-Party Services</h2>
-        <p>Our Service integrates with third-party services that have their own privacy policies:</p>
-        <ul>
-          <li><strong>Google AI:</strong> For AI model processing</li>
-          <li><strong>Google OAuth:</strong> For authentication</li>
-          <li><strong>LemonSqueezy:</strong> For payment processing</li>
-          <li><strong>Resend:</strong> For email delivery</li>
-          <li><strong>Vercel:</strong> For hosting and analytics</li>
-        </ul>
-
-        <h2>10. International Data Transfers</h2>
+        <h2>Children's Privacy</h2>
         <p>
-          Your information may be transferred to and processed in countries other than your own. 
-          We ensure appropriate safeguards are in place to protect your data during international transfers.
+          Our service is not intended for children under the age of 13. We do not knowingly collect personal information from children under 13. If we become aware that we have collected such information, we will take steps to delete it promptly.
         </p>
 
-        <h2>11. Children's Privacy</h2>
+        <h2>Changes to This Privacy Policy</h2>
         <p>
-          Our Service is not intended for children under 13 years of age. We do not knowingly collect 
-          personal information from children under 13. If we become aware of such collection, 
-          we will take steps to delete the information promptly.
+          We may update this Privacy Policy from time to time to reflect changes in our practices or for legal reasons. When we make material changes, we will notify you via email at the address associated with your account and update the "Last updated" date above.
         </p>
 
-        <h2>12. California Privacy Rights</h2>
-        <p>
-          California residents have additional rights under the California Consumer Privacy Act (CCPA), 
-          including the right to know, delete, and opt-out of the sale of personal information.
-        </p>
-
-        <h2>13. European Privacy Rights</h2>
-        <p>
-          If you are in the European Economic Area, you have rights under the General Data Protection Regulation (GDPR), 
-          including the rights mentioned in Section 7 above.
-        </p>
-
-        <h2>14. Changes to This Privacy Policy</h2>
-        <p>
-          We may update this Privacy Policy from time to time. We will notify you of any material changes 
-          by posting the new Privacy Policy on this page and updating the "Last updated" date.
-        </p>
-
-        <h2>15. Contact Us</h2>
+        <h2>Contact Us</h2>
         <p>
           If you have any questions about this Privacy Policy or our privacy practices, please contact us at:
         </p>
         <p>
-          Email: [Your Privacy Contact Email]<br />
-          Address: [Your Business Address]<br />
-          Data Protection Officer: [If applicable]
+          <strong>Email:</strong> <a href="mailto:support@mindscribe.xyz" className="text-primary hover:underline">support@mindscribe.xyz</a>
         </p>
 
-        <h2>16. Data Processing Lawful Basis</h2>
-        <p>We process your personal data based on:</p>
-        <ul>
-          <li><strong>Contract:</strong> To provide the Service you've subscribed to</li>
-          <li><strong>Legitimate Interest:</strong> To improve our Service and prevent fraud</li>
-          <li><strong>Consent:</strong> For marketing communications (when applicable)</li>
-          <li><strong>Legal Obligation:</strong> To comply with applicable laws</li>
-        </ul>
-
         <p className="text-sm text-muted-foreground mt-8">
-          This document was last updated on {new Date().toLocaleDateString()}.
+          This Privacy Policy is effective as of the date listed above and governs your use of our service.
         </p>
       </div>
     </div>

@@ -152,6 +152,17 @@ function LoginForm() {
             </Link>
             {' for free.'}
           </p>
+          
+          <p className="text-center text-xs text-gray-500 dark:text-zinc-500">
+            By continuing, you agree to our{' '}
+            <Link href="/terms" className="underline hover:text-gray-700 dark:hover:text-zinc-300">
+              Terms of Service
+            </Link>
+            {' and '}
+            <Link href="/privacy" className="underline hover:text-gray-700 dark:hover:text-zinc-300">
+              Privacy Policy
+            </Link>
+          </p>
           <div className="flex flex-col gap-y-2.5">
         </div>
         </AuthForm>
