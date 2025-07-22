@@ -1,7 +1,5 @@
 import { Resend } from "resend";
-
-// DEVELOPER CONTROL: Set to false to disable email sending and Google OAuth
-export const DEV_ENABLE_EXTERNAL_SERVICES = true;
+import { DEV_ENABLE_EXTERNAL_SERVICES } from './dev-config';
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error("RESEND_API_KEY is not set");

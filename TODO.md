@@ -15,6 +15,12 @@
 
 ### LemonSqueezy Local Test
 - ngrok http --url=informed-commonly-alpaca.ngrok-free.app 3000
+
+## Development
+- **Developer Control Flag**: Use `DEV_ENABLE_EXTERNAL_SERVICES` in `/lib/dev-config.ts` to enable/disable email sending and Google OAuth
+  - Default: `true` (both features enabled)
+  - Set to `false` to disable both email sending and Google OAuth for development
+
 # Backlog
 ## Though About Tool Calling
 - We need to separate, tool that need user to choose, or wheter the AI choose it

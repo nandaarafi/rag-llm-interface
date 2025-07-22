@@ -11,12 +11,14 @@ import { Button } from '@/components/ui/button';
 
 import { register, type RegisterActionState } from '../actions';
 import { toast } from '@/components/toast';
+import { DEV_ENABLE_EXTERNAL_SERVICES } from '@/lib/dev-config';
 
 export default function Page() {
   const router = useRouter();
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
 
   const [state, formAction] = useActionState<RegisterActionState, FormData>(
     register,
@@ -35,9 +37,14 @@ export default function Page() {
         type: 'error',
         description: 'Failed validating your submission!',
       });
+    } else if (state.status === 'verification_sent') {
+      toast({ 
+        type: 'success', 
+        description: 'Verification email sent! Please check your inbox.' 
+      });
+      setVerificationSent(true);
     } else if (state.status === 'success') {
       toast({ type: 'success', description: 'Account created successfully!' });
-
       setIsSuccessful(true);
       router.refresh();
     }
@@ -50,6 +57,16 @@ export default function Page() {
 
   const handleGoogleSignIn = async (e: React.MouseEvent) => {
     e.preventDefault();
+    
+    // Developer control: Disable Google OAuth if external services are disabled
+    if (!DEV_ENABLE_EXTERNAL_SERVICES) {
+      toast({
+        type: 'error',
+        description: '[DEV MODE] Google OAuth is disabled.',
+      });
+      return;
+    }
+    
     try {
       await signIn('google', { callbackUrl: '/' });
     } catch (error) {
@@ -60,6 +77,46 @@ export default function Page() {
       });
     }
   };
+
+  if (verificationSent) {
+    return (
+      <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
+        <div className="w-full max-w-md overflow-hidden rounded-2xl gap-6 flex flex-col">
+          <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+              </svg>
+            </div>
+            <h3 className="text-xl font-semibold dark:text-zinc-50">Check Your Email</h3>
+            <p className="text-sm text-gray-500 dark:text-zinc-400">
+              We've sent a verification link to <strong>{email}</strong>
+            </p>
+            <p className="text-xs text-gray-400 dark:text-zinc-500 mt-2">
+              Click the link in the email to verify your account and complete registration.
+            </p>
+          </div>
+          
+          <div className="flex flex-col gap-4 px-4 sm:px-16">
+            <Link href="/login">
+              <Button size="lg" className="w-full">
+                Back to Sign In
+              </Button>
+            </Link>
+            <p className="text-center text-xs text-gray-500 dark:text-zinc-500">
+              Didn't receive an email? Check your spam folder or{' '}
+              <button 
+                onClick={() => setVerificationSent(false)}
+                className="text-primary hover:underline"
+              >
+                try again
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">

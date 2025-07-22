@@ -10,6 +10,7 @@ import { signIn } from 'next-auth/react';
 
 import { login, type LoginActionState } from '../actions';
 import { Button } from '@/components/ui/button';
+import { DEV_ENABLE_EXTERNAL_SERVICES } from '@/lib/dev-config';
 
 function LoginForm() {
   const router = useRouter();
@@ -65,6 +66,11 @@ function LoginForm() {
         type: 'error',
         description: 'This email is linked to Google. Please use "Continue with Google" or register with a different email.',
       });
+    } else if (state.status === 'email_not_verified') {
+      toast({
+        type: 'error',
+        description: 'Please verify your email address before signing in. Check your inbox for a verification link.',
+      });
     } else if (state.status === 'success') {
       setIsSuccessful(true);
       router.refresh();
@@ -78,6 +84,16 @@ function LoginForm() {
 
   const handleGoogleSignIn = async (e: React.MouseEvent) => {
     e.preventDefault();
+    
+    // Developer control: Disable Google OAuth if external services are disabled
+    if (!DEV_ENABLE_EXTERNAL_SERVICES) {
+      toast({
+        type: 'error',
+        description: '[DEV MODE] Google OAuth is disabled.',
+      });
+      return;
+    }
+    
     try {
       // Clear any previous form state when starting Google OAuth
       window.history.replaceState({}, '', '/login');
