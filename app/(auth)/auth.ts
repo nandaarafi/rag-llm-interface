@@ -4,6 +4,7 @@ import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 // eslint-disable-next-line import/no-unresolved
 import { getUser, createUserOauth, updateUser } from '@/lib/db/queries';
+import { env } from '@/lib/env';
 
 import { authConfig } from './auth.config';
 
@@ -11,12 +12,38 @@ interface ExtendedSession extends Session {
   user: User;
 }
 
-// Debug environment variables
-console.error('Environment Debug:', {
-  hasGoogleId: !!process.env.GOOGLE_ID,
-  googleIdPrefix: process.env.GOOGLE_ID?.replace(/\n/g, ''),
-  nextauthUrl: process.env.NEXTAUTH_URL?.replace(/\n/g, ''),
-  nodeEnv: process.env.NODE_ENV
+// Debug ALL environment variables
+console.error('All Environment Variables:', {
+  // Auth
+  authSecret: env.AUTH_SECRET ? 'SET' : 'MISSING',
+  nextauthUrl: env.NEXTAUTH_URL,
+  
+  // Google OAuth
+  googleId: env.GOOGLE_ID,
+  googleSecret: env.GOOGLE_SECRET ? 'SET' : 'MISSING',
+  
+  // AI API
+  googleAiKey: env.GOOGLE_GENERATIVE_AI_API_KEY ? 'SET' : 'MISSING',
+  openrouterKey: env.OPENROUTER_API_KEY ? 'SET' : 'NOT_SET',
+  
+  // Database
+  databaseUrl: env.DATABASE_URL ? 'SET' : 'MISSING',
+  
+  // Email
+  resendKey: env.RESEND_API_KEY ? 'SET' : 'MISSING',
+  resendFrom: env.RESEND_FROM_EMAIL,
+  
+  // Payments
+  lemonKey: env.LEMONSQUEEZY_API_KEY ? 'SET' : 'MISSING',
+  lemonStore: env.LEMONSQUEEZY_STORE_ID || 'NOT_SET',
+  lemonVariant: env.LEMONSQUEEZY_VARIANT_ID || 'NOT_SET',
+  lemonSecret: env.LEMONSQUEEZY_SIGNING_SECRET ? 'SET' : 'MISSING',
+  
+  // Files
+  uploadthingToken: env.UPLOADTHING_TOKEN ? 'SET' : 'MISSING',
+  
+  // Environment
+  nodeEnv: env.NODE_ENV
 });
 
 export const {
@@ -53,8 +80,8 @@ export const {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID?.replace(/\n/g, ''),
-      clientSecret: process.env.GOOGLE_SECRET?.replace(/\n/g, ''),
+      clientId: env.GOOGLE_ID,
+      clientSecret: env.GOOGLE_SECRET,
       authorization: {
         params: {
           prompt: "consent",
