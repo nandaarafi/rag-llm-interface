@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent } from '@/components/ui/card';
 import {MinimalCardDemo}  from './features';
 import { GoogleIcon } from "@/components/ui/google-icon";
 import { signIn } from 'next-auth/react';
@@ -58,11 +57,11 @@ export default function MarketingPage() {
             
             <div className="flex items-center justify-center gap-8 pt-8 text-sm text-muted-foreground">
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                <div className="size-2 bg-green-500 rounded-full" />
                 No credit card required
               </div>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                <div className="size-2 bg-blue-500 rounded-full" />
                 Free tier available
               </div>
             </div>

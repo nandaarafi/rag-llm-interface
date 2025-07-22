@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 import apiClient from '@/lib/api';
-import { getAllPlans, type PricingPlan } from '@/lib/pricing-config';
+import { getAllPlans, } from '@/lib/pricing-config';
   const handlePayment = async (variantId: string) => {
     // setIsLoading(true);
 

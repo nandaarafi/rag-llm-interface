@@ -20,7 +20,7 @@ import {
 import Link from 'next/link';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import SidebarCredit from './sidebar-credit';
-import { MessageSquareText, FileText } from 'lucide-react';
+import { FileText } from 'lucide-react';
 const NAVIGATION_ITEMS = [
   { id: 'library', label: 'Library', icon: FileText },
 ];

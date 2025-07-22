@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getUserByEmailVerificationToken, verifyUserEmail } from '@/lib/db/queries';
 import { sendWelcomeEmail } from '@/lib/resend';
 

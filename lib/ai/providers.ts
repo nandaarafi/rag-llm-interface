@@ -5,8 +5,8 @@ import {
 
 } from 'ai';
 import { google } from "@ai-sdk/google"
-import { openai } from "@ai-sdk/openai"
 import { createOpenAI } from "@ai-sdk/openai"
+
 import { isTestEnvironment } from '../constants';
 import {
   artifactModel,

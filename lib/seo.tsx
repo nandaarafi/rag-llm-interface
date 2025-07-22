@@ -106,6 +106,6 @@ export const renderSchemaTags = () => {
           ],
         }),
       }}
-    ></script>
+    />
   );
 };

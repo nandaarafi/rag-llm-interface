@@ -2,7 +2,6 @@ import { Artifact } from '@/components/create-artifact';
 import {
   CopyIcon,
   DownloadIcon,
-  PresentationIcon,
   RedoIcon,
   UndoIcon,
 } from '@/components/icons';

@@ -53,7 +53,7 @@ function VerifyEmailContent() {
         <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
           {verificationStatus === 'verifying' && (
             <>
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+              <div className="animate-spin rounded-full size-8 border-b-2 border-primary" />
               <h3 className="text-xl font-semibold dark:text-zinc-50">Verifying Email</h3>
               <p className="text-sm text-gray-500 dark:text-zinc-400">
                 Please wait while we verify your email address...
@@ -63,9 +63,9 @@ function VerifyEmailContent() {
           
           {verificationStatus === 'success' && (
             <>
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+              <div className="size-12 bg-green-100 rounded-full flex items-center justify-center">
+                <svg className="size-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-green-600 dark:text-green-400">Email Verified!</h3>
@@ -77,9 +77,9 @@ function VerifyEmailContent() {
           
           {verificationStatus === 'error' && (
             <>
-              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path>
+              <div className="size-12 bg-red-100 rounded-full flex items-center justify-center">
+                <svg className="size-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-red-600 dark:text-red-400">Verification Failed</h3>
@@ -91,9 +91,9 @@ function VerifyEmailContent() {
           
           {verificationStatus === 'invalid' && (
             <>
-              <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-                <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z"></path>
+              <div className="size-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                <svg className="size-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L4.34 16.5c-.77.833.192 2.5 1.732 2.5z" />
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-yellow-600 dark:text-yellow-400">Invalid Link</h3>
@@ -138,7 +138,7 @@ export default function VerifyEmailPage() {
       <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
         <div className="w-full max-w-md overflow-hidden rounded-2xl gap-6 flex flex-col">
           <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-full size-8 border-b-2 border-primary" />
             <h3 className="text-xl font-semibold dark:text-zinc-50">Loading...</h3>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getUser, createPasswordResetToken } from '@/lib/db/queries';
 import { sendPasswordResetEmail } from '@/lib/resend';
 import { z } from 'zod';

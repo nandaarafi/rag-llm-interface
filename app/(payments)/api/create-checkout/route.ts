@@ -1,5 +1,5 @@
 import { createLemonSqueezyCheckout } from "@/lib/lemonsqueezy";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from '@/app/(auth)/auth';
 import { getUser }  from '@/lib/db/queries';
 

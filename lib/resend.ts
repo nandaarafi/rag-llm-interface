@@ -198,7 +198,7 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   });
 };
 
-export const sendPaymentConfirmationEmail = async (email: string, name: string, amount: string, plan: string = "Premium") => {
+export const sendPaymentConfirmationEmail = async (email: string, name: string, amount: string, plan = "Premium") => {
   const html = `
     <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
       <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eee;">

@@ -43,7 +43,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
     return initialDocuments.filter(
       doc =>
         doc.title.toLowerCase().includes(term) ||
-        (doc.content && doc.content.toLowerCase().includes(term))
+        (doc.content?.toLowerCase().includes(term))
     );
   }, [searchTerm, initialDocuments]);
 

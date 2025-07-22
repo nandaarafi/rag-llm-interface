@@ -66,7 +66,7 @@ export default function Header() {
   }, [lastScrollY])
 
   return (
-    <header className={`fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6 transition-transform duration-300 ${
+    <header className={`fixed top-0 inset-x-0 z-50 border-b bg-background/80 backdrop-blur-sm px-4 md:px-6 transition-transform duration-300 ${
       isVisible ? 'translate-y-0' : '-translate-y-full'
     }`}>
       <div className="flex h-16 items-center">

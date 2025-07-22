@@ -58,15 +58,15 @@ export default function CTA() {
               
               <div className="flex items-center justify-center gap-8 pt-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="size-2 bg-green-500 rounded-full animate-pulse" />
                   3-day free trial
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                  <div className="size-2 bg-blue-500 rounded-full animate-pulse" />
                   No credit card required
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                  <div className="size-2 bg-purple-500 rounded-full animate-pulse" />
                   Cancel anytime
                 </div>
               </div>

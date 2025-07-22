@@ -2,8 +2,8 @@
 
 import { z } from 'zod';
 
-import { createUser, getUser, createUserWithEmailVerification } from '@/lib/db/queries';
-import { sendWelcomeEmail, sendEmailVerificationEmail } from '@/lib/resend';
+import { getUser, createUserWithEmailVerification } from '@/lib/db/queries';
+import { sendEmailVerificationEmail } from '@/lib/resend';
 
 import { signIn } from './auth';
 

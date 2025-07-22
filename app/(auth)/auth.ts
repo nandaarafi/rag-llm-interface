@@ -220,13 +220,13 @@ export const {
             const [dbUser] = await getUser(user.email!);
             if (dbUser) {
               token.image = dbUser.image;
-              token.name = user.name || user.email!.split('@')[0];
+              token.name = user.name || user.email?.split('@')[0];
               token.hasAccess = dbUser.hasAccess;
               // console.log('JWT Credentials: Set image from database:', dbUser.image);
             }
           } catch (error) {
             console.error('Failed to fetch user data in JWT callback:', error);
-            token.name = user.name || user.email!.split('@')[0];
+            token.name = user.name || user.email?.split('@')[0];
             token.image = null;
             token.hasAccess = false;
           }

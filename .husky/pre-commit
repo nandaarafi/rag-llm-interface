@@ -1,0 +1,2 @@
+pnpm lint:fix || true
+pnpm tsc --noEmit || true

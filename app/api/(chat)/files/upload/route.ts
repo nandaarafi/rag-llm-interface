@@ -55,7 +55,7 @@ export async function POST(request: Request) {
 
     if (!response.data) {
       console.error('UploadThing error:', response.error);
-      throw new Error('Upload failed: ' + (response.error?.message || 'Unknown error'));
+      throw new Error(`Upload failed: ${response.error?.message || 'Unknown error'}`);
     }
 
     return NextResponse.json({

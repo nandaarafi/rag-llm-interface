@@ -594,7 +594,7 @@ export async function getUserCredits(userId: string): Promise<number> {
   }
 }
 
-export async function deductCredits(userId: string, amount: number = 1): Promise<boolean> {
+export async function deductCredits(userId: string, amount = 1): Promise<boolean> {
   try {
     const userRecord = await getUserById(userId);
     if (!userRecord || userRecord.credits < amount) {

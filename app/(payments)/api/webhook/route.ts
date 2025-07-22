@@ -1,7 +1,7 @@
 
-import crypto from "crypto";
+import crypto from "node:crypto";
 import { headers } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 // eslint-disable-next-line import/no-unresolved
 import { updateUser, getUser, updateUserPlan } from "@/lib/db/queries";
 import { sendPaymentConfirmationEmail } from "@/lib/resend";

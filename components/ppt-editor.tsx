@@ -75,7 +75,7 @@ export function PresentationEditor({
   if (status === 'streaming') {
     return (
       <div className="flex items-center justify-center h-96">
-        <div className="animate-spin rounded-full size-8 border-b-2 border-blue-500"></div>
+        <div className="animate-spin rounded-full size-8 border-b-2 border-blue-500" />
         <span className="ml-2 text-muted-foreground">Generating presentation...</span>
       </div>
     );

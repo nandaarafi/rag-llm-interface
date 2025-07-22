@@ -9,10 +9,8 @@ const apiClient = axios.create({
 });
 
 apiClient.interceptors.response.use(
-  function (response) {
-    return response.data;
-  },
-  function (error) {
+  (response) => response.data,
+  (error) => {
     let message = "";
 
     if (error.response?.status === 401) {

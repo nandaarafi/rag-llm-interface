@@ -1,7 +1,5 @@
-import { Metadata } from 'next';
+import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { getAllPosts, getPostBySlug } from '@/lib/blog';
 import { TableOfContents } from '@/components/blog/table-of-contents';
 import { MarkdownWithHeadings } from '@/components/blog/markdown-with-headings';
@@ -118,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </article>
         
         {/* Table of Contents sidebar */}
-        <aside className="hidden lg:block w-64 flex-shrink-0">
+        <aside className="hidden lg:block w-64 shrink-0">
           <TableOfContents content={post.content} />
         </aside>
       </div>

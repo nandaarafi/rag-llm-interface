@@ -1,5 +1,5 @@
 import {
-    NewCheckout,
+    type NewCheckout,
     createCheckout,
     getCustomer,
     lemonSqueezySetup,

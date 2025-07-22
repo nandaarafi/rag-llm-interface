@@ -1,10 +1,7 @@
 'use client';
-import { ChevronUp , PanelLeftClose, PanelLeftOpen, MessageSquareText, Settings,   CreditCard, 
+import { Settings,   
   LogOut,  
-  Star, 
-  Bell,  
-  FileText} from 'lucide-react';
-import Image from 'next/image';
+  Star, } from 'lucide-react';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 
@@ -18,9 +15,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import {
-  SidebarFooter,
-} from '@/components/ui/sidebar';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
