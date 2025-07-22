@@ -17,6 +17,7 @@ build
 .DS_Store
 *.pem
 OAUTH_JWT_AUTHENTICATION_FIX.md
+docs
 
 settings.local.json
 # debug
