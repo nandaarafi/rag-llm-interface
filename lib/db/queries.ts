@@ -14,6 +14,7 @@ import {
 } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 import {
   user,
@@ -619,24 +620,18 @@ export async function resetMonthlyCredits(): Promise<void> {
   }
 }
 
-export async function updateUserPlan(userId: string, planType: 'free' | 'pro' | 'ultra'): Promise<void> {
+export async function updateUserPlan(userId: string, planType: PlanType): Promise<void> {
   try {
     const now = new Date();
-    let credits = 3; // Default for free
-    
-    if (planType === 'pro') {
-      credits = 300;
-    } else if (planType === 'ultra') {
-      credits = 1000;
-    }
+    const planConfig = getPlanConfig(planType);
 
     await db
       .update(user)
       .set({ 
         planType,
-        credits,
+        credits: planConfig.credits,
         lastCreditReset: now,
-        hasAccess: planType !== 'free'
+        hasAccess: planConfig.hasAccess
       })
       .where(eq(user.id, userId));
   } catch (error) {

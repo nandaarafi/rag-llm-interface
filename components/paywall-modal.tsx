@@ -7,6 +7,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Crown, MessageSquare, Zap, Check } from 'lucide-react';
 import apiClient from '@/lib/api';
+import { getPurchasablePlans, getPlanConfig } from '@/lib/pricing-config';
 
 interface PaywallModalProps {
   open: boolean;
@@ -51,35 +52,8 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
     }
   };
 
-  const tiers = [
-    {
-      name: 'Pro',
-      price: { monthly: '$9', yearly: '$7' },
-      description: 'Everything in Hobby, plus',
-      features: [
-        '200 access requests to OpenAI GPT-4.1, Claude, etc.',
-        'Extended limits on agent requests',
-        'Unlimited tab completions',
-        'Access to Background Agents',
-        'Access to Bug Bot',
-        'Access to maximum context windows',
-      ],
-      variantId: '818286',
-      proGlow: true,
-    },
-    {
-      name: 'Ultra',
-      price: { monthly: '$20', yearly: '$16' },
-      description: 'Everything in Pro, plus',
-      features: [
-        '20x usage on all OpenAI, Claude, Gemini models',
-        'Priority access to new features',
-        'Unlimited access to all models',
-      ],
-      variantId: '905815',
-      proGlow: false,
-    },
-  ];
+  const tiers = getPurchasablePlans();
+  const proPlan = getPlanConfig('pro');
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange} modal>
@@ -115,19 +89,19 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
 
         {/* Free Plan Benefits Summary */}
         <div className="bg-muted/50 rounded-lg p-4 mb-6">
-          <h3 className="font-semibold mb-3 text-sm">What you get with Pro:</h3>
+          <h3 className="font-semibold mb-3 text-sm">What you get with {proPlan.displayName}:</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             <div className="flex items-center gap-2">
               <MessageSquare className="size-4 text-blue-500" />
-              <span className="text-sm">Unlimited chat messages</span>
+              <span className="text-sm">{proPlan.features[0]}</span>
             </div>
             <div className="flex items-center gap-2">
               <Zap className="size-4 text-yellow-500" />
-              <span className="text-sm">Access to all AI models</span>
+              <span className="text-sm">{proPlan.features[2]}</span>
             </div>
             <div className="flex items-center gap-2">
               <Crown className="size-4 text-purple-500" />
-              <span className="text-sm">Priority support</span>
+              <span className="text-sm">{proPlan.features[3]}</span>
             </div>
           </div>
         </div>
@@ -164,17 +138,17 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
         <div className="grid md:grid-cols-2 gap-6">
           {tiers.map((tier) => (
             <div
-              key={tier.name}
+              key={tier.id}
               className={cn(
                 'relative',
-                tier.proGlow && 'p-[1px] rounded-xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400'
+                tier.ui.proGlow && 'p-[1px] rounded-xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400'
               )}
             >
               <Card className="rounded-xl h-full flex flex-col">
                 <CardHeader>
                   <div className="flex items-center justify-between">
-                    <CardTitle className="text-lg">{tier.name}</CardTitle>
-                    {tier.proGlow && (
+                    <CardTitle className="text-lg">{tier.displayName}</CardTitle>
+                    {tier.ui.popular && (
                       <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full">
                         Most Popular
                       </span>
@@ -182,7 +156,7 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
                   </div>
                   <div className="flex items-baseline gap-1">
                     <span className="text-3xl font-bold">
-                      {billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}
+                      {billingCycle === 'monthly' ? tier.priceDisplay.monthly : tier.priceDisplay.yearly}
                     </span>
                     <span className="text-muted-foreground">/mo</span>
                   </div>
@@ -200,12 +174,12 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
                 </CardContent>
                 <CardFooter>
                   <Button
-                    onClick={() => handlePayment(tier.variantId)}
+                    onClick={() => handlePayment(tier.lemonsqueezy.variantId!)}
                     className="w-full"
                     disabled={isLoading}
-                    variant={tier.proGlow ? 'default' : 'outline'}
+                    variant={tier.ui.proGlow ? 'default' : 'outline'}
                   >
-                    {isLoading ? 'Processing...' : `Get ${tier.name}`}
+                    {isLoading ? 'Processing...' : tier.ui.buttonText}
                   </Button>
                 </CardFooter>
               </Card>

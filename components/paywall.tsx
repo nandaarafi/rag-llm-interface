@@ -5,10 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Crown, MessageSquare, Zap } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { getPlanConfig } from '@/lib/pricing-config';
 
 export function Paywall() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const proPlan = getPlanConfig('pro');
 
   const handleUpgrade = () => {
     setIsLoading(true);
@@ -22,7 +24,7 @@ export function Paywall() {
           <div className="mx-auto mb-4 size-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
             <Crown className="size-6 text-white" />
           </div>
-          <CardTitle className="text-2xl">Upgrade to Pro</CardTitle>
+          <CardTitle className="text-2xl">Upgrade to {proPlan.displayName}</CardTitle>
           <CardDescription>
             You've reached the limit of your free plan. Upgrade to continue chatting with unlimited access.
           </CardDescription>
@@ -32,15 +34,15 @@ export function Paywall() {
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <MessageSquare className="size-5 text-blue-500" />
-              <span className="text-sm">Unlimited chat messages</span>
+              <span className="text-sm">{proPlan.features[0]}</span>
             </div>
             <div className="flex items-center gap-3">
               <Zap className="size-5 text-yellow-500" />
-              <span className="text-sm">Access to all AI models</span>
+              <span className="text-sm">{proPlan.features[2]}</span>
             </div>
             <div className="flex items-center gap-3">
               <Crown className="size-5 text-purple-500" />
-              <span className="text-sm">Priority support</span>
+              <span className="text-sm">{proPlan.features[3]}</span>
             </div>
           </div>
         </CardContent>

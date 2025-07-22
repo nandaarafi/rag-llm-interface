@@ -10,30 +10,12 @@ import { user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
+import { getPlanByVariantId } from "@/lib/pricing-config";
 
 // Create database connection
 const client = postgres(process.env.DATABASE_URL!);
 const db = drizzle(client);
 
-// Helper function to determine plan type from variant ID
-function getPlanTypeFromVariantId(variantId: string): 'pro' | 'ultra' {
-  // You should map your actual LemonSqueezy variant IDs here
-  // For now, using a simple heuristic - you can configure this based on your actual variant IDs
-  // For example: 'pro' plan variant IDs vs 'ultra' plan variant IDs
-  
-  // Actual variant IDs from LemonSqueezy
-  const proVariants = ['818286']; // Pro plan variant ID
-  const ultraVariants = ['818288']; // Ultra plan variant ID
-  
-  if (proVariants.includes(variantId)) {
-    return 'pro';
-  } else if (ultraVariants.includes(variantId)) {
-    return 'ultra';
-  }
-  
-  // Default to pro if variant not found in mapping
-  return 'pro';
-}
 
 // This is where we receive Lemon Squeezy webhook events
 // It used to update the user data, send emails, etc...
@@ -102,7 +84,12 @@ export async function POST(req: NextRequest) {
         const userId = payload.meta?.custom_data?.userId;
 
         // Determine plan type from variant ID
-        const planType = getPlanTypeFromVariantId(variantId);
+        const planType = getPlanByVariantId(variantId);
+        
+        if (!planType) {
+          console.error('🔥 Unknown variant ID:', variantId);
+          return new Response("Unknown variant ID", { status: 400 });
+        }
         
         // Find or create user
         let foundUser;

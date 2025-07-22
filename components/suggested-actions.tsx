@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { memo } from 'react';
 import { UseChatHelpers } from '@ai-sdk/react';
+import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -63,7 +64,18 @@ function PureSuggestedActions({
             variant="ghost"
             onClick={async () => {
               // Check credits/access before appending suggested action
-              if (!hasAccess && planType === 'free' && credits <= 0) {
+              const planConfig = getPlanConfig(planType as PlanType);
+              const maxCredits = planConfig.credits;
+              
+              // If plan has 0 max credits, always show paywall
+              if (maxCredits === 0) {
+                console.log('🚫 Blocking suggested action: plan has no credits', { credits, planType, maxCredits });
+                onShowPaywall();
+                return;
+              }
+              
+              // Standard credit check for plans with credits
+              if (credits <= 0) {
                 console.log('🚫 Blocking suggested action: insufficient credits', { credits, planType, hasAccess });
                 onShowPaywall();
                 return;

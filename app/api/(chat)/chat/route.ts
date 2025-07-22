@@ -29,6 +29,7 @@ import { requestSuggestions } from '@/lib/ai/tools/request-suggestions';
 import { getWeather } from '@/lib/ai/tools/get-weather';
 import { isProductionEnvironment } from '@/lib/constants';
 import { myProvider } from '@/lib/ai/providers';
+import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 export const maxDuration = 60;
 
@@ -58,12 +59,34 @@ export async function POST(request: Request) {
 
     // Check credits for all users
     const userCredits = await getUserCredits(session.user.id);
+    const planConfig = getPlanConfig((user.planType || 'free') as PlanType);
+    const maxCredits = planConfig.credits;
+    
+    // If plan has 0 max credits, deny access regardless of current credits
+    if (maxCredits === 0) {
+      return new Response(
+        JSON.stringify({
+          error: 'no_credits_plan',
+          message: 'Your current plan does not include AI credits. Please upgrade to continue chatting.',
+          credits: userCredits,
+          maxCredits: maxCredits,
+          planType: user.planType || 'free'
+        }),
+        { 
+          status: 402,
+          headers: { 'Content-Type': 'application/json' }
+        }
+      );
+    }
+    
+    // Standard credit check for plans with credits
     if (userCredits <= 0) {
       return new Response(
         JSON.stringify({
           error: 'insufficient_credits',
           message: 'You have reached your credit limit. Please upgrade to continue chatting.',
           credits: userCredits,
+          maxCredits: maxCredits,
           planType: user.planType || 'free'
         }),
         { 

@@ -1,10 +1,11 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 interface CreditContextType {
   credits: number;
-  planType: 'free' | 'pro' | 'ultra';
+  planType: PlanType;
   loading: boolean;
   error: string | null;
   refetchCredits: () => Promise<void>;
@@ -20,8 +21,8 @@ export function CreditProvider({
   children: React.ReactNode;
   userId?: string;
 }) {
-  const [credits, setCredits] = useState(3); // Start with free plan default
-  const [planType, setPlanType] = useState<'free' | 'pro' | 'ultra'>('free');
+  const [credits, setCredits] = useState(getPlanConfig('free').credits); // Start with free plan default from config
+  const [planType, setPlanType] = useState<PlanType>('free');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const refetchCredits = useCallback(async () => {

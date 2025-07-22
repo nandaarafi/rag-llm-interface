@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Check } from 'lucide-react';
 import apiClient from '@/lib/api';
- const handlePayment = async (variantId: string) => {
+import { getAllPlans, type PricingPlan } from '@/lib/pricing-config';
+  const handlePayment = async (variantId: string) => {
     // setIsLoading(true);
-
 
     try {
       const { url }: { url: string } = await apiClient.post(
@@ -26,49 +26,8 @@ import apiClient from '@/lib/api';
 
     // setIsLoading(false);
   };
-const tiers = [
-  {
-    name: 'Hobby',
-    price: { monthly: '$0', yearly: '$0' },
-    description: 'Free',
-    features: [
-        "10 access requests to GPT-4o Mini.",
-        "Limited agent requests.",
-        "Limited tab completions.",
-        "Pro two-week trial."
-      ],    buttons: [
-    ],
-    proGlow: false,
-  },
-  {
-    name: 'Pro',
-    price: { monthly: '$9', yearly: '$8' },
-    description: 'Everything in Hobby, plus',
-    features: [
-        "200 access requests to OpenAI GPT-4.1, Claude, etc.",
-        "Extended limits on agent requests.",
-        "Unlimited tab completions.",
-        "Access to Background Agents.",
-        "Access to Bug Bot.",
-        "Access to maximum context windows."
-    ],
-    buttons: [
-      { text: 'Get Pro', variant: 'default', onClick: () => handlePayment('818286') },
-    ],
-    proGlow: true,
-  },
-  {
-    name: 'Ultra',
-    price: { monthly: '$20', yearly: '$16' },
-    description: 'Everything in Pro, plus',
-    features: [
-        "20x usage on all OpenAI, Claude, Gemini models.",
-        "Priority access to new features.",
-        "Unlimited access to all models."
-    ],    buttons: [{ text: 'Get Ultra', variant: 'default', onClick: () => handlePayment('905815') }],
-    proGlow: false,
-  },
-];
+
+  const tiers = getAllPlans();
 
 
 
@@ -117,25 +76,20 @@ export default function PricingPage() {
           <h2 className="text-2xl font-semibold mb-8">Individual Plans</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {tiers.map((tier) => (
-              <div key={tier.name} className={cn('relative', tier.proGlow && 'p-[1px] rounded-2xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400')}>
-                {/* MODIFIED: Removed `bg-gray-900` and `border-gray-800`.
-                    The Card component now correctly uses `bg-card` and `border-border` from the theme. */}
+              <div key={tier.id} className={cn('relative', tier.ui.proGlow && 'p-[1px] rounded-2xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400')}>
                 <Card className="rounded-2xl h-full flex flex-col">
                   <CardHeader>
-                    {/* MODIFIED: Replaced `text-gray-400` with `text-muted-foreground` */}
                     <CardTitle className="text-muted-foreground font-normal">{tier.name}</CardTitle>
-                    {tier.name === 'Hobby' ? (
-                        <p className="text-4xl font-bold">Free</p>
+                    {tier.id === 'free' ? (
+                        <p className="text-4xl font-bold">{tier.priceDisplay.monthly}</p>
                     ) : (
                         <p className="text-4xl font-bold">
-                        {billingCycle === 'monthly' ? tier.price.monthly : tier.price.yearly}
-                        {/* MODIFIED: Replaced `text-gray-400` with `text-muted-foreground` */}
+                        {billingCycle === 'monthly' ? tier.priceDisplay.monthly : tier.priceDisplay.yearly}
                         <span className="text-base font-normal text-muted-foreground">/mo</span>
                         </p>
                     )}
                   </CardHeader>
                   <CardContent className="grow">
-                    {/* MODIFIED: Replaced `text-gray-400` with `text-muted-foreground` */}
                     <p className="text-sm text-muted-foreground mb-4">{tier.description}</p>
                     <ul className="space-y-2">
                       {tier.features.map((feature) => (
@@ -147,13 +101,23 @@ export default function PricingPage() {
                     </ul>
                   </CardContent>
                   <CardFooter className="flex gap-2">
-                    {tier.buttons.map(button => (
-                      // MODIFIED: Removed the entire conditional class override.
-                      // This allows the Button's `variant` prop to correctly apply theme styles.
-                      <Button key={button.text} variant={button.variant as any} className="w-full" onClick={button.onClick}>
-                          {button.text}
+                    {tier.lemonsqueezy.variantId ? (
+                      <Button 
+                        variant={tier.ui.buttonVariant as any} 
+                        className="w-full" 
+                        onClick={() => handlePayment(tier.lemonsqueezy.variantId!)}
+                      >
+                        {tier.ui.buttonText}
                       </Button>
-                    ))}
+                    ) : (
+                      <Button 
+                        variant="outline" 
+                        className="w-full" 
+                        disabled
+                      >
+                        Current Plan
+                      </Button>
+                    )}
                   </CardFooter>
                 </Card>
               </div>

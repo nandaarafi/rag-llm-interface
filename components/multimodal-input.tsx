@@ -23,7 +23,8 @@ import { Textarea } from './ui/textarea';
 import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
-import { Images } from 'lucide-react'
+import { Images } from 'lucide-react';
+import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 function PureMultimodalInput({
   chatId,
@@ -114,7 +115,18 @@ function PureMultimodalInput({
 
   const submitForm = useCallback(() => {
     // Check credits/access before submitting
-    if (!hasAccess && planType === 'free' && credits <= 0) {
+    const planConfig = getPlanConfig(planType as PlanType);
+    const maxCredits = planConfig.credits;
+    
+    // If plan has 0 max credits, always show paywall
+    if (maxCredits === 0) {
+      console.log('🚫 Blocking submission: plan has no credits', { credits, planType, maxCredits });
+      onShowPaywall();
+      return;
+    }
+    
+    // Standard credit check for plans with credits
+    if (credits <= 0) {
       console.log('🚫 Blocking submission: insufficient credits', { credits, planType, hasAccess });
       onShowPaywall();
       return;
