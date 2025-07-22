@@ -21,10 +21,10 @@ const createHeadingComponent = (level: number) => {
       .replace(/\s+/g, '-')
       .trim()
 
-    const Tag = `h${level}` as keyof JSX.IntrinsicElements
+    const Tag = `h${level}` as 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
 
     return (
-      <Tag id={id} {...props}>
+      <Tag id={id} {...(props as any)}>
         {children}
       </Tag>
     )
