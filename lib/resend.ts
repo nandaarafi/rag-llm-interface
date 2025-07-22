@@ -1,5 +1,8 @@
 import { Resend } from "resend";
 
+// DEVELOPER CONTROL: Set to false to disable email sending and Google OAuth
+export const DEV_ENABLE_EXTERNAL_SERVICES = true;
+
 if (!process.env.RESEND_API_KEY) {
   throw new Error("RESEND_API_KEY is not set");
 }
@@ -9,13 +12,13 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 // Email Configuration
 export const emailConfig = {
   // For automated emails (login links, password resets, etc.)
-  fromNoReply: process.env.RESEND_FROM_NOREPLY || "MindScribe <noreply@resend.mindscribe.xyz>",
+  fromNoReply: process.env.RESEND_FROM_NOREPLY || "Mindscribe <noreply@resend.mindscribe.xyz>",
   
   // For admin notifications, updates, announcements
-  fromAdmin: process.env.RESEND_FROM_ADMIN || "Team at MindScribe <team@resend.mindscribe.xyz>",
+  fromAdmin: process.env.RESEND_FROM_ADMIN || "Team at Mindscribe <team@resend.mindscribe.xyz>",
   
   // Support email for customer inquiries
-  supportEmail: process.env.RESEND_SUPPORT_EMAIL || "support@resend.mindscribe.xyz",
+  supportEmail: process.env.RESEND_SUPPORT_EMAIL || "support@mindscribe.xyz",
   
   // Reply-to email for customer responses
   replyTo: process.env.RESEND_REPLY_TO || "hello@resend.mindscribe.xyz",
@@ -36,6 +39,12 @@ export const sendEmail = async ({
   replyTo?: string | string[];
   from?: string;
 }) => {
+  // Developer control: Skip sending emails if disabled
+  if (!DEV_ENABLE_EXTERNAL_SERVICES) {
+    console.log(`[DEV MODE] Email sending disabled. Would have sent: ${subject} to ${to}`);
+    return { id: 'dev-mode-skip' };
+  }
+
   const { data, error } = await resend.emails.send({
     from: from || emailConfig.fromNoReply,
     to,
@@ -60,13 +69,13 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
   const html = `
     <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
       <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eee;">
-        <h1 style="color: #333; margin: 0;">MindScribe</h1>
+        <h1 style="color: #333; margin: 0;">Mindscribe</h1>
       </div>
       
       <div style="padding: 30px 20px;">
         <h2 style="color: #333; margin-bottom: 20px;">Reset Your Password</h2>
         <p style="color: #555; margin-bottom: 20px;">
-          You requested a password reset for your MindScribe account. Click the button below to create a new password:
+          You requested a password reset for your Mindscribe account. Click the button below to create a new password:
         </p>
         
         <div style="text-align: center; margin: 30px 0;">
@@ -93,9 +102,9 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
   `;
 
   const text = `
-    MindScribe - Reset Your Password
+    Mindscribe - Reset Your Password
     
-    You requested a password reset for your MindScribe account.
+    You requested a password reset for your Mindscribe account.
     
     Reset your password: ${resetUrl}
     
@@ -108,7 +117,7 @@ export const sendPasswordResetEmail = async (email: string, resetToken: string) 
 
   return sendEmail({
     to: email,
-    subject: "Reset Your Password - MindScribe",
+    subject: "Reset Your Password - Mindscribe",
     html,
     text,
     from: emailConfig.fromNoReply,
@@ -119,14 +128,14 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   const html = `
     <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
       <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eee;">
-        <h1 style="color: #333; margin: 0;">MindScribe</h1>
+        <h1 style="color: #333; margin: 0;">Mindscribe</h1>
       </div>
       
       <div style="padding: 30px 20px;">
-        <h2 style="color: #333; margin-bottom: 20px;">Welcome to MindScribe, ${name}! 🎉</h2>
+        <h2 style="color: #333; margin-bottom: 20px;">Welcome to Mindscribe, ${name}! 🎉</h2>
         
         <p style="color: #555; margin-bottom: 20px;">
-          We're thrilled to have you join our community! MindScribe is here to help you unlock your potential with AI-powered assistance.
+          We're thrilled to have you join our community! Mindscribe is here to help you unlock your potential with AI-powered assistance.
         </p>
         
         <p style="color: #555; margin-bottom: 25px;">
@@ -152,7 +161,7 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
         
         <p style="color: #555; margin-top: 25px;">
           Best regards,<br>
-          The MindScribe Team
+          The Mindscribe Team
         </p>
       </div>
       
@@ -165,9 +174,9 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
   `;
 
   const text = `
-    Welcome to MindScribe, ${name}!
+    Welcome to Mindscribe, ${name}!
     
-    We're thrilled to have you join our community! MindScribe is here to help you unlock your potential with AI-powered assistance.
+    We're thrilled to have you join our community! Mindscribe is here to help you unlock your potential with AI-powered assistance.
     
     Here's what you can do next:
     • Complete your profile setup
@@ -179,12 +188,12 @@ export const sendWelcomeEmail = async (email: string, name: string) => {
     If you have any questions, don't hesitate to reach out to our support team at ${emailConfig.supportEmail}
     
     Best regards,
-    The MindScribe Team
+    The Mindscribe Team
   `;
 
   return sendEmail({
     to: email,
-    subject: "Welcome to MindScribe! Let's get started 🚀",
+    subject: "Welcome to Mindscribe! Let's get started 🚀",
     html,
     text,
     from: emailConfig.fromAdmin, // Using admin email for welcome
@@ -195,7 +204,7 @@ export const sendPaymentConfirmationEmail = async (email: string, name: string, 
   const html = `
     <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
       <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eee;">
-        <h1 style="color: #333; margin: 0;">MindScribe</h1>
+        <h1 style="color: #333; margin: 0;">Mindscribe</h1>
       </div>
       
       <div style="padding: 30px 20px;">
@@ -230,7 +239,7 @@ export const sendPaymentConfirmationEmail = async (email: string, name: string, 
         
         <p style="color: #555; margin-top: 25px;">
           Best regards,<br>
-          The MindScribe Team
+          The Mindscribe Team
         </p>
       </div>
       
@@ -243,7 +252,7 @@ export const sendPaymentConfirmationEmail = async (email: string, name: string, 
   `;
 
   const text = `
-    MindScribe - Payment Confirmed!
+    Mindscribe - Payment Confirmed!
     
     Hi ${name},
     
@@ -262,7 +271,7 @@ export const sendPaymentConfirmationEmail = async (email: string, name: string, 
     Need help? Contact us at ${emailConfig.supportEmail}
     
     Best regards,
-    The MindScribe Team
+    The Mindscribe Team
   `;
 
   return sendEmail({
@@ -278,7 +287,7 @@ export const sendPaymentConfirmationEmail = async (email: string, name: string, 
 export const sendNewUserNotification = async (userEmail: string, userName: string) => {
   return sendEmail({
     to: emailConfig.supportEmail,
-    subject: "New User Registration - MindScribe",
+    subject: "New User Registration - Mindscribe",
     html: `
       <h2>New User Registered</h2>
       <p><strong>Name:</strong> ${userName}</p>
@@ -293,6 +302,67 @@ export const sendNewUserNotification = async (userEmail: string, userName: strin
       Time: ${new Date().toLocaleString()}
     `,
     from: emailConfig.fromAdmin,
+  });
+};
+
+export const sendEmailVerificationEmail = async (email: string, verificationToken: string) => {
+  const verificationUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${verificationToken}`;
+  
+  const html = `
+    <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif; line-height: 1.6;">
+      <div style="text-align: center; padding: 20px 0; border-bottom: 1px solid #eee;">
+        <h1 style="color: #333; margin: 0;">Mindscribe</h1>
+      </div>
+      
+      <div style="padding: 30px 20px;">
+        <h2 style="color: #333; margin-bottom: 20px;">Verify Your Email Address</h2>
+        <p style="color: #555; margin-bottom: 20px;">
+          Thank you for signing up for Mindscribe! To complete your registration and start using your account, please verify your email address by clicking the button below:
+        </p>
+        
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${verificationUrl}" 
+             style="background-color: #007cba; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 500;">
+            Verify Email Address
+          </a>
+        </div>
+        
+        <p style="color: #666; font-size: 14px; margin-bottom: 10px;">
+          This link will expire in 24 hours for security reasons.
+        </p>
+        <p style="color: #666; font-size: 14px;">
+          If you didn't create an account with us, please ignore this email or contact our support team if you have concerns.
+        </p>
+      </div>
+      
+      <div style="text-align: center; padding: 20px; border-top: 1px solid #eee; background-color: #f9f9f9;">
+        <p style="color: #666; font-size: 12px; margin: 0;">
+          Need help? Contact us at <a href="mailto:${emailConfig.supportEmail}" style="color: #007cba;">${emailConfig.supportEmail}</a>
+        </p>
+      </div>
+    </div>
+  `;
+
+  const text = `
+    Mindscribe - Verify Your Email Address
+    
+    Thank you for signing up for Mindscribe! To complete your registration and start using your account, please verify your email address.
+    
+    Verify your email: ${verificationUrl}
+    
+    This link will expire in 24 hours for security reasons.
+    
+    If you didn't create an account with us, please ignore this email.
+    
+    Need help? Contact us at ${emailConfig.supportEmail}
+  `;
+
+  return sendEmail({
+    to: email,
+    subject: "Verify Your Email Address - Mindscribe",
+    html,
+    text,
+    from: emailConfig.fromNoReply,
   });
 };
 

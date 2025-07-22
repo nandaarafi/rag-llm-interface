@@ -77,6 +77,25 @@ export async function createUser(email: string, password: string) {
     throw error;
   }
 }
+
+export async function createUserWithEmailVerification(email: string, password: string): Promise<string> {
+  const salt = genSaltSync(10);
+  const hash = hashSync(password, salt);
+  const verificationToken = crypto.randomUUID();
+
+  try {
+    await db.insert(user).values({ 
+      email, 
+      password: hash,
+      emailVerified: false,
+      emailVerificationToken: verificationToken
+    });
+    return verificationToken;
+  } catch (error) {
+    console.error('Failed to create user with email verification');
+    throw error;
+  }
+}
 export async function createUserOauth(userData: {
   email: string;
   name: string;
@@ -92,6 +111,7 @@ export async function createUserOauth(userData: {
       .values({
         email: userData.email,
         image: userData.image,
+        emailVerified: true, // OAuth users are pre-verified
         createdAt: new Date(),
         updatedAt: new Date(),
       })
@@ -636,6 +656,39 @@ export async function updateUserPlan(userId: string, planType: PlanType): Promis
       .where(eq(user.id, userId));
   } catch (error) {
     console.error('Failed to update user plan');
+    throw error;
+  }
+}
+
+// Email verification functions
+export async function getUserByEmailVerificationToken(token: string): Promise<User | null> {
+  try {
+    const result = await db
+      .select()
+      .from(user)
+      .where(eq(user.emailVerificationToken, token));
+    
+    return result[0] || null;
+  } catch (error) {
+    console.error('Failed to get user by email verification token');
+    throw error;
+  }
+}
+
+export async function verifyUserEmail(token: string): Promise<boolean> {
+  try {
+    const result = await db
+      .update(user)
+      .set({
+        emailVerified: true,
+        emailVerificationToken: null,
+        updatedAt: new Date(),
+      })
+      .where(eq(user.emailVerificationToken, token));
+    
+    return true;
+  } catch (error) {
+    console.error('Failed to verify user email');
     throw error;
   }
 }

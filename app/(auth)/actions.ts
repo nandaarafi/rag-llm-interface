@@ -2,8 +2,8 @@
 
 import { z } from 'zod';
 
-import { createUser, getUser } from '@/lib/db/queries';
-import { sendWelcomeEmail } from '@/lib/resend';
+import { createUser, getUser, createUserWithEmailVerification } from '@/lib/db/queries';
+import { sendWelcomeEmail, sendEmailVerificationEmail } from '@/lib/resend';
 
 import { signIn } from './auth';
 
@@ -13,7 +13,7 @@ const authFormSchema = z.object({
 });
 
 export interface LoginActionState {
-  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data' | 'oauth_only';
+  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data' | 'oauth_only' | 'email_not_verified';
 }
 
 export const login = async (
@@ -28,8 +28,14 @@ export const login = async (
 
     // Check if user exists and is OAuth-only before attempting sign in
     const users = await getUser(validatedData.email);
-    if (users.length > 0 && !users[0].password) {
-      return { status: 'oauth_only' };
+    if (users.length > 0) {
+      const user = users[0];
+      if (!user.password) {
+        return { status: 'oauth_only' };
+      }
+      if (!user.emailVerified) {
+        return { status: 'email_not_verified' };
+      }
     }
 
     await signIn('credentials', {
@@ -55,7 +61,8 @@ export interface RegisterActionState {
     | 'success'
     | 'failed'
     | 'user_exists'
-    | 'invalid_data';
+    | 'invalid_data'
+    | 'verification_sent';
 }
 
 export const register = async (
@@ -73,24 +80,22 @@ export const register = async (
     if (user) {
       return { status: 'user_exists' } as RegisterActionState;
     }
-    await createUser(validatedData.email, validatedData.password);
     
-    // Send welcome email (non-blocking)
+    // Create user with email verification token
+    const verificationToken = await createUserWithEmailVerification(
+      validatedData.email, 
+      validatedData.password
+    );
+    
+    // Send verification email (non-blocking)
     try {
-      const name = validatedData.email.split('@')[0];
-      await sendWelcomeEmail(validatedData.email, name);
+      await sendEmailVerificationEmail(validatedData.email, verificationToken);
     } catch (emailError) {
-      console.error('Failed to send welcome email:', emailError);
+      console.error('Failed to send verification email:', emailError);
       // Don't fail registration if email fails
     }
-    
-    await signIn('credentials', {
-      email: validatedData.email,
-      password: validatedData.password,
-      redirect: false,
-    });
 
-    return { status: 'success' };
+    return { status: 'verification_sent' };
   } catch (error) {
     if (error instanceof z.ZodError) {
       return { status: 'invalid_data' };
