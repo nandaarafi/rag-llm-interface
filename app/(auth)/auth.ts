@@ -11,6 +11,14 @@ interface ExtendedSession extends Session {
   user: User;
 }
 
+// Debug environment variables
+console.error('Environment Debug:', {
+  hasGoogleId: !!process.env.GOOGLE_ID,
+  googleIdPrefix: process.env.GOOGLE_ID?.replace(/\n/g, ''),
+  nextauthUrl: process.env.NEXTAUTH_URL?.replace(/\n/g, ''),
+  nodeEnv: process.env.NODE_ENV
+});
+
 export const {
   handlers: { GET, POST },
   auth,
@@ -19,6 +27,10 @@ export const {
 } = NextAuth({
   ...authConfig,
   debug: process.env.NODE_ENV === 'development',
+  ...(process.env.NEXTAUTH_URL && {
+    basePath: '/api/auth',
+    trustHost: true,
+  }),
   providers: [
     Credentials({
       credentials: {},
@@ -41,14 +53,29 @@ export const {
       },
     }),
     GoogleProvider({
-      clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET,
+      clientId: process.env.GOOGLE_ID?.replace(/\n/g, ''),
+      clientSecret: process.env.GOOGLE_SECRET?.replace(/\n/g, ''),
       authorization: {
         params: {
           prompt: "consent",
           access_type: "offline",
           response_type: "code"
         }
+      },
+      // Add debug logging for production
+      async profile(profile, tokens) {
+        console.error('Google OAuth Profile Debug:', {
+          hasProfile: !!profile,
+          profileId: profile?.sub,
+          hasTokens: !!tokens,
+          tokenType: tokens?.token_type
+        });
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        };
       }
     })
   ],

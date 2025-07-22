@@ -21,6 +21,10 @@
   - Default: `true` (both features enabled)
   - Set to `false` to disable both email sending and Google OAuth for development
 
+## Deployment 
+- Bug when using file env as the environment variable in CLI use dashboard instead?
+- https://www.mindscribe.xyz became https://mindscribe.xyz
+
 # Backlog
 ## Though About Tool Calling
 - We need to separate, tool that need user to choose, or wheter the AI choose it
