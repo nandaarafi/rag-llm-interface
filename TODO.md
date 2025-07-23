@@ -24,6 +24,11 @@
 ## Deployment 
 - Bug when using file env as the environment variable in CLI use dashboard instead?
 - https://www.mindscribe.xyz became https://mindscribe.xyz
+- the environment variable end up with `\n` at the end of the line, fix using 
+
+```typescript
+import { createEnv } from "@t3-oss/env-nextjs";
+```
 
 # Backlog
 ## Though About Tool Calling
