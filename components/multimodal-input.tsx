@@ -43,6 +43,7 @@ function PureMultimodalInput({
   planType,
   hasAccess,
   onShowPaywall,
+  autoFocus = true,
 }: {
   chatId: string;
   input: UseChatHelpers['input'];
@@ -60,6 +61,7 @@ function PureMultimodalInput({
   planType: string;
   hasAccess?: boolean;
   onShowPaywall: () => void;
+  autoFocus?: boolean;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -275,7 +277,7 @@ function PureMultimodalInput({
           className,
         )}
         rows={2}
-        autoFocus
+        autoFocus={autoFocus}
         onKeyDown={(event) => {
           if (
             event.key === 'Enter' &&

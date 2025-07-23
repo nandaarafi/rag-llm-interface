@@ -41,8 +41,8 @@ function PureSuggestedActions({
     },
     {
       title: 'Help me to generate a PPT',
-      label: 'about AI',
-      action: 'Help me to generate a PPT about AI',
+      label: 'about AI in general',
+      action: 'Help me to generate a PPT about AI in general',
     },
   ];
 

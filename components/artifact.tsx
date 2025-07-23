@@ -337,6 +337,7 @@ function PureArtifact({
                     append={append}
                     className="bg-background dark:bg-muted"
                     setMessages={setMessages}
+                    autoFocus={false}
                     credits={0}
                     planType="free"
                     hasAccess={true}
