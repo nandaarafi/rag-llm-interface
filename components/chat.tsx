@@ -57,7 +57,16 @@ export function Chat({
       // Update credits immediately for better UX, then refetch to ensure accuracy
       decrementCredit();
       // Refetch credits from server to ensure sync (in case of any discrepancies)
-      setTimeout(() => refetchCredits(), 1000);
+      setTimeout(async () => {
+        try {
+          await refetchCredits();
+          console.log('✅ Credits refetched successfully after message');
+        } catch (error) {
+          console.error('❌ Failed to refetch credits after message:', error);
+          // Retry once more after 3 seconds if first attempt fails
+          setTimeout(() => refetchCredits(), 3000);
+        }
+      }, 1000);
     },
     onError: (error: any) => {
       console.log('💥 Chat Error:', error);
