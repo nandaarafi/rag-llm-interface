@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 import { memo } from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
-import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 interface SuggestedActionsProps {
   chatId: string;
@@ -12,7 +11,6 @@ interface SuggestedActionsProps {
   credits: number;
   planType: string;
   hasAccess?: boolean;
-  onShowPaywall: () => void;
 }
 
 function PureSuggestedActions({ 
@@ -20,8 +18,7 @@ function PureSuggestedActions({
   append, 
   credits, 
   planType, 
-  hasAccess, 
-  onShowPaywall 
+  hasAccess
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
@@ -63,28 +60,8 @@ function PureSuggestedActions({
           <Button
             variant="ghost"
             onClick={async () => {
-              // Check credits/access before appending suggested action
-              const planConfig = getPlanConfig(planType as PlanType);
-              const maxCredits = planConfig.credits;
-              
-              // For free plan users, check their actual credits rather than plan max credits
-              // This allows free users with credits to use suggested actions
-              if (planType === 'free') {
-                if (credits <= 0) {
-                  console.log('🚫 Blocking suggested action: free user with no credits', { credits, planType });
-                  onShowPaywall();
-                  return;
-                }
-              } else {
-                // For paid plans, check both plan max credits and current credits
-                if (maxCredits === 0 || credits <= 0) {
-                  console.log('🚫 Blocking suggested action: insufficient credits', { credits, planType, maxCredits });
-                  onShowPaywall();
-                  return;
-                }
-              }
-
-              console.log('✅ Executing suggested action with credits:', { credits, planType, hasAccess });
+              // Remove client-side credit checking - let server handle it
+              console.log('✅ Executing suggested action (server will validate credits):', { credits, planType, hasAccess });
               window.history.replaceState({}, '', `/chat/${chatId}`);
 
               append({

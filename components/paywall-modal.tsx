@@ -19,13 +19,13 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   // Debug logging
-  console.log('🎭 PaywallModal render:', { open });
+  // console.log('🎭 PaywallModal render:', { open });
 
   // Add global escape key listener for debugging
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) {
-        console.log('🔑 Global Escape key detected when modal is open');
+        // console.log('🔑 Global Escape key detected when modal is open');
       }
     };
     
@@ -34,7 +34,7 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
   }, [open]);
 
   const handleOpenChange = (newOpen: boolean) => {
-    console.log('🎭 PaywallModal handleOpenChange:', { newOpen, currentOpen: open });
+    // console.log('🎭 PaywallModal handleOpenChange:', { newOpen, currentOpen: open });
     onOpenChange(newOpen);
   };
 
@@ -60,12 +60,12 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
       <DialogContent 
         className="max-w-4xl max-h-[90vh] overflow-y-auto"
         onEscapeKeyDown={(e) => {
-          console.log('🔑 Escape key pressed in PaywallModal');
+          // console.log('🔑 Escape key pressed in PaywallModal');
           e.preventDefault();
           handleOpenChange(false);
         }}
         onPointerDownOutside={(e) => {
-          console.log('👆 Click outside PaywallModal');
+          // console.log('👆 Click outside PaywallModal');
           handleOpenChange(false);
         }}
         onInteractOutside={(e) => {

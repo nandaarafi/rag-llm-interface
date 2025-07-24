@@ -86,6 +86,7 @@ export async function POST(request: Request) {
       if (maxCredits === 0) {
         return new Response(
           JSON.stringify({
+            status: 402,
             error: 'no_credits_plan',
             message: 'Your current plan does not include AI credits. Please upgrade to continue chatting.',
             credits: userCredits,
@@ -102,6 +103,7 @@ export async function POST(request: Request) {
       if (userCredits <= 0) {
         return new Response(
           JSON.stringify({
+            status: 402,
             error: 'insufficient_credits',
             message: 'You have reached your credit limit. Please upgrade to continue chatting.',
             credits: userCredits,

@@ -24,7 +24,6 @@ import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import { Images } from 'lucide-react';
-import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
 
 function PureMultimodalInput({
   chatId,
@@ -116,28 +115,8 @@ function PureMultimodalInput({
   const [uploadQueue, setUploadQueue] = useState<Array<string>>([]);
 
   const submitForm = useCallback(() => {
-    // Check credits/access before submitting
-    const planConfig = getPlanConfig(planType as PlanType);
-    const maxCredits = planConfig.credits;
-    
-    // For free plan users, check their actual credits rather than plan max credits
-    // This allows free users with credits to chat
-    if (planType === 'free') {
-      if (credits <= 0) {
-        console.log('🚫 Blocking submission: free user with no credits', { credits, planType });
-        onShowPaywall();
-        return;
-      }
-    } else {
-      // For paid plans, check both plan max credits and current credits
-      if (maxCredits === 0 || credits <= 0) {
-        console.log('🚫 Blocking submission: insufficient credits', { credits, planType, maxCredits });
-        onShowPaywall();
-        return;
-      }
-    }
-
-    console.log('✅ Submitting message with credits:', { credits, planType, hasAccess });
+    // Remove client-side credit checking - let server handle it
+    // console.log('✅ Submitting message (server will validate credits):', { credits, planType, hasAccess });
     window.history.replaceState({}, '', `/chat/${chatId}`);
 
     handleSubmit(undefined, {
@@ -161,7 +140,6 @@ function PureMultimodalInput({
     credits,
     planType,
     hasAccess,
-    onShowPaywall,
   ]);
 
   const uploadFile = async (file: File) => {
@@ -230,7 +208,6 @@ function PureMultimodalInput({
             credits={credits}
             planType={planType}
             hasAccess={hasAccess}
-            onShowPaywall={onShowPaywall}
           />
         )}
 
