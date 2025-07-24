@@ -36,14 +36,32 @@ export const regularPrompt =
 
 export const systemPrompt = ({
   selectedChatModel,
+  currentArtifact,
 }: {
   selectedChatModel: string;
+  currentArtifact?: {
+    documentId: string;
+    kind: string;
+    title: string;
+  } | null;
 }) => {
-  if (selectedChatModel === 'chat-model-reasoning') {
-    return regularPrompt;
-  } else {
-    return `${regularPrompt}\n\n${artifactsPrompt}`;
+  let basePrompt = regularPrompt;
+  
+  if (selectedChatModel !== 'chat-model-reasoning') {
+    basePrompt = `${regularPrompt}\n\n${artifactsPrompt}`;
   }
+  
+  if (currentArtifact) {
+    basePrompt += `\n\nCURRENT ARTIFACT CONTEXT:
+The user is currently viewing a ${currentArtifact.kind} artifact titled "${currentArtifact.title}" (ID: ${currentArtifact.documentId}).
+
+When the user requests changes to this content:
+- Use \`updateDocument\` with the current artifact ID (${currentArtifact.documentId}) to modify the existing ${currentArtifact.kind} artifact
+- Only use \`createDocument\` if the user explicitly asks for a completely new document or different artifact type
+- Consider the current artifact context when interpreting user requests`;
+  }
+  
+  return basePrompt;
 };
 
 export const codePrompt = `

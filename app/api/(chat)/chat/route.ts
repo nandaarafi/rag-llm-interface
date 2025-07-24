@@ -39,10 +39,16 @@ export async function POST(request: Request) {
       id,
       messages,
       selectedChatModel,
+      currentArtifact,
     }: {
       id: string;
       messages: Array<UIMessage>;
       selectedChatModel: string;
+      currentArtifact?: {
+        documentId: string;
+        kind: string;
+        title: string;
+      } | null;
     } = await request.json();
 
     const session = await auth();
@@ -169,7 +175,7 @@ export async function POST(request: Request) {
       execute: (dataStream) => {
         const result = streamText({
           model: myProvider.languageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel }),
+          system: systemPrompt({ selectedChatModel, currentArtifact }),
           messages,
           maxSteps: 5,
           experimental_activeTools:

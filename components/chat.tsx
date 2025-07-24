@@ -34,6 +34,9 @@ export function Chat({
 }) {
   const { mutate } = useSWRConfig();
   const { decrementCredit, refetchCredits, credits, planType } = useCredits();
+  
+  const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
+  const artifactState = useArtifactSelector((state) => state);
 
   const {
     messages,
@@ -47,7 +50,15 @@ export function Chat({
     reload,
   } = useChat({
     id,
-    body: { id, selectedChatModel: selectedChatModel },
+    body: { 
+      id, 
+      selectedChatModel: selectedChatModel,
+      currentArtifact: artifactState.isVisible ? {
+        documentId: artifactState.documentId,
+        kind: artifactState.kind,
+        title: artifactState.title
+      } : null
+    },
     initialMessages,
     experimental_throttle: 100,
     sendExtraMessageFields: true,
@@ -101,7 +112,6 @@ export function Chat({
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const [showPaywall, setShowPaywall] = useState(false);
   const [paywallDismissed, setPaywallDismissed] = useState(false);
-  const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
   // Only show paywall modal when explicitly triggered by API error responses
   const shouldShowPaywall = showPaywall;
