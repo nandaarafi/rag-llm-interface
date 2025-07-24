@@ -1,6 +1,12 @@
 
 # TODO
 - [] Create ppt editor, similar to sheet-editor, text-editor etc
+- [] Enhance paywall handling for insufficient credits
+  - [] Add preventive credit checks before message submission
+  - [] Improve error handling for different credit error types (insufficient_credits vs no_credits_plan)
+  - [] Enhance user feedback with specific messages for different credit scenarios
+  - [] Add loading states and better UX during credit validation
+  - [] Consider adding credit balance display in UI
 
 # NOTES
 

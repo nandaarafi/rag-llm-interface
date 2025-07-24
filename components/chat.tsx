@@ -33,7 +33,7 @@ export function Chat({
   isReadonly: boolean;
 }) {
   const { mutate } = useSWRConfig();
-  const { decrementCredit, refetchCredits, credits, planType, loading } = useCredits();
+  const { decrementCredit, refetchCredits, credits, planType } = useCredits();
 
   const {
     messages,
@@ -70,16 +70,15 @@ export function Chat({
     },
     onError: (error: any) => {
       console.log('💥 Chat Error:', error);
-      // Check for structured credit error response
-      if (error?.status === 402 || 
-          error?.message?.includes('Payment required') || 
-          error?.message?.includes('Insufficient credits') ||
-          error?.message?.includes('free plan limit')) {
-        console.log('💳 Credit error detected, showing paywall and stopping any ongoing requests');
+      
+      const isCreditError = 
+        error?.message?.includes('credit limit');
+      if (isCreditError) {
+        // console.log('💳 Credit error detected, showing paywall and stopping any ongoing requests');
         
         // Stop any ongoing streaming/generation
         if (status === 'streaming') {
-          console.log('🛑 Stopping ongoing chat request due to credit error');
+          // console.log('🛑 Stopping ongoing chat request due to credit error');
           stop();
         }
         
@@ -104,20 +103,16 @@ export function Chat({
   const [paywallDismissed, setPaywallDismissed] = useState(false);
   const isArtifactVisible = useArtifactSelector((state) => state.isVisible);
 
-  // Check if should show paywall modal
-  // Only auto-show if credits are 0, user is free, not loading, and user hasn't manually dismissed it
-  const shouldShowPaywall = showPaywall || (credits === 0 && planType === 'free' && !loading && !paywallDismissed);
+  // Only show paywall modal when explicitly triggered by API error responses
+  const shouldShowPaywall = showPaywall;
 
   // Debug logging
-  console.log('🔍 Chat Component State:', {
-    showPaywall,
-    paywallDismissed,
-    credits,
-    planType,
-    loading,
-    shouldShowPaywall,
-    chatStatus: status
-  });
+  // console.log('🔍 Chat Component State:', {
+  //   showPaywall,
+  //   paywallDismissed,
+  //   shouldShowPaywall,
+  //   chatStatus: status
+  // });
 
   const handlePaywallClose = (open: boolean) => {
     console.log('🔧 handlePaywallClose called with:', open);
