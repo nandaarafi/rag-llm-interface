@@ -4,6 +4,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { PlusIcon, TrashIcon, EyeIcon, PencilEditIcon } from '@/components/icons';
+import { generatePPTX, downloadPPTX } from '@/lib/pptx-generator';
+import { toast } from 'sonner';
 
 interface Slide {
   id: string;
@@ -153,17 +155,37 @@ export function PresentationEditor({
     setEditingContent('');
   };
 
-  const nextSlide = () => {
-    if (currentSlide < presentation.slides.length - 1) {
-      setCurrentSlide(currentSlide + 1);
+  const exportToPPTX = async () => {
+    try {
+      toast.loading('Generating PPTX file...');
+      const pptxBlob = await generatePPTX(content);
+      
+      // Extract presentation title for filename
+      let filename = 'presentation.pptx';
+      if (presentation.title) {
+        filename = `${presentation.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.pptx`;
+      }
+      
+      downloadPPTX(pptxBlob, filename);
+      toast.dismiss();
+      toast.success('PPTX file exported successfully!');
+    } catch (error) {
+      toast.dismiss();
+      toast.error(`Failed to export PPTX: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   };
 
-  const prevSlide = () => {
+  const nextSlide = useCallback(() => {
+    if (currentSlide < presentation.slides.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+    }
+  }, [currentSlide, presentation.slides.length]);
+
+  const prevSlide = useCallback(() => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
-  };
+  }, [currentSlide]);
 
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
@@ -346,6 +368,16 @@ export function PresentationEditor({
           </div>
           
           <div className="flex items-center space-x-2">
+            <button
+              onClick={exportToPPTX}
+              className={cn("px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors text-sm font-medium", {
+                'bg-blue-500 hover:bg-blue-600': theme === 'light',
+                'bg-blue-600 hover:bg-blue-700': theme === 'dark'
+              })}
+              title="Export as PPTX"
+            >
+              Export PPTX
+            </button>
             <button
               onClick={() => setShowThumbnails(!showThumbnails)}
               className={cn("p-2 rounded transition-colors", {

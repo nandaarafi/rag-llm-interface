@@ -3,6 +3,8 @@ import postgres from 'postgres';
 import { myProvider } from '@/lib/ai/providers';
 
 export async function GET() {
+  console.log('DATABASE_URL:', process.env.DATABASE_URL);
+  
   const healthChecks = {
     status: 'healthy',
     url: process.env.NEXTAUTH_URL || 'http://localhost:3000',
@@ -13,12 +15,18 @@ export async function GET() {
 
   // Test database connection
   try {
-    const client = postgres(process.env.DATABASE_URL!);
+    const client = postgres(process.env.DATABASE_URL!, { 
+      ssl: 'require',
+      max: 1,
+      idle_timeout: 20,
+      connect_timeout: 10
+    });
     await client`SELECT 1`;
     await client.end();
-    console.log(process.env.DATABASE_URL);
+    console.log('Database connection successful');
     healthChecks.database = 'connected';
   } catch (error) {
+    console.error('Database connection error:', error);
     healthChecks.database = `error: ${error instanceof Error ? error.message : 'Unknown error'}`;
     healthChecks.status = 'degraded';
   }
