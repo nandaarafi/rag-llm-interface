@@ -6,6 +6,7 @@ import {
   asc,
   desc,
   eq,
+  exists,
   gt,
   gte,
   inArray,
@@ -302,10 +303,26 @@ export async function getChatsByUserId({
   });
 }
 
-export async function getChatById({ id }: { id: string }) {
+export async function getChatById({ id, userId }: { id: string; userId?: string }) {
   try {
-    const [selectedChat] = await db.select().from(chat).where(eq(chat.id, id));
-    return selectedChat;
+    if (userId) {
+      // If userId provided, use RLS context for private chats
+      return await withUserContext(userId, async () => {
+        const [selectedChat] = await db
+          .select()
+          .from(chat)
+          .where(eq(chat.id, id));
+        return selectedChat;
+      });
+    } else {
+      // No userId provided, try to access public chat directly
+      // RLS policy "public_chats_readable" allows this for public chats
+      const [selectedChat] = await db
+        .select()
+        .from(chat)
+        .where(and(eq(chat.id, id), eq(chat.visibility, 'public')));
+      return selectedChat;
+    }
   } catch (error) {
     console.error('Failed to get chat by id from database');
     throw error;
@@ -325,13 +342,35 @@ export async function saveMessages({
   }
 }
 
-export async function getMessagesByChatId({ id }: { id: string }) {
+export async function getMessagesByChatId({ id, userId }: { id: string; userId?: string }) {
   try {
-    return await db
-      .select()
-      .from(message)
-      .where(eq(message.chatId, id))
-      .orderBy(asc(message.createdAt));
+    if (userId) {
+      // If userId provided, use RLS context for private chats
+      return await withUserContext(userId, async () => {
+        return await db
+          .select()
+          .from(message)
+          .where(eq(message.chatId, id))
+          .orderBy(asc(message.createdAt));
+      });
+    } else {
+      // No userId provided, get messages for public chats only
+      // RLS policy allows access to messages from public chats
+      return await db
+        .select()
+        .from(message)
+        .where(and(
+          eq(message.chatId, id),
+          // Subquery to ensure chat is public
+          exists(
+            db
+              .select()
+              .from(chat)
+              .where(and(eq(chat.id, id), eq(chat.visibility, 'public')))
+          )
+        ))
+        .orderBy(asc(message.createdAt));
+    }
   } catch (error) {
     console.error('Failed to get messages by chat id from database', error);
     throw error;

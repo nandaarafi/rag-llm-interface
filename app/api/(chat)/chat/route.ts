@@ -130,7 +130,7 @@ export async function POST(request: Request) {
       return new Response('No user message found', { status: 400 });
     }
 
-    const chat = await getChatById({ id });
+    const chat = await getChatById({ id, userId: session.user.id });
 
     if (!chat) {
       try {
@@ -286,7 +286,7 @@ export async function DELETE(request: Request) {
   }
 
   try {
-    const chat = await getChatById({ id });
+    const chat = await getChatById({ id, userId: session.user.id });
 
     if (chat.userId !== session.user.id) {
       return new Response('Unauthorized', { status: 401 });

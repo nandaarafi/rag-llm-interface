@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const chat = await getChatById({ id: chatId });
+  const chat = await getChatById({ id: chatId, userId: session.user.id });
 
   if (!chat) {
     return new Response('Chat not found', { status: 404 });
@@ -48,7 +48,7 @@ export async function PATCH(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const chat = await getChatById({ id: chatId });
+  const chat = await getChatById({ id: chatId, userId: session.user.id });
 
   if (!chat) {
     return new Response('Chat not found', { status: 404 });

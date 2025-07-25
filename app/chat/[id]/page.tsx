@@ -12,14 +12,23 @@ import type { Attachment, UIMessage } from 'ai';
 export default async function Page(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
   const { id } = params;
-  const chat = await getChatById({ id });
+  const session = await auth();
+
+  // Try to get chat with appropriate context
+  let chat: Awaited<ReturnType<typeof getChatById>>;
+  if (session?.user?.id) {
+    // User is logged in - try to get chat (works for both private and public)
+    chat = await getChatById({ id, userId: session.user.id });
+  } else {
+    // User not logged in - can only access public chats
+    chat = await getChatById({ id });
+  }
 
   if (!chat) {
     notFound();
   }
 
-  const session = await auth();
-
+  // Additional access control for private chats
   if (chat.visibility === 'private') {
     if (!session || !session.user) {
       return notFound();
@@ -30,8 +39,10 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
+  // Get messages with appropriate context
   const messagesFromDb = await getMessagesByChatId({
     id,
+    userId: session?.user?.id,
   });
 
   function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {

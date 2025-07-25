@@ -42,8 +42,9 @@ export const authConfig = {
       }
 
       if (isOnChat) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
+        // Allow access to /chat routes for both authenticated and unauthenticated users
+        // The page-level logic will handle public vs private chat access control
+        return true;
       }
 
       return true;
