@@ -21,6 +21,7 @@ import { useArtifact } from '@/hooks/use-artifact';
 import equal from 'fast-deep-equal';
 import { SpreadsheetEditor } from './sheet-editor';
 import { ImageEditor } from './image-editor';
+import { PresentationEditor } from './ppt-editor';
 
 interface DocumentPreviewProps {
   isReadonly: boolean;
@@ -33,11 +34,19 @@ export function DocumentPreview({
   result,
   args,
 }: DocumentPreviewProps) {
+  
+  
+  
+  
   const { artifact, setArtifact } = useArtifact();
+  
 
   const { data: documents, isLoading: isDocumentsFetching } = useSWR<
     Array<Document>
   >(result ? `/api/document?id=${result.id}` : null, fetcher);
+  
+  
+  
 
   const previewDocument = useMemo(() => documents?.[0], [documents]);
   const hitboxRef = useRef<HTMLDivElement>(null);
@@ -97,7 +106,14 @@ export function DocumentPreview({
         }
       : null;
 
-  if (!document) return <LoadingSkeleton artifactKind={artifact.kind} />;
+  
+  
+  
+
+  if (!document) {
+    
+    return <LoadingSkeleton artifactKind={artifact.kind} />;
+  }
 
   return (
     <div className="relative w-full cursor-pointer">
@@ -241,7 +257,7 @@ const DocumentContent = ({ document }: { document: Document }) => {
     'h-[257px] overflow-y-scroll border rounded-b-2xl dark:bg-muted border-t-0 dark:border-zinc-700',
     {
       'p-4 sm:px-14 sm:py-16': document.kind === 'text',
-      'p-0': document.kind === 'code',
+      'p-0': document.kind === 'code' || document.kind === 'ppt',
     },
   );
 
@@ -279,7 +295,15 @@ const DocumentContent = ({ document }: { document: Document }) => {
           status={artifact.status}
           isInline={true}
         />
-      ) : null}
+      ) : document.kind === 'ppt' ? (
+        <div className="flex flex-1 relative size-full">
+          <div className="absolute inset-0">
+            <PresentationEditor {...commonProps} onSaveContent={() => {}} />
+          </div>
+        </div>
+      ) : (
+        null
+      )}
     </div>
   );
 };

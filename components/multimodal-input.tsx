@@ -16,14 +16,13 @@ import {
 import { toast } from 'sonner';
 import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { ArrowUpIcon, StopIcon } from './icons';
+import { ArrowUpIcon, StopIcon, PaperclipIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
-import { Images } from 'lucide-react';
 
 function PureMultimodalInput({
   chatId,
@@ -326,7 +325,7 @@ function PureAttachmentsButton({
       disabled={status !== 'ready'}
       variant="ghost"
     >
-      <Images size={14} />
+      <PaperclipIcon size={14} />
     </Button>
     </TooltipTrigger>
           <TooltipContent side="top">
