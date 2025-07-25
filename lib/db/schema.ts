@@ -171,3 +171,13 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const systemSettings = pgTable('SystemSettings', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  description: varchar('description', { length: 255 }).notNull().unique(),
+  condition: boolean('condition').notNull().default(true),
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+});
+
+export type SystemSettings = InferSelectModel<typeof systemSettings>;

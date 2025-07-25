@@ -69,7 +69,7 @@ export function PaywallModal({ open, onOpenChange }: PaywallModalProps) {
           handleOpenChange(false);
         }}
         onInteractOutside={(e) => {
-          console.log('🔄 Interact outside PaywallModal');
+          // console.log('🔄 Interact outside PaywallModal');
           handleOpenChange(false);
         }}
       >

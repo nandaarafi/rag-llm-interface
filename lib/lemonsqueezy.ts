@@ -33,8 +33,8 @@ import {
         throw new Error("LEMONSQUEEZY_STORE_ID is not defined in the environment variables.");
       }
       // console.log(process.env.LEMONSQUEEZY_API_KEY);
-      console.log(email);
-      console.log(userId);
+      // console.log(email);
+      // console.log(userId);
   
       const newCheckout: NewCheckout = {
         productOptions: {

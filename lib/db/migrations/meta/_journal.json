@@ -71,6 +71,20 @@
       "when": 1752802949040,
       "tag": "0009_dear_mysterio",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1753432883792,
+      "tag": "0010_magenta_red_skull",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1753434009805,
+      "tag": "0011_broad_dark_phoenix",
+      "breakpoints": true
     }
   ]
 }

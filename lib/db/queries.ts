@@ -27,6 +27,8 @@ import {
   vote,
   type DBMessage,
   type Chat,
+  systemSettings,
+  type SystemSettings,
 } from './schema';
 import type { ArtifactKind } from '@/components/artifact';
 
@@ -689,6 +691,71 @@ export async function verifyUserEmail(token: string): Promise<boolean> {
     return true;
   } catch (error) {
     console.error('Failed to verify user email');
+    throw error;
+  }
+}
+
+// System Settings functions
+export async function getSystemSetting(description: string): Promise<boolean> {
+  try {
+    const [setting] = await db
+      .select()
+      .from(systemSettings)
+      .where(eq(systemSettings.description, description))
+      .limit(1);
+    
+    return setting?.condition ?? true; // Default to true if setting doesn't exist
+  } catch (error) {
+    console.error('Failed to get system setting from database');
+    throw error;
+  }
+}
+
+export async function createSystemSetting(description: string, condition: boolean): Promise<SystemSettings> {
+  try {
+    const [newSetting] = await db
+      .insert(systemSettings)
+      .values({
+        description,
+        condition,
+      })
+      .returning();
+    
+    return newSetting;
+  } catch (error) {
+    console.error('Failed to create system setting in database');
+    throw error;
+  }
+}
+
+export async function updateSystemSetting(description: string, condition: boolean): Promise<void> {
+  try {
+    const result = await db
+      .update(systemSettings)
+      .set({
+        condition,
+        updatedAt: new Date(),
+      })
+      .where(eq(systemSettings.description, description));
+    
+    // If no rows were updated, create the setting
+    if (result.rowCount === 0) {
+      await createSystemSetting(description, condition);
+    }
+  } catch (error) {
+    console.error('Failed to update system setting in database');
+    throw error;
+  }
+}
+
+export async function getAllSystemSettings(): Promise<SystemSettings[]> {
+  try {
+    return await db
+      .select()
+      .from(systemSettings)
+      .orderBy(asc(systemSettings.description));
+  } catch (error) {
+    console.error('Failed to get all system settings from database');
     throw error;
   }
 }

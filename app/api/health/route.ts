@@ -3,7 +3,7 @@ import postgres from 'postgres';
 import { myProvider } from '@/lib/ai/providers';
 
 export async function GET() {
-  console.log('DATABASE_URL:', process.env.DATABASE_URL);
+  // console.log('DATABASE_URL:', process.env.DATABASE_URL);
   
   const healthChecks = {
     status: 'healthy',
@@ -23,7 +23,7 @@ export async function GET() {
     });
     await client`SELECT 1`;
     await client.end();
-    console.log('Database connection successful');
+    // console.log('Database connection successful');
     healthChecks.database = 'connected';
   } catch (error) {
     console.error('Database connection error:', error);

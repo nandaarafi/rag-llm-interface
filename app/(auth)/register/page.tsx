@@ -11,10 +11,11 @@ import { Button } from '@/components/ui/button';
 
 import { register, type RegisterActionState } from '../actions';
 import { toast } from '@/components/toast';
-import { DEV_ENABLE_EXTERNAL_SERVICES } from '@/lib/dev-config';
+import { useSystemSettings } from '@/lib/hooks/use-system-settings';
 
 export default function Page() {
   const router = useRouter();
+  const { googleOAuthEnabled } = useSystemSettings();
 
   const [email, setEmail] = useState('');
   const [isSuccessful, setIsSuccessful] = useState(false);
@@ -59,10 +60,10 @@ export default function Page() {
     e.preventDefault();
     
     // Developer control: Disable Google OAuth if external services are disabled
-    if (!DEV_ENABLE_EXTERNAL_SERVICES) {
+    if (!googleOAuthEnabled) {
       toast({
         type: 'error',
-        description: '[DEV MODE] Google OAuth is disabled.',
+        description: '[DEV MODE] Google OAuth is disabled',
       });
       return;
     }

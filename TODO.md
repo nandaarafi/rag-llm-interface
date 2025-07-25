@@ -4,8 +4,8 @@
 - [x] Fix artifact type confusion bug - when user is working with PPT artifact and requests changes, system incorrectly creates new sheet artifact instead of updating existing PPT artifact
 - [x] Investigate AI prompt/context detection for artifact type selection
 - [x] Review artifact creation logic to properly maintain context of current artifact type
-- [] Test PPT artifact update scenarios to ensure proper artifact type persistence
-- [] Make the Pricing UI consistent in pricing page and also in paywall modal
+- [X] Test PPT artifact update scenarios to ensure proper artifact type persistence
+- [X] Make the Pricing UI consistent in pricing page and also in paywall modal
 
 # NOTES
 
@@ -13,9 +13,17 @@
 - ngrok http --url=informed-commonly-alpaca.ngrok-free.app 3000
 
 ## Development
-- **Developer Control Flag**: Use `DEV_ENABLE_EXTERNAL_SERVICES` in `/lib/dev-config.ts` to enable/disable email sending and Google OAuth
-  - Default: `true` (both features enabled)
-  - Set to `false` to disable both email sending and Google OAuth for development
+- **System Settings**: Database-driven configuration system for controlling external services
+  - **Database Table**: `SystemSettings` with settings stored in database
+  - **Settings Available** (Hierarchical):
+    - `ENABLE_EXTERNAL_SERVICES`: **Master switch** - overrides all external services
+    - `ENABLE_EMAIL_SENDING`: Control email sending (only when master switch is ON)
+    - `ENABLE_GOOGLE_OAUTH`: Control Google OAuth login (only when master switch is ON)
+  - **Management**:
+    - View settings: `GET /api/system-settings` (public)
+    - Admin management: `GET/POST /api/admin/system-settings` (requires auth)
+    - Initialize defaults: `npx tsx scripts/init-system-settings.ts`
+  - **Legacy**: `DEV_ENABLE_EXTERNAL_SERVICES` constant kept for backward compatibility
 
 ## Deployment 
 - Bug when using file env as the environment variable in CLI use dashboard instead?

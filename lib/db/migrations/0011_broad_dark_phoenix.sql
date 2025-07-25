@@ -1,0 +1,1 @@
+ALTER TABLE "SystemSettings" ADD CONSTRAINT "SystemSettings_description_unique" UNIQUE("description");

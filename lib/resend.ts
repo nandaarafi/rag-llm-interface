@@ -1,5 +1,5 @@
 import { Resend } from "resend";
-import { DEV_ENABLE_EXTERNAL_SERVICES } from './dev-config';
+import { getEmailEnabled } from './dev-config';
 
 if (!process.env.RESEND_API_KEY) {
   throw new Error("RESEND_API_KEY is not set");
@@ -38,8 +38,9 @@ export const sendEmail = async ({
   from?: string;
 }) => {
   // Developer control: Skip sending emails if disabled
-  if (!DEV_ENABLE_EXTERNAL_SERVICES) {
-    console.log(`[DEV MODE] Email sending disabled. Would have sent: ${subject} to ${to}`);
+  const emailEnabled = await getEmailEnabled();
+  if (!emailEnabled) {
+    console.log(`[DEV MODE] Email sending disabled via database setting. Would have sent: ${subject} to ${to}`);
     return { id: 'dev-mode-skip' };
   }
 
