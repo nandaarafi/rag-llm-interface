@@ -1,9 +1,9 @@
 
 # TODO
 - [x] Create ppt editor, similar to sheet-editor, text-editor etc
-- [] Fix artifact type confusion bug - when user is working with PPT artifact and requests changes, system incorrectly creates new sheet artifact instead of updating existing PPT artifact
-- [] Investigate AI prompt/context detection for artifact type selection
-- [] Review artifact creation logic to properly maintain context of current artifact type
+- [x] Fix artifact type confusion bug - when user is working with PPT artifact and requests changes, system incorrectly creates new sheet artifact instead of updating existing PPT artifact
+- [x] Investigate AI prompt/context detection for artifact type selection
+- [x] Review artifact creation logic to properly maintain context of current artifact type
 - [] Test PPT artifact update scenarios to ensure proper artifact type persistence
 - [] Make the Pricing UI consistent in pricing page and also in paywall modal
 
