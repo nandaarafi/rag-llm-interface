@@ -52,22 +52,24 @@ export default function PricingPage() {
             <button
               onClick={() => setBillingCycle('monthly')}
               className={cn(
-                'px-4 py-1 rounded-md',
-                // MODIFIED: Replaced `bg-gray-600` with `bg-accent` for the active state
-                billingCycle === 'monthly' ? 'bg-gray-200' : 'bg-transparent'
+                'px-4 py-2 rounded-md transition-colors',
+                billingCycle === 'monthly' 
+                  ? 'bg-background shadow-sm' 
+                  : 'hover:bg-muted-foreground/10'
               )}
             >
-              MONTHLY
+              Monthly
             </button>
             <button
               onClick={() => setBillingCycle('yearly')}
               className={cn(
-                'px-4 py-1 rounded-md',
-                // MODIFIED: Replaced `bg-gray-600` with `bg-accent` for the active state
-                billingCycle === 'yearly' ? 'bg-gray-200' : 'bg-transparent'
+                'px-4 py-2 rounded-md transition-colors',
+                billingCycle === 'yearly' 
+                  ? 'bg-background shadow-sm' 
+                  : 'hover:bg-muted-foreground/10'
               )}
             >
-              YEARLY (SAVE 20%)
+              Yearly (Save 20%)
             </button>
           </div>
         </div>
@@ -79,7 +81,14 @@ export default function PricingPage() {
               <div key={tier.id} className={cn('relative', tier.ui.proGlow && 'p-[1px] rounded-2xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400')}>
                 <Card className="rounded-2xl h-full flex flex-col">
                   <CardHeader>
-                    <CardTitle className="text-muted-foreground font-normal">{tier.name}</CardTitle>
+                    <div className="flex items-center justify-between">
+                      <CardTitle className="text-muted-foreground font-normal">{tier.displayName}</CardTitle>
+                      {tier.ui.popular && (
+                        <span className="text-xs bg-gradient-to-r from-purple-500 to-pink-500 text-white px-2 py-1 rounded-full">
+                          Most Popular
+                        </span>
+                      )}
+                    </div>
                     {tier.id === 'free' ? (
                         <p className="text-4xl font-bold">{tier.priceDisplay.monthly}</p>
                     ) : (
