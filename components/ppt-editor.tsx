@@ -4,7 +4,7 @@ import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { PlusIcon, TrashIcon, EyeIcon, PencilEditIcon } from '@/components/icons';
-import { generatePPTX, downloadPPTX } from '@/lib/pptx-generator';
+// Import moved to dynamic import to avoid build issues
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
@@ -221,6 +221,7 @@ export function PresentationEditor({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
+    return undefined;
   }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const addSlide = () => {
@@ -302,6 +303,9 @@ export function PresentationEditor({
   const exportToPPTX = async () => {
     try {
       toast.loading('Generating PPTX file...');
+      
+      // Dynamic import to avoid build issues
+      const { generatePPTX, downloadPPTX } = await import('@/lib/pptx-generator');
       const pptxBlob = await generatePPTX(content);
       
       // Extract presentation title for filename

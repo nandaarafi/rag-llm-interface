@@ -6,7 +6,7 @@ import {
   UndoIcon,
 } from '@/components/icons';
 import { PresentationEditor } from '@/components/ppt-editor';
-import { generatePPTX, downloadPPTX } from '@/lib/pptx-generator';
+// Import moved to dynamic import to avoid build issues
 import { toast } from 'sonner';
 
 type Metadata = any;
@@ -95,6 +95,9 @@ export const pptArtifact = new Artifact<'ppt', Metadata>({
       onClick: async ({ content }) => {
         try {
           toast.loading('Generating PPTX file...');
+          
+          // Dynamic import to avoid build issues
+          const { generatePPTX, downloadPPTX } = await import('@/lib/pptx-generator');
           const pptxBlob = await generatePPTX(content);
           
           // Extract presentation title for filename

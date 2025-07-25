@@ -739,7 +739,7 @@ export async function updateSystemSetting(description: string, condition: boolea
       .where(eq(systemSettings.description, description));
     
     // If no rows were updated, create the setting
-    if (result.rowCount === 0) {
+    if (result.length === 0) {
       await createSystemSetting(description, condition);
     }
   } catch (error) {
