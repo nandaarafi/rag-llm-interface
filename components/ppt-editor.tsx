@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useTheme } from 'next-themes';
 import { cn } from '@/lib/utils';
 import { PlusIcon, TrashIcon, EyeIcon, PencilEditIcon } from '@/components/icons';
 import { generatePPTX, downloadPPTX } from '@/lib/pptx-generator';
 import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
 
 interface Slide {
   id: string;
@@ -14,6 +15,9 @@ interface Slide {
   layout: 'title' | 'content' | 'two-column' | 'image';
   backgroundColor?: string;
   speakerNotes?: string;
+  // New positioning data for movable elements
+  titlePosition?: { x: number; y: number; width: number; height: number };
+  contentPositions?: { x: number; y: number; width: number; height: number }[];
 }
 
 interface Presentation {
@@ -29,53 +33,103 @@ interface PresentationEditorProps {
   currentVersionIndex: number;
 }
 
+// Helper functions for positioning
+const getDefaultTitlePosition = () => ({ x: 10, y: 10, width: 80, height: 15 });
+const getDefaultContentPosition = (index: number) => ({ x: 10, y: 30 + (index * 8), width: 80, height: 6 });
+
 export function PresentationEditor({
   content,
   onSaveContent,
   status,
 }: PresentationEditorProps) {
+  
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [editingSlide, setEditingSlide] = useState<string | null>(null);
+  const [editingContentIndex, setEditingContentIndex] = useState<number | null>(null);
   const [editingContent, setEditingContent] = useState<string>('');
+  const [draggedElement, setDraggedElement] = useState<{ type: 'title' | 'content'; index?: number } | null>(null);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
+  const [localPresentation, setLocalPresentation] = useState<Presentation | null>(null);
   const { theme } = useTheme();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
-  let presentation: Presentation;
-  try {
-    presentation = JSON.parse(content);
-    // Ensure slides array exists and has at least one slide
-    if (!presentation.slides || !Array.isArray(presentation.slides) || presentation.slides.length === 0) {
-      presentation.slides = [
-        {
-          id: '1',
-          title: 'Slide 1',
-          content: ['Content not available'],
-          layout: 'content'
-        }
-      ];
+  // Parse content and update local state when content changes
+  const parsedPresentation = useMemo(() => {
+    
+    let presentation: Presentation;
+    try {
+      presentation = JSON.parse(content);
+      
+      // Ensure slides array exists and has at least one slide
+      if (!presentation.slides || !Array.isArray(presentation.slides) || presentation.slides.length === 0) {
+        
+        presentation.slides = [
+          {
+            id: '1',
+            title: 'Slide 1',
+            content: ['Content not available'],
+            layout: 'content'
+          }
+        ];
+      }
+      // Ensure all slides have IDs
+      presentation.slides = presentation.slides.map((slide, index) => ({
+        ...slide,
+        id: slide.id || `slide-${index + 1}`
+      }));
+    } catch (error) {
+      
+      
+      presentation = {
+        title: 'Untitled Presentation',
+        slides: [
+          {
+            id: '1',
+            title: 'Slide 1',
+            content: ['Content not available'],
+            layout: 'content'
+          }
+        ]
+      };
     }
-    // Ensure all slides have IDs
-    presentation.slides = presentation.slides.map((slide, index) => ({
-      ...slide,
-      id: slide.id || `slide-${index + 1}`
-    }));
-  } catch {
-    presentation = {
-      title: 'Untitled Presentation',
-      slides: [
-        {
-          id: '1',
-          title: 'Slide 1',
-          content: ['Content not available'],
-          layout: 'content'
-        }
-      ]
-    };
-  }
+    
+    return presentation;
+  }, [content]);
+
+  // Use local presentation if available, otherwise use parsed content
+  const presentation = localPresentation || parsedPresentation;
+  
+  
+
+  // Update local presentation when content changes from external source
+  useEffect(() => {
+    
+    
+    
+    
+    // Always update if streaming, or if we don't have local data yet, 
+    // or if the parsed content is different from what we have locally
+    const shouldUpdate = 
+      status === 'streaming' ||
+      !localPresentation ||
+      (parsedPresentation.title !== 'Untitled Presentation' && 
+       localPresentation.title === 'Untitled Presentation');
+    
+    if (shouldUpdate) {
+      
+      setLocalPresentation(parsedPresentation);
+    } else {
+      
+    }
+  }, [parsedPresentation, localPresentation, status]);
 
   const savePresentation = useCallback((updatedPresentation: Presentation) => {
+    // Immediately update local state for instant UI feedback
+    setLocalPresentation(updatedPresentation);
+    
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
@@ -83,6 +137,91 @@ export function PresentationEditor({
       onSaveContent(JSON.stringify(updatedPresentation, null, 2), true);
     }, 500);
   }, [onSaveContent]);
+
+  // Drag handlers
+  const handleMouseDown = useCallback((e: React.MouseEvent, type: 'title' | 'content', index?: number) => {
+    if (editingSlide) return; // Don't allow dragging while editing
+    
+    e.preventDefault();
+    setIsDragging(true);
+    setDraggedElement({ type, index });
+    
+    const rect = (e.target as HTMLElement).closest('.draggable-element')?.getBoundingClientRect();
+    if (!rect) return;
+    
+    const slideContainer = (e.target as HTMLElement).closest('.slide-container');
+    if (!slideContainer) return;
+    
+    const containerRect = slideContainer.getBoundingClientRect();
+    setDragOffset({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    });
+  }, [editingSlide]);
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !draggedElement) return;
+    
+    const slideContainer = document.querySelector('.slide-container');
+    if (!slideContainer) return;
+    
+    const containerRect = slideContainer.getBoundingClientRect();
+    const x = ((e.clientX - dragOffset.x - containerRect.left) / containerRect.width) * 100;
+    const y = ((e.clientY - dragOffset.y - containerRect.top) / containerRect.height) * 100;
+    
+    // Constrain to slide boundaries
+    const constrainedX = Math.max(0, Math.min(90, x));
+    const constrainedY = Math.max(0, Math.min(90, y));
+    
+    // Update position
+    const updatedSlides = presentation.slides.map((slide, slideIndex) => {
+      if (slideIndex !== currentSlide) return slide;
+      
+      if (draggedElement.type === 'title') {
+        return {
+          ...slide,
+          titlePosition: {
+            ...(slide.titlePosition || getDefaultTitlePosition()),
+            x: constrainedX,
+            y: constrainedY
+          }
+        };
+      } else if (draggedElement.type === 'content' && draggedElement.index !== undefined) {
+        const positions = slide.contentPositions || slide.content.map((_, i) => getDefaultContentPosition(i));
+        positions[draggedElement.index!] = {
+          ...positions[draggedElement.index!],
+          x: constrainedX,
+          y: constrainedY
+        };
+        return {
+          ...slide,
+          contentPositions: positions
+        };
+      }
+      
+      return slide;
+    });
+    
+    savePresentation({ ...presentation, slides: updatedSlides });
+  }, [isDragging, draggedElement, dragOffset, presentation, currentSlide, savePresentation]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+    setDraggedElement(null);
+    setDragOffset({ x: 0, y: 0 });
+  }, []);
+
+  // Add mouse event listeners
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const addSlide = () => {
     const newSlide: Slide = {
@@ -110,49 +249,54 @@ export function PresentationEditor({
     savePresentation(updatedPresentation);
   };
 
-  const updateSlideTitle = (slideId: string, newTitle: string) => {
-    const updatedPresentation = {
-      ...presentation,
-      slides: presentation.slides.map(slide =>
-        slide.id === slideId ? { ...slide, title: newTitle } : slide
-      )
-    };
-    savePresentation(updatedPresentation);
-  };
 
-  const updateSlideContent = (slideId: string, newContent: string[]) => {
-    const updatedPresentation = {
-      ...presentation,
-      slides: presentation.slides.map(slide =>
-        slide.id === slideId ? { ...slide, content: newContent } : slide
-      )
-    };
-    savePresentation(updatedPresentation);
-  };
-
-  const startEditing = (slideId: string, content: string) => {
+  const startEditing = (slideId: string, content: string, contentIndex?: number) => {
     setEditingSlide(slideId);
     setEditingContent(content);
+    setEditingContentIndex(contentIndex ?? null);
   };
 
   const saveEdit = () => {
     if (!editingSlide) return;
-    const slide = presentation.slides.find(s => s.id === editingSlide);
-    if (!slide) return;
     
-    if (editingSlide.endsWith('-title')) {
+    if (editingSlide === 'presentation-title') {
+      const updatedPresentation = {
+        ...presentation,
+        title: editingContent
+      };
+      savePresentation(updatedPresentation);
+    } else if (editingSlide.endsWith('-title')) {
       const slideId = editingSlide.replace('-title', '');
-      updateSlideTitle(slideId, editingContent);
+      const updatedPresentation = {
+        ...presentation,
+        slides: presentation.slides.map(slide =>
+          slide.id === slideId ? { ...slide, title: editingContent } : slide
+        )
+      };
+      savePresentation(updatedPresentation);
     } else {
-      updateSlideContent(editingSlide, [editingContent]);
+      const slide = presentation.slides.find(s => s.id === editingSlide);
+      if (!slide || editingContentIndex === null) return;
+      
+      const newContent = [...slide.content];
+      newContent[editingContentIndex] = editingContent;
+      const updatedPresentation = {
+        ...presentation,
+        slides: presentation.slides.map(s =>
+          s.id === editingSlide ? { ...s, content: newContent } : s
+        )
+      };
+      savePresentation(updatedPresentation);
     }
     setEditingSlide(null);
     setEditingContent('');
+    setEditingContentIndex(null);
   };
 
   const cancelEdit = () => {
     setEditingSlide(null);
     setEditingContent('');
+    setEditingContentIndex(null);
   };
 
   const exportToPPTX = async () => {
@@ -190,7 +334,7 @@ export function PresentationEditor({
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       // Don't handle keyboard shortcuts if user is editing or typing in input fields
-      if (editingSlide) return;
+      if (editingSlide || editingContentIndex !== null) return;
       
       // Check if user is typing in an input field, textarea, or contenteditable element
       const activeElement = document.activeElement;
@@ -361,23 +505,49 @@ export function PresentationEditor({
           'border-zinc-800 bg-zinc-900': theme === 'dark'
         })}>
           <div>
-            <h1 className="text-2xl font-bold text-gray-800 dark:text-white">{presentation.title}</h1>
+            {editingSlide === 'presentation-title' ? (
+              <input
+                type="text"
+                value={editingContent}
+                onChange={(e) => setEditingContent(e.target.value)}
+                onBlur={saveEdit}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') saveEdit();
+                  if (e.key === 'Escape') cancelEdit();
+                }}
+                className={cn("text-2xl font-bold bg-transparent border-b-2 border-blue-500 focus:outline-none", {
+                  'text-gray-800': theme === 'light',
+                  'text-white': theme === 'dark'
+                })}
+                autoFocus
+              />
+            ) : (
+              <h1 
+                className={cn("text-2xl font-bold cursor-pointer group relative", {
+                  'text-gray-800 hover:text-blue-600': theme === 'light',
+                  'text-white hover:text-blue-400': theme === 'dark'
+                })}
+                onClick={() => startEditing('presentation-title', presentation.title)}
+              >
+                {presentation.title}
+                <span className="absolute -right-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
+                  <PencilEditIcon size={16} />
+                </span>
+              </h1>
+            )}
             <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Slide {safeCurrentSlide + 1} of {presentation.slides.length}
             </div>
           </div>
           
           <div className="flex items-center space-x-2">
-            <button
+            <Button
               onClick={exportToPPTX}
-              className={cn("px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded transition-colors text-sm font-medium", {
-                'bg-blue-500 hover:bg-blue-600': theme === 'light',
-                'bg-blue-600 hover:bg-blue-700': theme === 'dark'
-              })}
+              className="text-sm font-medium"
               title="Export as PPTX"
             >
               Export PPTX
-            </button>
+            </Button>
             <button
               onClick={() => setShowThumbnails(!showThumbnails)}
               className={cn("p-2 rounded transition-colors", {
@@ -410,118 +580,116 @@ export function PresentationEditor({
           'bg-gray-100': theme === 'light',
           'bg-zinc-900': theme === 'dark'
         })}>
-          <div className={cn("border shadow-lg rounded-lg w-full max-w-4xl aspect-[16/9] p-8 flex flex-col", {
+          <div className={cn("slide-container border shadow-lg rounded-lg w-full max-w-4xl aspect-[16/9] relative overflow-hidden", {
             'bg-white border-gray-200': theme === 'light',
             'bg-zinc-800 border-zinc-700': theme === 'dark'
           })}>
-            {editingSlide === `${currentSlideData.id}-title` ? (
-              <input
-                type="text"
-                value={editingContent}
-                onChange={(e) => setEditingContent(e.target.value)}
-                onBlur={saveEdit}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') saveEdit();
-                  if (e.key === 'Escape') cancelEdit();
-                }}
-                className={cn("text-3xl font-bold mb-6 text-center bg-transparent border-b-2 border-blue-500 focus:outline-none", {
-                  'text-gray-800': theme === 'light',
-                  'text-white': theme === 'dark'
-                })}
-                autoFocus
-              />
-            ) : (
-              <div 
-                className={cn("text-3xl font-bold mb-6 text-center cursor-pointer group relative", {
-                  'text-gray-800 hover:text-blue-600': theme === 'light',
-                  'text-white hover:text-blue-400': theme === 'dark'
-                })}
-                onClick={() => startEditing(`${currentSlideData.id}-title`, currentSlideData.title)}
-              >
-                {currentSlideData.title}
-                <span className="absolute -right-6 top-1 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                  <PencilEditIcon size={16} />
-                </span>
-              </div>
-            )}
+            {/* Title Element */}
+            {(() => {
+              const titlePos = currentSlideData.titlePosition || getDefaultTitlePosition();
+              return (
+                <div
+                  className="draggable-element absolute"
+                  style={{
+                    left: `${titlePos.x}%`,
+                    top: `${titlePos.y}%`,
+                    width: `${titlePos.width}%`,
+                    minHeight: '40px'
+                  }}
+                >
+                  {editingSlide === `${currentSlideData.id}-title` ? (
+                    <input
+                      type="text"
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      onBlur={saveEdit}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') saveEdit();
+                        if (e.key === 'Escape') cancelEdit();
+                      }}
+                      className={cn("w-full text-2xl font-bold text-center bg-transparent border-b-2 border-blue-500 focus:outline-none", {
+                        'text-gray-800': theme === 'light',
+                        'text-white': theme === 'dark'
+                      })}
+                      autoFocus
+                    />
+                  ) : (
+                    <div className="group cursor-move">
+                      <div
+                        className={cn("text-2xl font-bold text-center p-2 rounded border-2 border-transparent hover:border-blue-300 transition-colors", {
+                          'text-gray-800 hover:bg-blue-50': theme === 'light',
+                          'text-white hover:bg-blue-900/20': theme === 'dark'
+                        })}
+                        onMouseDown={(e) => handleMouseDown(e, 'title')}
+                        onDoubleClick={() => startEditing(`${currentSlideData.id}-title`, currentSlideData.title)}
+                      >
+                        {currentSlideData.title}
+                        <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                          <span className="bg-blue-500 text-white p-1 rounded-full text-xs cursor-move">⋮⋮</span>
+                          <span className="bg-gray-500 text-white p-1 rounded-full text-xs cursor-pointer">
+                            <PencilEditIcon size={10} />
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
             
-            <div className="flex-1 flex flex-col justify-center">
-              {currentSlideData.layout === 'two-column' ? (
-                <div className="grid grid-cols-2 gap-8 h-full">
-                  <div className="space-y-4">
-                    {currentSlideData.content.slice(0, Math.ceil(currentSlideData.content.length / 2)).map((item, index) => (
-                      <div 
-                        key={index} 
-                        className={cn("text-lg leading-relaxed cursor-pointer group relative p-2 rounded", {
-                          'text-gray-800 hover:bg-gray-100': theme === 'light',
-                          'text-white hover:bg-zinc-700': theme === 'dark'
+            {/* Content Elements */}
+            {currentSlideData.content.map((item, index) => {
+              const contentPos = currentSlideData.contentPositions?.[index] || getDefaultContentPosition(index);
+              return (
+                <div
+                  key={index}
+                  className="draggable-element absolute"
+                  style={{
+                    left: `${contentPos.x}%`,
+                    top: `${contentPos.y}%`,
+                    width: `${contentPos.width}%`,
+                    minHeight: '30px'
+                  }}
+                >
+                  {editingSlide === currentSlideData.id && editingContentIndex === index ? (
+                    <textarea
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      onBlur={saveEdit}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && e.ctrlKey) saveEdit();
+                        if (e.key === 'Escape') cancelEdit();
+                      }}
+                      className={cn("w-full text-lg leading-relaxed bg-transparent border-2 border-blue-500 rounded p-2 focus:outline-none resize-none", {
+                        'text-gray-800': theme === 'light',
+                        'text-white': theme === 'dark'
+                      })}
+                      autoFocus
+                      rows={2}
+                    />
+                  ) : (
+                    <div className="group cursor-move">
+                      <div
+                        className={cn("text-lg leading-relaxed p-2 rounded border-2 border-transparent hover:border-blue-300 transition-colors", {
+                          'text-gray-800 hover:bg-blue-50': theme === 'light',
+                          'text-white hover:bg-blue-900/20': theme === 'dark'
                         })}
-                        onClick={() => startEditing(currentSlideData.id, item)}
+                        onMouseDown={(e) => handleMouseDown(e, 'content', index)}
+                        onDoubleClick={() => startEditing(currentSlideData.id, item, index)}
                       >
                         • {item}
-                        <span className="absolute -right-6 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                          <PencilEditIcon size={14} />
-                        </span>
+                        <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+                          <span className="bg-blue-500 text-white p-1 rounded-full text-xs cursor-move">⋮⋮</span>
+                          <span className="bg-gray-500 text-white p-1 rounded-full text-xs cursor-pointer">
+                            <PencilEditIcon size={10} />
+                          </span>
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                  <div className="space-y-4">
-                    {currentSlideData.content.slice(Math.ceil(currentSlideData.content.length / 2)).map((item, index) => (
-                      <div 
-                        key={index} 
-                        className={cn("text-lg leading-relaxed cursor-pointer group relative p-2 rounded", {
-                          'text-gray-800 hover:bg-gray-100': theme === 'light',
-                          'text-white hover:bg-zinc-700': theme === 'dark'
-                        })}
-                        onClick={() => startEditing(currentSlideData.id, item)}
-                      >
-                        • {item}
-                        <span className="absolute -right-6 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                          <PencilEditIcon size={14} />
-                        </span>
-                      </div>
-                    ))}
-                  </div>
+                    </div>
+                  )}
                 </div>
-              ) : (
-                <div className="space-y-4">
-                  {currentSlideData.content.map((item, index) => (
-                    editingSlide === currentSlideData.id && editingContent === item ? (
-                      <textarea
-                        key={index}
-                        value={editingContent}
-                        onChange={(e) => setEditingContent(e.target.value)}
-                        onBlur={saveEdit}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && e.ctrlKey) saveEdit();
-                          if (e.key === 'Escape') cancelEdit();
-                        }}
-                        className={cn("w-full text-lg leading-relaxed bg-transparent border-2 border-blue-500 rounded p-2 focus:outline-none resize-none", {
-                          'text-gray-800': theme === 'light',
-                          'text-white': theme === 'dark'
-                        })}
-                        autoFocus
-                        rows={3}
-                      />
-                    ) : (
-                      <div 
-                        key={index} 
-                        className={cn("text-lg leading-relaxed cursor-pointer group relative p-2 rounded", {
-                          'text-gray-800 hover:bg-gray-100': theme === 'light',
-                          'text-white hover:bg-zinc-700': theme === 'dark'
-                        })}
-                        onClick={() => startEditing(currentSlideData.id, item)}
-                      >
-                        • {item}
-                        <span className="absolute -right-6 top-2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400">
-                          <PencilEditIcon size={14} />
-                        </span>
-                      </div>
-                    )
-                  ))}
-                </div>
-              )}
-            </div>
+              );
+            })}
           </div>
         </div>
 
@@ -530,16 +698,12 @@ export function PresentationEditor({
           'border-gray-200 bg-gray-50': theme === 'light',
           'border-zinc-800 bg-zinc-900': theme === 'dark'
         })}>
-          <button
+          <Button
             onClick={prevSlide}
             disabled={currentSlide === 0}
-            className={cn("px-4 py-2 bg-blue-500 text-white rounded disabled:cursor-not-allowed hover:bg-blue-600 transition-colors", {
-              'disabled:bg-gray-300': theme === 'light',
-              'disabled:bg-zinc-600': theme === 'dark'
-            })}
           >
             Previous
-          </button>
+          </Button>
           
           <div className="flex space-x-2">
             {presentation.slides.map((_, index) => (
@@ -555,16 +719,12 @@ export function PresentationEditor({
             ))}
           </div>
           
-          <button
+          <Button
             onClick={nextSlide}
             disabled={currentSlide === presentation.slides.length - 1}
-            className={cn("px-4 py-2 bg-blue-500 text-white rounded disabled:cursor-not-allowed hover:bg-blue-600 transition-colors", {
-              'disabled:bg-gray-300': theme === 'light',
-              'disabled:bg-zinc-600': theme === 'dark'
-            })}
           >
             Next
-          </button>
+          </Button>
         </div>
       </div>
     </div>
