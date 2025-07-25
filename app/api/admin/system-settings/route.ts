@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from 'next/server';
-import { getServerSession } from 'next-auth';
-import { authOptions } from '@/app/(auth)/auth';
+import { auth } from '@/app/(auth)/auth';
 import { 
   getAllSystemSettings, 
   updateSystemSetting,
@@ -9,7 +8,7 @@ import {
 // GET - Get all system settings (admin only)
 export async function GET(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     // For now, any authenticated user can view settings
     // In production, you'd want proper admin role checking
@@ -31,7 +30,7 @@ export async function GET(request: NextRequest) {
 // POST - Create or update system setting (admin only)
 export async function POST(request: NextRequest) {
   try {
-    const session = await getServerSession(authOptions);
+    const session = await auth();
     
     // For now, any authenticated user can update settings
     // In production, you'd want proper admin role checking
