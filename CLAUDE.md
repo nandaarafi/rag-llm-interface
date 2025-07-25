@@ -3,6 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## Development Commands
+- CLI list pid use `ss -ltnp | grep ':3000'`
 ## Commit Message Convention
 
 This website follows [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
