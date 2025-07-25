@@ -5,7 +5,7 @@
 import { config } from 'dotenv';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
-import { readFileSync } from 'fs';
+import { readFileSync } from 'node:fs';
 
 config({ path: '.env.local' });
 
