@@ -1,10 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { type NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/(auth)/auth';
 import { 
   getAllSystemSettings, 
   updateSystemSetting,
-  createSystemSetting 
 } from '@/lib/db/queries';
 
 // GET - Get all system settings (admin only)
