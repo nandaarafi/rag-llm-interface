@@ -16,6 +16,8 @@
     "db:pull": "drizzle-kit pull",
     "db:check": "drizzle-kit check",
     "db:up": "drizzle-kit up",
+    "db:rls:status": "npx tsx scripts/rls/check-rls-status.ts",
+    "db:rls:deploy": "npx tsx scripts/rls/deploy-production.ts",
     "test": "cross-env PLAYWRIGHT=true playwright test --workers=4",
     "prepare": "husky"
   },

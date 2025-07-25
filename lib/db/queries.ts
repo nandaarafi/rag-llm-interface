@@ -15,6 +15,7 @@ import {
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import { getPlanConfig, type PlanType } from '@/lib/pricing-config';
+import { withUserContext } from './auth-context';
 
 import {
   user,
@@ -204,29 +205,34 @@ export async function saveChat({
   userId: string;
   title: string;
 }) {
-  try {
-    return await db.insert(chat).values({
-      id,
-      createdAt: new Date(),
-      userId,
-      title,
-    });
-  } catch (error) {
-    console.error('Failed to save chat in database');
-    throw error;
-  }
+  return await withUserContext(userId, async () => {
+    try {
+      return await db.insert(chat).values({
+        id,
+        createdAt: new Date(),
+        userId,
+        title,
+      });
+    } catch (error) {
+      console.error('Failed to save chat in database');
+      throw error;
+    }
+  });
 }
 
-export async function deleteChatById({ id }: { id: string }) {
-  try {
-    await db.delete(vote).where(eq(vote.chatId, id));
-    await db.delete(message).where(eq(message.chatId, id));
+export async function deleteChatById({ id, userId }: { id: string; userId: string }) {
+  return await withUserContext(userId, async () => {
+    try {
+      // With RLS, these operations will only succeed if the user owns the chat
+      await db.delete(vote).where(eq(vote.chatId, id));
+      await db.delete(message).where(eq(message.chatId, id));
 
-    return await db.delete(chat).where(eq(chat.id, id));
-  } catch (error) {
-    console.error('Failed to delete chat by id from database');
-    throw error;
-  }
+      return await db.delete(chat).where(eq(chat.id, id));
+    } catch (error) {
+      console.error('Failed to delete chat by id from database');
+      throw error;
+    }
+  });
 }
 
 export async function getChatsByUserId({
@@ -240,61 +246,60 @@ export async function getChatsByUserId({
   startingAfter: string | null;
   endingBefore: string | null;
 }) {
-  try {
-    const extendedLimit = limit + 1;
+  return await withUserContext(id, async () => {
+    try {
+      const extendedLimit = limit + 1;
 
-    const query = (whereCondition?: SQL<any>) =>
-      db
-        .select()
-        .from(chat)
-        .where(
-          whereCondition
-            ? and(whereCondition, eq(chat.userId, id))
-            : eq(chat.userId, id),
-        )
-        .orderBy(desc(chat.createdAt))
-        .limit(extendedLimit);
+      // With RLS, we can simplify the query since policies will handle user filtering
+      const query = (whereCondition?: SQL<any>) =>
+        db
+          .select()
+          .from(chat)
+          .where(whereCondition || undefined)
+          .orderBy(desc(chat.createdAt))
+          .limit(extendedLimit);
 
-    let filteredChats: Array<Chat> = [];
+      let filteredChats: Array<Chat> = [];
 
-    if (startingAfter) {
-      const [selectedChat] = await db
-        .select()
-        .from(chat)
-        .where(eq(chat.id, startingAfter))
-        .limit(1);
+      if (startingAfter) {
+        const [selectedChat] = await db
+          .select()
+          .from(chat)
+          .where(eq(chat.id, startingAfter))
+          .limit(1);
 
-      if (!selectedChat) {
-        throw new Error(`Chat with id ${startingAfter} not found`);
+        if (!selectedChat) {
+          throw new Error(`Chat with id ${startingAfter} not found`);
+        }
+
+        filteredChats = await query(gt(chat.createdAt, selectedChat.createdAt));
+      } else if (endingBefore) {
+        const [selectedChat] = await db
+          .select()
+          .from(chat)
+          .where(eq(chat.id, endingBefore))
+          .limit(1);
+
+        if (!selectedChat) {
+          throw new Error(`Chat with id ${endingBefore} not found`);
+        }
+
+        filteredChats = await query(lt(chat.createdAt, selectedChat.createdAt));
+      } else {
+        filteredChats = await query();
       }
 
-      filteredChats = await query(gt(chat.createdAt, selectedChat.createdAt));
-    } else if (endingBefore) {
-      const [selectedChat] = await db
-        .select()
-        .from(chat)
-        .where(eq(chat.id, endingBefore))
-        .limit(1);
+      const hasMore = filteredChats.length > limit;
 
-      if (!selectedChat) {
-        throw new Error(`Chat with id ${endingBefore} not found`);
-      }
-
-      filteredChats = await query(lt(chat.createdAt, selectedChat.createdAt));
-    } else {
-      filteredChats = await query();
+      return {
+        chats: hasMore ? filteredChats.slice(0, limit) : filteredChats,
+        hasMore,
+      };
+    } catch (error) {
+      console.error('Failed to get chats by user from database');
+      throw error;
     }
-
-    const hasMore = filteredChats.length > limit;
-
-    return {
-      chats: hasMore ? filteredChats.slice(0, limit) : filteredChats,
-      hasMore,
-    };
-  } catch (error) {
-    console.error('Failed to get chats by user from database');
-    throw error;
-  }
+  });
 }
 
 export async function getChatById({ id }: { id: string }) {

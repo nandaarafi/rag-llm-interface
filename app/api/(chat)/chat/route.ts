@@ -292,7 +292,7 @@ export async function DELETE(request: Request) {
       return new Response('Unauthorized', { status: 401 });
     }
 
-    await deleteChatById({ id });
+    await deleteChatById({ id, userId: session.user.id });
 
     return new Response('Chat deleted', { status: 200 });
   } catch (error) {
