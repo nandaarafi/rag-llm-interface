@@ -3,11 +3,12 @@ import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 import { SidebarToggle } from '@/components/sidebar-toggle';
 import { Button } from '@/components/ui/button';
-import { PlusIcon, } from './icons';
+import { PlusIcon, EyeIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import type { VisibilityType, } from './visibility-selector';
+import { useSession } from 'next-auth/react';
 
 function PureChatHeader({
   chatId,
@@ -22,12 +23,24 @@ function PureChatHeader({
 }) {
   const router = useRouter();
   const { open } = useSidebar();
+  const { data: session } = useSession();
 
   const { width: windowWidth } = useWindowSize();
+
+  // Check if user is viewing anonymously (not authenticated but can see public chat)
+  const isAnonymousViewing = !session && selectedVisibilityType === 'public';
 
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
       <SidebarToggle />
+
+      {/* Show "Viewing" indicator for anonymous users */}
+      {isAnonymousViewing && (
+        <div className="flex items-center gap-2 px-3 py-1 bg-muted rounded-md">
+          <EyeIcon size={16} />
+          <span className="text-sm text-muted-foreground">Viewing</span>
+        </div>
+      )}
 
       {(!open || windowWidth < 768) && (
         <Tooltip>

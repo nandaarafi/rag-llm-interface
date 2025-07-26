@@ -6,6 +6,7 @@ import { auth } from '../(auth)/auth';
 import Script from 'next/script';
 import { SessionRefresher } from '@/components/session-refresher';
 import { CreditProvider } from '@/contexts/credit-context';
+import { SessionProvider } from 'next-auth/react';
 
 export const experimental_ppr = true;
 
@@ -23,15 +24,17 @@ export default async function Layout({
         src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
         strategy="beforeInteractive"
       />
-      <SidebarProvider defaultOpen={!isCollapsed}>
-        <CreditProvider userId={session?.user?.id}>
-          <AppSidebar user={session?.user} />
-          <SidebarInset>
-            <SessionRefresher />
-            {children}
-          </SidebarInset>
-        </CreditProvider>
-      </SidebarProvider>
+      <SessionProvider session={session}>
+        <SidebarProvider defaultOpen={!isCollapsed}>
+          <CreditProvider userId={session?.user?.id}>
+            <AppSidebar user={session?.user} />
+            <SidebarInset>
+              <SessionRefresher />
+              {children}
+            </SidebarInset>
+          </CreditProvider>
+        </SidebarProvider>
+      </SessionProvider>
     </>
   );
 }

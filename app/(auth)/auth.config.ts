@@ -42,8 +42,7 @@ export const authConfig = {
       }
 
       if (isOnChat) {
-        // Allow access to /chat routes for both authenticated and unauthenticated users
-        // The page-level logic will handle public vs private chat access control
+        // Allow all /chat routes, let pages handle access control
         return true;
       }
 

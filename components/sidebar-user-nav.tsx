@@ -24,8 +24,11 @@ export function SidebarUserNav({ user }: { user: User }) {
   const { setTheme, theme } = useTheme();
   const router = useRouter();
   const handleSignOut = async () => {
-    await signOut();
-    router.push('/');
+    await signOut({ 
+      callbackUrl: '/',
+      redirect: true 
+    });
+    console.log('signed out');
   };
 
   const handleUpgradeToPro = () => {

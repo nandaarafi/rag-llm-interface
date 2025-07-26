@@ -251,12 +251,13 @@ export async function getChatsByUserId({
     try {
       const extendedLimit = limit + 1;
 
-      // With RLS, we can simplify the query since policies will handle user filtering
+      // Explicit user filtering to ensure proper access control
+      // Note: Also relies on RLS policies as additional security layer
       const query = (whereCondition?: SQL<any>) =>
         db
           .select()
           .from(chat)
-          .where(whereCondition || undefined)
+          .where(whereCondition ? and(eq(chat.userId, id), whereCondition) : eq(chat.userId, id))
           .orderBy(desc(chat.createdAt))
           .limit(extendedLimit);
 
@@ -449,30 +450,66 @@ export async function saveDocument({
   }
 }
 
-export async function getDocumentsById({ id }: { id: string }) {
+export async function getDocumentsById({ id, userId }: { id: string; userId?: string }) {
   try {
-    const documents = await db
-      .select()
-      .from(document)
-      .where(eq(document.id, id))
-      .orderBy(asc(document.createdAt));
-
-    return documents;
+    if (userId) {
+      // If userId provided, use RLS context for private documents
+      return await withUserContext(userId, async () => {
+        const documents = await db
+          .select()
+          .from(document)
+          .where(eq(document.id, id))
+          .orderBy(asc(document.createdAt));
+        return documents;
+      });
+    } else {
+      // No userId provided, try to access documents directly (for public chats)
+      // This may fail due to RLS, but we'll handle it gracefully
+      try {
+        const documents = await db
+          .select()
+          .from(document)
+          .where(eq(document.id, id))
+          .orderBy(asc(document.createdAt));
+        return documents;
+      } catch (rlsError) {
+        // RLS blocked access, return empty array for anonymous users
+        return [];
+      }
+    }
   } catch (error) {
     console.error('Failed to get document by id from database');
     throw error;
   }
 }
 
-export async function getDocumentById({ id }: { id: string }) {
+export async function getDocumentById({ id, userId }: { id: string; userId?: string }) {
   try {
-    const [selectedDocument] = await db
-      .select()
-      .from(document)
-      .where(eq(document.id, id))
-      .orderBy(desc(document.createdAt));
-
-    return selectedDocument;
+    if (userId) {
+      // If userId provided, use RLS context for private documents
+      return await withUserContext(userId, async () => {
+        const [selectedDocument] = await db
+          .select()
+          .from(document)
+          .where(eq(document.id, id))
+          .orderBy(desc(document.createdAt));
+        return selectedDocument;
+      });
+    } else {
+      // No userId provided, try to access document directly (for public chats)
+      // This may fail due to RLS, but we'll handle it gracefully
+      try {
+        const [selectedDocument] = await db
+          .select()
+          .from(document)
+          .where(eq(document.id, id))
+          .orderBy(desc(document.createdAt));
+        return selectedDocument;
+      } catch (rlsError) {
+        // RLS blocked access, return null for anonymous users
+        return null;
+      }
+    }
   } catch (error) {
     console.error('Failed to get document by id from database');
     throw error;

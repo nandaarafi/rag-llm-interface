@@ -24,6 +24,11 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     chat = await getChatById({ id });
   }
 
+  // If logged-in user couldn't access the chat, try as anonymous (for public chats)
+  if (!chat && session?.user?.id) {
+    chat = await getChatById({ id });
+  }
+
   if (!chat) {
     notFound();
   }
@@ -39,10 +44,14 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
+  // Determine if user is the owner
+  const isOwner = session?.user?.id === chat.userId;
+  
   // Get messages with appropriate context
+  // For public chats, non-owners should access like anonymous users
   const messagesFromDb = await getMessagesByChatId({
     id,
-    userId: session?.user?.id,
+    userId: isOwner ? session.user.id : undefined,
   });
 
   function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {
@@ -69,7 +78,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
           initialMessages={convertToUIMessages(messagesFromDb)}
           selectedChatModel={DEFAULT_CHAT_MODEL}
           selectedVisibilityType={chat.visibility}
-          isReadonly={session?.user?.id !== chat.userId}
+          isReadonly={!isOwner}
         />
         <DataStreamHandler id={id} />
       </>
@@ -83,7 +92,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
         initialMessages={convertToUIMessages(messagesFromDb)}
         selectedChatModel={chatModelFromCookie.value}
         selectedVisibilityType={chat.visibility}
-        isReadonly={session?.user?.id !== chat.userId}
+        isReadonly={!isOwner}
       />
       <DataStreamHandler id={id} />
     </>

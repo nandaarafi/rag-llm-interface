@@ -16,20 +16,25 @@ export async function GET(request: Request) {
 
   const session = await auth();
 
-  if (!session?.user?.id) {
-    return new Response('Unauthorized', { status: 401 });
+  // Try to get documents with appropriate context
+  let documents;
+  if (session?.user?.id) {
+    // User is logged in - try to get documents (works for both private and public)
+    documents = await getDocumentsById({ id, userId: session.user.id });
+    
+    // If logged-in user couldn't access it, try as anonymous (for public documents)
+    if (documents.length === 0) {
+      documents = await getDocumentsById({ id });
+    }
+  } else {
+    // User not logged in - try to access public documents only
+    documents = await getDocumentsById({ id });
   }
-
-  const documents = await getDocumentsById({ id });
 
   const [document] = documents;
 
   if (!document) {
     return new Response('Not found', { status: 404 });
-  }
-
-  if (document.userId !== session.user.id) {
-    return new Response('Forbidden', { status: 403 });
   }
 
   return Response.json(documents, { status: 200 });
@@ -45,8 +50,9 @@ export async function POST(request: Request) {
 
   const session = await auth();
 
+  // POST (editing) requires authentication - anonymous users cannot edit documents
   if (!session?.user?.id) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response('Unauthorized - Document editing requires authentication', { status: 401 });
   }
 
   const {
@@ -56,7 +62,7 @@ export async function POST(request: Request) {
   }: { content: string; title: string; kind: ArtifactKind } =
     await request.json();
 
-  const documents = await getDocumentsById({ id });
+  const documents = await getDocumentsById({ id, userId: session.user.id });
 
   if (documents.length > 0) {
     const [document] = documents;
@@ -92,11 +98,12 @@ export async function DELETE(request: Request) {
 
   const session = await auth();
 
+  // DELETE requires authentication - anonymous users cannot delete documents
   if (!session?.user?.id) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response('Unauthorized - Document deletion requires authentication', { status: 401 });
   }
 
-  const documents = await getDocumentsById({ id });
+  const documents = await getDocumentsById({ id, userId: session.user.id });
 
   const [document] = documents;
 

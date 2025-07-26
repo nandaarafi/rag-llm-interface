@@ -28,6 +28,7 @@ import { textArtifact } from '@/artifacts/text/client';
 import { pptArtifact } from '@/artifacts/ppt/client';
 import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
+import { EyeIcon } from './icons';
 
 export const artifactDefinitions = [
   textArtifact,
@@ -323,20 +324,21 @@ function PureArtifact({
                   artifactStatus={artifact.status}
                 />
 
-                <form className="flex flex-row gap-2 relative items-end w-full px-4 pb-4">
-                  <MultimodalInput
-                    chatId={chatId}
-                    input={input}
-                    setInput={setInput}
-                    handleSubmit={handleSubmit}
-                    status={status}
-                    stop={stop}
-                    attachments={attachments}
-                    setAttachments={setAttachments}
-                    messages={messages}
-                    append={append}
-                    className="bg-background dark:bg-muted"
-                    setMessages={setMessages}
+                {!isReadonly && (
+                  <form className="flex flex-row gap-2 relative items-end w-full px-4 pb-4">
+                    <MultimodalInput
+                      chatId={chatId}
+                      input={input}
+                      setInput={setInput}
+                      handleSubmit={handleSubmit}
+                      status={status}
+                      stop={stop}
+                      attachments={attachments}
+                      setAttachments={setAttachments}
+                      messages={messages}
+                      append={append}
+                      className="bg-background dark:bg-muted"
+                      setMessages={setMessages}
                     autoFocus={false}
                     credits={0}
                     planType="free"
@@ -344,6 +346,7 @@ function PureArtifact({
                     onShowPaywall={() => {}}
                   />
                 </form>
+                )}
               </div>
             </motion.div>
           )}
@@ -420,7 +423,15 @@ function PureArtifact({
                 <ArtifactCloseButton />
 
                 <div className="flex flex-col">
-                  <div className="font-medium">{artifact.title}</div>
+                  <div className="flex items-center gap-3">
+                    <div className="font-medium">{artifact.title}</div>
+                    {isReadonly && (
+                      <div className="flex items-center gap-2 px-2 py-1 bg-muted rounded-md">
+                        <EyeIcon size={14} />
+                        <span className="text-xs text-muted-foreground">Viewing</span>
+                      </div>
+                    )}
+                  </div>
 
                   {isContentDirty ? (
                     <div className="text-sm text-muted-foreground">
@@ -475,7 +486,7 @@ function PureArtifact({
               />
 
               <AnimatePresence>
-                {isCurrentVersion && (
+                {isCurrentVersion && !isReadonly && (
                   <Toolbar
                     isToolbarVisible={isToolbarVisible}
                     setIsToolbarVisible={setIsToolbarVisible}

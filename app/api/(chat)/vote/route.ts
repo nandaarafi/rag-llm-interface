@@ -15,13 +15,23 @@ export async function GET(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  const chat = await getChatById({ id: chatId, userId: session.user.id });
+  // Try to get chat with user context first
+  let chat = await getChatById({ id: chatId, userId: session.user.id });
+  
+  // If user can't access it, try as anonymous (for public chats)
+  if (!chat) {
+    chat = await getChatById({ id: chatId });
+  }
 
   if (!chat) {
     return new Response('Chat not found', { status: 404 });
   }
 
-  if (chat.userId !== session.user.id) {
+  // Allow access if user owns the chat OR if it's a public chat
+  const isOwner = chat.userId === session.user.id;
+  const isPublic = chat.visibility === 'public';
+  
+  if (!isOwner && !isPublic) {
     return new Response('Unauthorized', { status: 401 });
   }
 
@@ -54,8 +64,9 @@ export async function PATCH(request: Request) {
     return new Response('Chat not found', { status: 404 });
   }
 
+  // Only chat owners can vote on messages
   if (chat.userId !== session.user.id) {
-    return new Response('Unauthorized', { status: 401 });
+    return new Response('Unauthorized - Only chat owners can vote', { status: 401 });
   }
 
   await voteMessage({
