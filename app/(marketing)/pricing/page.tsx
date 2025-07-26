@@ -7,7 +7,9 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Check } from 'lucide-react';
 import apiClient from '@/lib/api';
 import { getAllPlans, } from '@/lib/pricing-config';
-  const handlePayment = async (variantId: string) => {
+ 
+
+const handlePayment = async (variantId: string) => {
     // setIsLoading(true);
 
     try {

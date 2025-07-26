@@ -7,7 +7,7 @@ import NextJSTopLoader from 'nextjs-toploader';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Mindscribe Chatbot',
+  title: 'Mindscribe | Your Gen AI Assistant',
   description: 'Mindscribe ask your chatbot.',
 };
 

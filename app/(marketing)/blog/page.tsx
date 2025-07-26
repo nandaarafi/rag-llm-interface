@@ -3,7 +3,7 @@ import { getAllPosts } from '@/lib/blog';
 import { BlogWithFilter } from '@/components/blog/blog-with-filter';
 
 export const metadata: Metadata = {
-  title: 'Blog',
+  title: 'Mindscribe | Blog',
   description: 'Read our latest blog posts and insights.',
 };
 

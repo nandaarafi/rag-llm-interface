@@ -51,7 +51,7 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
   // For public chats, non-owners should access like anonymous users
   const messagesFromDb = await getMessagesByChatId({
     id,
-    userId: isOwner ? session.user.id : undefined,
+    userId: isOwner ? session?.user?.id : undefined,
   });
 
   function convertToUIMessages(messages: Array<DBMessage>): Array<UIMessage> {

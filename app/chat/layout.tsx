@@ -7,7 +7,12 @@ import Script from 'next/script';
 import { SessionRefresher } from '@/components/session-refresher';
 import { CreditProvider } from '@/contexts/credit-context';
 import { SessionProvider } from 'next-auth/react';
+import type { Metadata } from 'next';
 
+export const metadata: Metadata = {
+  title: 'Chat | Mindscribe',
+  description: 'Chat with your AI assistant.',
+};  
 export const experimental_ppr = true;
 
 export default async function Layout({
