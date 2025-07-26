@@ -21,26 +21,13 @@ const navigationLinks = [
   { href: "/blog", label: "Blog" },
 ]
 
-export default function Header() {
+interface HeaderProps {
+  isAuthenticated: boolean;
+}
+
+export default function Header({ isAuthenticated }: HeaderProps) {
   const [isVisible, setIsVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
-
-  // Check authentication status
-  useEffect(() => {
-    const checkAuthStatus = async () => {
-      try {
-        const response = await fetch('/api/auth/session')
-        const session = await response.json()
-        setIsAuthenticated(!!session?.user)
-      } catch (error) {
-        console.error('Error checking auth status:', error)
-        setIsAuthenticated(false)
-      }
-    }
-    
-    checkAuthStatus()
-  }, [])
 
   useEffect(() => {
     const controlNavbar = () => {
@@ -156,10 +143,7 @@ export default function Header() {
 
         {/* Right side - Auth buttons */}
         <div className="flex items-center gap-2">
-          {isAuthenticated === null ? (
-            // Loading state
-            <div className="h-9 w-24 bg-muted animate-pulse rounded" />
-          ) : isAuthenticated ? (
+          {isAuthenticated ? (
             // Authenticated user - Show Dashboard button
             <Button asChild size="sm" className="text-md">
               <a href="/chat">Dashboard</a>
