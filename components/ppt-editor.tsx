@@ -381,6 +381,29 @@ export function PresentationEditor({
     }
   };
 
+  const exportToHTML = async () => {
+    try {
+      toast.loading('Generating HTML file...');
+      
+      // Dynamic import to avoid build issues
+      const { generatePresentationHTML, downloadHTML } = await import('@/lib/html-generator');
+      const htmlContent = generatePresentationHTML(content);
+      
+      // Extract presentation title for filename
+      let filename = 'presentation.html';
+      if (presentation.title) {
+        filename = `${presentation.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.html`;
+      }
+      
+      downloadHTML(htmlContent, filename);
+      toast.dismiss();
+      toast.success('HTML file exported successfully!');
+    } catch (error) {
+      toast.dismiss();
+      toast.error(`Failed to export HTML: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+  };
+
   const nextSlide = useCallback(() => {
     if (currentSlide < presentation.slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
@@ -610,6 +633,14 @@ export function PresentationEditor({
             >
               Export PPTX
             </Button>
+            <Button
+              onClick={exportToHTML}
+              className="text-sm font-medium"
+              variant="outline"
+              title="Export as HTML (compatible with Google Slides)"
+            >
+              Export HTML
+            </Button>
             <button
               onClick={() => setShowFormatToolbar(!showFormatToolbar)}
               className={cn("p-2 rounded transition-colors", {
@@ -677,7 +708,7 @@ export function PresentationEditor({
             {/* Font Size */}
             <select
               value={getCurrentFormat().fontSize || 16}
-              onChange={(e) => applyFormat({ fontSize: parseInt(e.target.value) })}
+              onChange={(e) => applyFormat({ fontSize: Number.parseInt(e.target.value) })}
               className={cn("px-2 py-1 rounded border text-sm w-16", {
                 'border-gray-300 bg-white': theme === 'light',
                 'border-zinc-600 bg-zinc-800 text-white': theme === 'dark'
@@ -802,7 +833,7 @@ export function PresentationEditor({
               type="color"
               value={getCurrentFormat().color || '#000000'}
               onChange={(e) => applyFormat({ color: e.target.value })}
-              className="w-8 h-8 rounded border cursor-pointer"
+              className="size-8 rounded border cursor-pointer"
               title="Text Color"
             />
 
@@ -811,7 +842,7 @@ export function PresentationEditor({
               type="color"
               value={getCurrentFormat().backgroundColor || '#ffffff'}
               onChange={(e) => applyFormat({ backgroundColor: e.target.value })}
-              className="w-8 h-8 rounded border cursor-pointer"
+              className="size-8 rounded border cursor-pointer"
               title="Background Color"
             />
 
