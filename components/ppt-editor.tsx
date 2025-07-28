@@ -8,6 +8,19 @@ import { PlusIcon, TrashIcon, EyeIcon, PencilEditIcon } from '@/components/icons
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 
+interface TextFormat {
+  fontFamily?: string;
+  fontSize?: number;
+  bold?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
+  color?: string;
+  backgroundColor?: string;
+  alignment?: 'left' | 'center' | 'right';
+  listType?: 'bullet' | 'numbered' | 'none';
+}
+
 interface Slide {
   id: string;
   title: string;
@@ -18,6 +31,9 @@ interface Slide {
   // New positioning data for movable elements
   titlePosition?: { x: number; y: number; width: number; height: number };
   contentPositions?: { x: number; y: number; width: number; height: number }[];
+  // Text formatting for title and content
+  titleFormat?: TextFormat;
+  contentFormats?: TextFormat[];
 }
 
 interface Presentation {
@@ -53,6 +69,8 @@ export function PresentationEditor({
   const [isDragging, setIsDragging] = useState(false);
   const [showThumbnails, setShowThumbnails] = useState(true);
   const [localPresentation, setLocalPresentation] = useState<Presentation | null>(null);
+  const [selectedElement, setSelectedElement] = useState<{ type: 'title' | 'content'; index?: number } | null>(null);
+  const [showFormatToolbar, setShowFormatToolbar] = useState(false);
   const { theme } = useTheme();
   const saveTimeoutRef = useRef<NodeJS.Timeout>();
   
@@ -137,6 +155,46 @@ export function PresentationEditor({
       onSaveContent(JSON.stringify(updatedPresentation, null, 2), true);
     }, 500);
   }, [onSaveContent]);
+
+  // Get current format for selected element
+  const getCurrentFormat = useCallback((): TextFormat => {
+    if (!selectedElement) return {};
+    
+    const slide = presentation.slides[currentSlide];
+    if (selectedElement.type === 'title') {
+      return slide.titleFormat || {};
+    } else if (selectedElement.type === 'content' && selectedElement.index !== undefined) {
+      return slide.contentFormats?.[selectedElement.index] || {};
+    }
+    return {};
+  }, [selectedElement, presentation.slides, currentSlide]);
+
+  // Apply formatting to selected element
+  const applyFormat = useCallback((format: Partial<TextFormat>) => {
+    if (!selectedElement) return;
+    
+    const updatedSlides = presentation.slides.map((slide, slideIndex) => {
+      if (slideIndex !== currentSlide) return slide;
+      
+      if (selectedElement.type === 'title') {
+        return {
+          ...slide,
+          titleFormat: { ...slide.titleFormat, ...format }
+        };
+      } else if (selectedElement.type === 'content' && selectedElement.index !== undefined) {
+        const contentFormats = slide.contentFormats || [];
+        contentFormats[selectedElement.index] = { ...contentFormats[selectedElement.index], ...format };
+        return {
+          ...slide,
+          contentFormats
+        };
+      }
+      
+      return slide;
+    });
+    
+    savePresentation({ ...presentation, slides: updatedSlides });
+  }, [selectedElement, presentation, currentSlide, savePresentation]);
 
   // Drag handlers
   const handleMouseDown = useCallback((e: React.MouseEvent, type: 'title' | 'content', index?: number) => {
@@ -553,6 +611,21 @@ export function PresentationEditor({
               Export PPTX
             </Button>
             <button
+              onClick={() => setShowFormatToolbar(!showFormatToolbar)}
+              className={cn("p-2 rounded transition-colors", {
+                'bg-blue-500 text-white': showFormatToolbar,
+                'hover:bg-gray-200': !showFormatToolbar && theme === 'light',
+                'hover:bg-zinc-800': !showFormatToolbar && theme === 'dark',
+                'text-gray-600': !showFormatToolbar && theme === 'light',
+                'text-gray-400': !showFormatToolbar && theme === 'dark'
+              })}
+              title="Toggle formatting toolbar"
+            >
+              <svg className="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5h16M4 10h16M4 15h16M4 20h16" />
+              </svg>
+            </button>
+            <button
               onClick={() => setShowThumbnails(!showThumbnails)}
               className={cn("p-2 rounded transition-colors", {
                 'hover:bg-gray-200': theme === 'light',
@@ -578,6 +651,202 @@ export function PresentationEditor({
             </button>
           </div>
         </div>
+
+        {/* Formatting Toolbar */}
+        {showFormatToolbar && selectedElement && (
+          <div className={cn("border-b p-3 flex items-center gap-2 flex-wrap", {
+            'border-gray-200 bg-gray-50': theme === 'light',
+            'border-zinc-800 bg-zinc-900': theme === 'dark'
+          })}>
+            {/* Font Family */}
+            <select
+              value={getCurrentFormat().fontFamily || 'Arial'}
+              onChange={(e) => applyFormat({ fontFamily: e.target.value })}
+              className={cn("px-2 py-1 rounded border text-sm", {
+                'border-gray-300 bg-white': theme === 'light',
+                'border-zinc-600 bg-zinc-800 text-white': theme === 'dark'
+              })}
+            >
+              <option value="Arial">Arial</option>
+              <option value="Times New Roman">Times New Roman</option>
+              <option value="Helvetica">Helvetica</option>
+              <option value="Georgia">Georgia</option>
+              <option value="Verdana">Verdana</option>
+            </select>
+
+            {/* Font Size */}
+            <select
+              value={getCurrentFormat().fontSize || 16}
+              onChange={(e) => applyFormat({ fontSize: parseInt(e.target.value) })}
+              className={cn("px-2 py-1 rounded border text-sm w-16", {
+                'border-gray-300 bg-white': theme === 'light',
+                'border-zinc-600 bg-zinc-800 text-white': theme === 'dark'
+              })}
+            >
+              {[8, 10, 12, 14, 16, 18, 20, 24, 28, 32, 36, 48].map(size => (
+                <option key={size} value={size}>{size}</option>
+              ))}
+            </select>
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-zinc-600 mx-1" />
+
+            {/* Bold */}
+            <button
+              onClick={() => applyFormat({ bold: !getCurrentFormat().bold })}
+              className={cn("p-2 rounded text-sm font-bold transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().bold,
+                'hover:bg-gray-200': !getCurrentFormat().bold && theme === 'light',
+                'hover:bg-zinc-800': !getCurrentFormat().bold && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Bold"
+            >
+              B
+            </button>
+
+            {/* Italic */}
+            <button
+              onClick={() => applyFormat({ italic: !getCurrentFormat().italic })}
+              className={cn("p-2 rounded text-sm italic transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().italic,
+                'hover:bg-gray-200': !getCurrentFormat().italic && theme === 'light',
+                'hover:bg-zinc-800': !getCurrentFormat().italic && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Italic"
+            >
+              I
+            </button>
+
+            {/* Underline */}
+            <button
+              onClick={() => applyFormat({ underline: !getCurrentFormat().underline })}
+              className={cn("p-2 rounded text-sm underline transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().underline,
+                'hover:bg-gray-200': !getCurrentFormat().underline && theme === 'light',
+                'hover:bg-zinc-800': !getCurrentFormat().underline && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Underline"
+            >
+              U
+            </button>
+
+            {/* Strikethrough */}
+            <button
+              onClick={() => applyFormat({ strikethrough: !getCurrentFormat().strikethrough })}
+              className={cn("p-2 rounded text-sm line-through transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().strikethrough,
+                'hover:bg-gray-200': !getCurrentFormat().strikethrough && theme === 'light',
+                'hover:bg-zinc-800': !getCurrentFormat().strikethrough && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Strikethrough"
+            >
+              S
+            </button>
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-zinc-600 mx-1" />
+
+            {/* Text Alignment */}
+            <button
+              onClick={() => applyFormat({ alignment: 'left' })}
+              className={cn("p-2 rounded text-sm transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().alignment === 'left',
+                'hover:bg-gray-200': getCurrentFormat().alignment !== 'left' && theme === 'light',
+                'hover:bg-zinc-800': getCurrentFormat().alignment !== 'left' && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Align Left"
+            >
+              ≡
+            </button>
+
+            <button
+              onClick={() => applyFormat({ alignment: 'center' })}
+              className={cn("p-2 rounded text-sm transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().alignment === 'center',
+                'hover:bg-gray-200': getCurrentFormat().alignment !== 'center' && theme === 'light',
+                'hover:bg-zinc-800': getCurrentFormat().alignment !== 'center' && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Align Center"
+            >
+              ≡
+            </button>
+
+            <button
+              onClick={() => applyFormat({ alignment: 'right' })}
+              className={cn("p-2 rounded text-sm transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().alignment === 'right',
+                'hover:bg-gray-200': getCurrentFormat().alignment !== 'right' && theme === 'light',
+                'hover:bg-zinc-800': getCurrentFormat().alignment !== 'right' && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Align Right"
+            >
+              ≡
+            </button>
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-zinc-600 mx-1" />
+
+            {/* Text Color */}
+            <input
+              type="color"
+              value={getCurrentFormat().color || '#000000'}
+              onChange={(e) => applyFormat({ color: e.target.value })}
+              className="w-8 h-8 rounded border cursor-pointer"
+              title="Text Color"
+            />
+
+            {/* Background Color */}
+            <input
+              type="color"
+              value={getCurrentFormat().backgroundColor || '#ffffff'}
+              onChange={(e) => applyFormat({ backgroundColor: e.target.value })}
+              className="w-8 h-8 rounded border cursor-pointer"
+              title="Background Color"
+            />
+
+            <div className="w-px h-6 bg-gray-300 dark:bg-zinc-600 mx-1" />
+
+            {/* List Type */}
+            <button
+              onClick={() => applyFormat({ listType: getCurrentFormat().listType === 'bullet' ? 'none' : 'bullet' })}
+              className={cn("p-2 rounded text-sm transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().listType === 'bullet',
+                'hover:bg-gray-200': getCurrentFormat().listType !== 'bullet' && theme === 'light',
+                'hover:bg-zinc-800': getCurrentFormat().listType !== 'bullet' && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Bullet List"
+            >
+              •
+            </button>
+
+            <button
+              onClick={() => applyFormat({ listType: getCurrentFormat().listType === 'numbered' ? 'none' : 'numbered' })}
+              className={cn("p-2 rounded text-sm transition-colors", {
+                'bg-blue-500 text-white': getCurrentFormat().listType === 'numbered',
+                'hover:bg-gray-200': getCurrentFormat().listType !== 'numbered' && theme === 'light',
+                'hover:bg-zinc-800': getCurrentFormat().listType !== 'numbered' && theme === 'dark',
+                'text-gray-700': theme === 'light',
+                'text-gray-300': theme === 'dark'
+              })}
+              title="Numbered List"
+            >
+              1.
+            </button>
+          </div>
+        )}
 
         {/* Slide Content */}
         <div className={cn("flex-1 flex items-center justify-center p-8", {
@@ -620,12 +889,31 @@ export function PresentationEditor({
                   ) : (
                     <div className="group cursor-move">
                       <div
-                        className={cn("text-2xl font-bold text-center p-2 rounded border-2 border-transparent hover:border-blue-300 transition-colors", {
+                        className={cn("text-2xl font-bold text-center p-2 rounded border-2 transition-colors", {
+                          'border-blue-500 bg-blue-50 dark:bg-blue-900/20': selectedElement?.type === 'title',
+                          'border-transparent hover:border-blue-300': selectedElement?.type !== 'title',
                           'text-gray-800 hover:bg-blue-50': theme === 'light',
                           'text-white hover:bg-blue-900/20': theme === 'dark'
                         })}
+                        style={{
+                          fontFamily: currentSlideData.titleFormat?.fontFamily,
+                          fontSize: currentSlideData.titleFormat?.fontSize ? `${currentSlideData.titleFormat.fontSize}px` : undefined,
+                          fontWeight: currentSlideData.titleFormat?.bold ? 'bold' : undefined,
+                          fontStyle: currentSlideData.titleFormat?.italic ? 'italic' : undefined,
+                          textDecoration: [
+                            currentSlideData.titleFormat?.underline ? 'underline' : '',
+                            currentSlideData.titleFormat?.strikethrough ? 'line-through' : ''
+                          ].filter(Boolean).join(' ') || undefined,
+                          color: currentSlideData.titleFormat?.color,
+                          backgroundColor: currentSlideData.titleFormat?.backgroundColor,
+                          textAlign: currentSlideData.titleFormat?.alignment || 'center'
+                        }}
                         onMouseDown={(e) => handleMouseDown(e, 'title')}
                         onDoubleClick={() => startEditing(`${currentSlideData.id}-title`, currentSlideData.title)}
+                        onClick={() => {
+                          setSelectedElement({ type: 'title' });
+                          setShowFormatToolbar(true);
+                        }}
                       >
                         {currentSlideData.title}
                         <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
@@ -674,14 +962,38 @@ export function PresentationEditor({
                   ) : (
                     <div className="group cursor-move">
                       <div
-                        className={cn("text-lg leading-relaxed p-2 rounded border-2 border-transparent hover:border-blue-300 transition-colors", {
+                        className={cn("text-lg leading-relaxed p-2 rounded border-2 transition-colors", {
+                          'border-blue-500 bg-blue-50 dark:bg-blue-900/20': selectedElement?.type === 'content' && selectedElement?.index === index,
+                          'border-transparent hover:border-blue-300': !(selectedElement?.type === 'content' && selectedElement?.index === index),
                           'text-gray-800 hover:bg-blue-50': theme === 'light',
                           'text-white hover:bg-blue-900/20': theme === 'dark'
                         })}
+                        style={{
+                          fontFamily: currentSlideData.contentFormats?.[index]?.fontFamily,
+                          fontSize: currentSlideData.contentFormats?.[index]?.fontSize ? `${currentSlideData.contentFormats[index].fontSize}px` : undefined,
+                          fontWeight: currentSlideData.contentFormats?.[index]?.bold ? 'bold' : undefined,
+                          fontStyle: currentSlideData.contentFormats?.[index]?.italic ? 'italic' : undefined,
+                          textDecoration: [
+                            currentSlideData.contentFormats?.[index]?.underline ? 'underline' : '',
+                            currentSlideData.contentFormats?.[index]?.strikethrough ? 'line-through' : ''
+                          ].filter(Boolean).join(' ') || undefined,
+                          color: currentSlideData.contentFormats?.[index]?.color,
+                          backgroundColor: currentSlideData.contentFormats?.[index]?.backgroundColor,
+                          textAlign: currentSlideData.contentFormats?.[index]?.alignment || 'left'
+                        }}
                         onMouseDown={(e) => handleMouseDown(e, 'content', index)}
                         onDoubleClick={() => startEditing(currentSlideData.id, item, index)}
+                        onClick={() => {
+                          setSelectedElement({ type: 'content', index });
+                          setShowFormatToolbar(true);
+                        }}
                       >
-                        • {item}
+                        {(() => {
+                          const format = currentSlideData.contentFormats?.[index];
+                          const listType = format?.listType || 'bullet';
+                          const prefix = listType === 'numbered' ? `${index + 1}.` : listType === 'bullet' ? '•' : '';
+                          return prefix ? `${prefix} ${item}` : item;
+                        })()}
                         <div className="absolute -top-2 -right-2 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
                           <span className="bg-blue-500 text-white p-1 rounded-full text-xs cursor-move">⋮⋮</span>
                           <span className="bg-gray-500 text-white p-1 rounded-full text-xs cursor-pointer">
