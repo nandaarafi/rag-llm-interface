@@ -1,0 +1,428 @@
+{
+  "info": {
+    "name": "AI Chatbot - Current API Architecture",
+    "description": "Complete API mapping for understanding agentic workflow integration points",
+    "version": "1.0.0"
+  },
+  "item": [
+    {
+      "name": "🔒 Authentication APIs",
+      "item": [
+        {
+          "name": "NextAuth Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/callback/credentials",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "callback", "credentials"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "email": "user@example.com",
+                "password": "password123"
+              }
+            }
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/forgot-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "forgot-password"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "email": "user@example.com"
+              }
+            }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/reset-password",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "reset-password"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "token": "reset-token-here",
+                "password": "newpassword123"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💬 Chat & AI APIs",
+      "item": [
+        {
+          "name": "Send Chat Message (STREAMING)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "chat"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "id": "chat-uuid-here",
+                "messages": [
+                  {
+                    "id": "msg-uuid",
+                    "role": "user",
+                    "parts": [
+                      {
+                        "type": "text",
+                        "text": "Create a PPT about climate change"
+                      }
+                    ]
+                  }
+                ],
+                "selectedChatModel": "chat-model",
+                "currentArtifact": {
+                  "documentId": "doc-uuid",
+                  "kind": "ppt",
+                  "title": "Climate Change Presentation"
+                }
+              }
+            }
+          },
+          "description": "Main chat endpoint with AI streaming response. Uses tools: createDocument, updateDocument, requestSuggestions, getWeather"
+        },
+        {
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/history",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "history"]
+            }
+          }
+        },
+        {
+          "name": "Get Suggestions",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/suggestions",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "suggestions"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "documentId": "doc-uuid-here"
+              }
+            }
+          }
+        },
+        {
+          "name": "Vote on Message",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/vote",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "vote"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "chatId": "chat-uuid",
+                "messageId": "msg-uuid",
+                "type": "up"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📄 Document/Artifact APIs",
+      "item": [
+        {
+          "name": "Create/Update Document",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/document",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "document"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "id": "doc-uuid",
+                "kind": "ppt",
+                "title": "Climate Change PPT",
+                "content": "{\n  \"title\": \"Climate Change\",\n  \"slides\": [\n    {\n      \"title\": \"Introduction\",\n      \"content\": [\"Climate change overview\"],\n      \"layout\": \"title\"\n    }\n  ]\n}"
+              }
+            }
+          }
+        },
+        {
+          "name": "Generate PPTX Export",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/generate-pptx",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "generate-pptx"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "slides": [
+                  {
+                    "title": "Title Slide",
+                    "content": ["Subtitle here"],
+                    "layout": "title"
+                  },
+                  {
+                    "title": "Content Slide",
+                    "content": ["Bullet point 1", "Bullet point 2"],
+                    "layout": "content"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "📁 File Management",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/files/upload",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "files", "upload"]
+            },
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "💳 Credits & Payments",
+      "item": [
+        {
+          "name": "Get User Credits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/user/credits",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "user", "credits"]
+            }
+          }
+        },
+        {
+          "name": "Create Checkout Session",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/create-checkout",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "create-checkout"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "planType": "pro"
+              }
+            }
+          }
+        },
+        {
+          "name": "Payment Webhook",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/webhook",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "webhook"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "⚙️ System Management",
+      "item": [
+        {
+          "name": "Get System Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/system-settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "system-settings"]
+            }
+          }
+        },
+        {
+          "name": "Update System Settings (Admin)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/system-settings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "system-settings"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "ENABLE_EXTERNAL_SERVICES": true,
+                "ENABLE_EMAIL_SENDING": true,
+                "ENABLE_GOOGLE_OAUTH": true
+              }
+            }
+          }
+        },
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "🤖 PROPOSED: Agentic Workflow APIs",
+      "description": "NEW APIs needed for agentic workflow system",
+      "item": [
+        {
+          "name": "Start Workflow",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/workflows",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workflows"]
+            },
+            "body": {
+              "mode": "json",
+              "json": {
+                "type": "ppt-generation",
+                "input": {
+                  "topic": "Climate Change",
+                  "slideCount": 10,
+                  "style": "professional",
+                  "includeImages": true
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get Workflow Status (STREAMING)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/workflows/{{workflowId}}/stream",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workflows", "{{workflowId}}", "stream"]
+            }
+          },
+          "description": "Server-Sent Events stream for real-time workflow updates"
+        },
+        {
+          "name": "Stop Workflow",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/workflows/{{workflowId}}/stop",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workflows", "{{workflowId}}", "stop"]
+            }
+          }
+        },
+        {
+          "name": "Get Workflow History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/workflows?status=completed&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "workflows"],
+              "query": [
+                {
+                  "key": "status",
+                  "value": "completed"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    }
+  ]
+}

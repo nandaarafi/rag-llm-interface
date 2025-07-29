@@ -10,6 +10,11 @@ This website follows [Conventional Commits](https://www.conventionalcommits.org/
 
 Commit message will be checked using [husky and commit lint](https://theodorusclarence.com/library/husky-commitlint-prettier), you can't commit if not using the proper convention below.
 
+### PPT Generation
+- Generate image using kling AI, Flux AI?
+- Generate text using chatgpt 4.1, claude 3.5?
+- AI Editing Tools in PPT Artifact?
+
 ### Format
 
 `<type>(optional scope): <description>`
@@ -77,6 +82,9 @@ Available types are:
 - **https://ui.aceternity.com/** for component
 - **https://www.cult-ui.com/** card references
 - **https://ui.aceternity.com/** for more animated UI
+
+## Reference Create UI
+- https://21st.dev/ All In One UI References    
 
 ### Project Structure
 ```

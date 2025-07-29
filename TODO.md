@@ -33,8 +33,13 @@
 ```typescript
 import { createEnv } from "@t3-oss/env-nextjs";
 ```
-
+## Product Engineer Thinking
+- How the wireframe
+- How the JSON API format look like?
+- How the architecture diagram look like?
 # Backlog
+## Agentic Tool Calling
+
 ## Though About Tool Calling
 - We need to separate, tool that need user to choose, or wheter the AI choose it
 
