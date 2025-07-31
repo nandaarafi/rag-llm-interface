@@ -1,5 +1,7 @@
 import { LoaderIcon } from './icons';
 import cn from 'classnames';
+import { useState } from 'react';
+import { ImageZoomModal } from './image-zoom-modal';
 
 interface ImageEditorProps {
   title: string;
@@ -16,6 +18,7 @@ export function ImageEditor({
   status,
   isInline,
 }: ImageEditorProps) {
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
   return (
     <div
       className={cn('flex flex-row items-center justify-center w-full', {
@@ -35,13 +38,23 @@ export function ImageEditor({
       ) : (
         <picture>
           <img
-            className={cn('w-full h-fit max-w-[800px]', {
+            className={cn('w-full h-fit max-w-[800px] cursor-pointer hover:opacity-80 transition-opacity', {
               'p-0 md:p-20': !isInline,
             })}
             src={`data:image/png;base64,${content}`}
             alt={title}
+            onClick={() => setIsZoomOpen(true)}
           />
         </picture>
+      )}
+      
+      {status !== 'streaming' && (
+        <ImageZoomModal
+          src={`data:image/png;base64,${content}`}
+          alt={title}
+          isOpen={isZoomOpen}
+          onClose={() => setIsZoomOpen(false)}
+        />
       )}
     </div>
   );

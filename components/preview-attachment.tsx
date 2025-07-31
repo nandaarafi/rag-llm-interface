@@ -1,6 +1,8 @@
 import type { Attachment } from 'ai';
+import { useState } from 'react';
 
 import { LoaderIcon } from './icons';
+import { ImageZoomModal } from './image-zoom-modal';
 
 export const PreviewAttachment = ({
   attachment,
@@ -10,6 +12,7 @@ export const PreviewAttachment = ({
   isUploading?: boolean;
 }) => {
   const { name, url, contentType } = attachment;
+  const [isZoomOpen, setIsZoomOpen] = useState(false);
 
   return (
     <div data-testid="input-attachment-preview" className="flex flex-col gap-2">
@@ -22,7 +25,8 @@ export const PreviewAttachment = ({
               key={url}
               src={url}
               alt={name ?? 'An image attachment'}
-              className="rounded-md size-full object-cover"
+              className="rounded-md size-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+              onClick={() => setIsZoomOpen(true)}
             />
           ) : (
             <div className="" />
@@ -41,6 +45,15 @@ export const PreviewAttachment = ({
         )}
       </div>
       <div className="text-xs text-zinc-500 max-w-16 truncate">{name}</div>
+      
+      {contentType?.startsWith('image') && (
+        <ImageZoomModal
+          src={url}
+          alt={name ?? 'An image attachment'}
+          isOpen={isZoomOpen}
+          onClose={() => setIsZoomOpen(false)}
+        />
+      )}
     </div>
   );
 };
