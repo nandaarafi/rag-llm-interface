@@ -208,3 +208,16 @@ LEMONSQUEEZY_SIGNING_SECRET=your_webhook_signing_secret
 - ✅ LemonSqueezy payment processing
 - ✅ User access management and session handling
 - ✅ Database schema with password reset tokens
+
+## Serverless Best Practices (Vercel)
+
+### ⚠️ Cost Optimization Warning
+- **Keep realtime database connections client-side** when possible
+- Moving realtime DB connections from client to server-side can increase function duration by 10000x
+- Server-side realtime connections stay constantly running, causing unexpected high charges
+- Use server-side connections only when absolutely necessary for security/functionality
+
+### Database Connection Patterns
+- **Client-side**: Good for realtime features, lower serverless costs
+- **Server-side**: Use for sensitive operations, API routes, but monitor duration closely
+- **Hybrid**: Keep auth/sensitive queries server-side, realtime subscriptions client-side
