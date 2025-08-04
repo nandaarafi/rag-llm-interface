@@ -40,7 +40,7 @@ export function ImageZoomModal({ src, alt, isOpen, onClose }: ImageZoomModalProp
             
             {!imageLoaded && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="animate-spin rounded-full size-8 border-b-2 border-white"></div>
+                <div className="animate-spin rounded-full size-8 border-b-2 border-white" />
               </div>
             )}
             
