@@ -67,3 +67,6 @@ The biggest opportunity might be tapping into the **general self-improvement/con
 - Which community to focus on first for the speaking app?
 - Technical feasibility research needed for voice analysis APIs
 - Competitive analysis of existing speech coaching apps
+
+##TODO:
+- Check if CalAI using react native or flutter using method in claude https://claude.ai/chat/a21fbf95-0af2-412a-9bf9-e1c8ca3f1bb4
