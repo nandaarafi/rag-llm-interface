@@ -29,6 +29,10 @@ export const myProvider = isTestEnvironment
         'title-model': titleModel,
         'artifact-model': artifactModel,
       },
+      textEmbeddingModels: {},
+      imageModels: {
+        'small-model': google('imagen-3.0-generate-001'),
+      },
     })
   : customProvider({
       languageModels: {
@@ -40,5 +44,8 @@ export const myProvider = isTestEnvironment
         'title-model': google('gemini-2.0-flash'),
         'artifact-model': google('gemini-2.0-flash'),
       },
-
+      textEmbeddingModels: {},
+      imageModels: {
+        'small-model': google('imagen-3.0-generate-001'),
+      },
     });

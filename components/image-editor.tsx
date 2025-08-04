@@ -41,7 +41,7 @@ export function ImageEditor({
             className={cn('w-full h-fit max-w-[800px] cursor-pointer hover:opacity-80 transition-opacity', {
               'p-0 md:p-20': !isInline,
             })}
-            src={`data:image/png;base64,${content}`}
+            src={content.startsWith('http') || content.startsWith('data:') ? content : `data:image/png;base64,${content}`}
             alt={title}
             onClick={() => setIsZoomOpen(true)}
           />
@@ -50,7 +50,7 @@ export function ImageEditor({
       
       {status !== 'streaming' && (
         <ImageZoomModal
-          src={`data:image/png;base64,${content}`}
+          src={content.startsWith('http') || content.startsWith('data:') ? content : `data:image/png;base64,${content}`}
           alt={title}
           isOpen={isZoomOpen}
           onClose={() => setIsZoomOpen(false)}

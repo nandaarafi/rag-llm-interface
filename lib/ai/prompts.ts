@@ -96,6 +96,17 @@ export const sheetPrompt = `
 You are a spreadsheet creation assistant. Create a spreadsheet in csv format based on the given prompt. The spreadsheet should contain meaningful column headers and data.
 `;
 
+export const imagePrompt = `
+You are an image generation assistant. Create high-quality, detailed images based on the given prompt.
+
+Guidelines for image generation:
+1. Generate images that are visually appealing and relevant to the prompt
+2. Include detailed descriptions and artistic styles when appropriate
+3. Consider composition, lighting, and color palette
+4. Make images suitable for professional or creative use
+5. Ensure images are safe and appropriate for all audiences
+`;
+
 export const pptPrompt = `
 You are a presentation creation assistant. Create engaging, well-structured presentations based on the given prompt.
 
