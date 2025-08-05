@@ -1,51 +1,114 @@
-# Speaking AI - UX Design Guide
+# SpeakScore MVP - Blake Anderson Strategy Implementation
+
+## App Concept: "SpeakScore"
+**3-word description**: "Speaking score app"
+
+## Core Problem Identified
+Current public speaking apps like Amplivio ($12.99/month) have trust issues because they're:
+- Over-engineered with complex features
+- High price barriers for unproven results
+- Don't provide instant gratification
+
+## Blake Anderson's Solution Strategy
+
+### 1. Extreme Simplification
+- **One core action**: Record 30 seconds → Get instant score + 1 tip
+- **Single button interface**: "Rate My Speaking"
+- **Free core feature** with optional premium upgrades
+
+### 2. Build Trust Through Transparency
+- Show AI analysis process (don't hide behind black box)
+- Instant results (no waiting, no complex onboarding)
+- Social proof built-in (shareable scores create viral validation)
+
+### 3. Target Specific Pain Points
+- **Job interview anxiety** (highest motivation to pay)
+- **Dating confidence** (overlaps with Rizz GPT audience)  
+- **Social situations** (asking for raises, difficult conversations)
+
+### 4. Viral Design Elements
+- **Shareable rating system** (1-10 speaking score like Umax)
+- **Before/after speaking scores** for transformation content
+- **Challenge features** ("Rate your pickup line delivery")
+
+## MVP Architecture
+
+### Core Technologies (Blake's 2025 Stack)
+- **React Native + Expo** (cross-platform development)
+- **Cursor IDE** (AI-powered development)
+- **Supabase** (database, auth, storage)
+- **OpenAI/Anthropic API** (speech analysis)
+
+### Essential Features (Launch with 20%)
+1. **Audio Recording** (30-second limit)
+2. **AI Speech Analysis** 
+   - Pace/speed analysis
+   - Filler word detection ("um", "uh", "like")
+   - Clarity assessment
+3. **Instant Scoring** (1-10 scale)
+4. **One Improvement Tip** per recording
+5. **Shareable Results** (screenshot with score)
+
+### Premium Features (Future)
+- Unlimited recordings (free = 3 per day)
+- Detailed analysis breakdown
+- Practice prompts for specific scenarios
+- Progress tracking over time
+
+### Blake Anderson Framework Validation ✅
+- **Familiar Mental Model**: FIFA 1-100 scoring system
+- **"Did You Hear About" Test**: "AI that rates your speaking" - passes
+- **Single Core Action**: Record speech → Get score → Share result
+- **Market Research**: 6M+ view viral teleprompter content validates demand
+
+## Immediate Implementation Plan
+
+### Phase 1: Figma Design (2-3 days, 8-12 hours)
+**Day 1**: Figma basics + idea board + design system
+**Day 2**: 3 core screens + interactions + viral results card  
+**Day 3**: Polish + app icon + export for development
+
+### Phase 2: MVP Development (1-2 weeks)
+**Core Features Only:**
+1. One-button onboarding
+2. Teleprompter with viral scripts (Grammy speech, TED talk)
+3. 30-second recording with OpenAI transcription
+4. FIFA-style 1-100 scoring with tier names
+5. Viral share cards for social media
+
+### Phase 3: Launch Strategy
+1. r/PublicSpeaking beta testing
+2. TikTok content creation using viral scripts
+3. Influencer outreach in public speaking niche
 
 ## Blake Anderson's 3 Core Design Principles Applied
 
-### Principle 1: Minimize Cognitive Load
-**"Every tap, decision, and moment of confusion hinders your app's growth"**
-- **Target**: 1 button (like Umax's "scan your face")
-- **5-Year-Old Test**: Must be simple enough for a child to use
-- **80/20 Rule**: Launch with the 20% of features that provide 80% of value
+### Principle 1: Minimize Cognitive Load ✅
+- **One button per screen** (following Umax model)
+- **5-Year-Old Test**: Simple enough for child to use
+- **80/20 Rule**: Focus on core rating functionality only
 
-### Principle 2: Do Not Reinvent the Wheel  
-**"Save your innovation for solving the core problem"**
-- **FIFA Rating System**: Users already understand 1-100 player ratings
-- **Standard UI Patterns**: Settings in top-right, familiar navigation
-- **Leverage Existing Mental Models**: Don't create new interaction patterns
+### Principle 2: Do Not Reinvent the Wheel ✅
+- **FIFA Rating System**: Leverage familiar 1-100 scale
+- **Mobbin.com patterns**: Copy successful app layouts
+- **Standard UI**: Don't innovate on basic interactions
 
-### Principle 3: Think Like Your Customer
-**"Apps that go viral are designed by people who understand users obsessively"**
-- **Become the customer**: Use r/PublicSpeaking, practice speeches yourself
-- **Deep user research**: What specific problems do they have?
-- **Build for real needs**: Not imaginary feature requests
+### Principle 3: Think Like Your Customer ✅
+- **Deep research done**: r/PublicSpeaking analysis complete
+- **Viral content studied**: TikTok teleprompter challenges researched
+- **User pain points identified**: Fear of public embarrassment
 
-## Blake Anderson's Design Objective
-**"Viral app design seeks to minimize friction from design to millions of users"**
+## Ready for Execution
 
-### Blake Anderson's 3 Methods Applied
+### All Research Complete ✅
+- Competitive analysis finished
+- Market validation through viral content
+- Technical feasibility confirmed (OpenAI API)
+- Blake Anderson methodology applied
+- User flow designed and documented
 
-#### Method 1: Figma-First Design
-- **Learn Figma**: All successful apps start in Figma
-- **UX over UI**: Focus on what components do, not corner radius
-- **Quick iteration**: Turn ideas into tangible designs fast
-
-#### Method 2: Create Idea Board (Screenshots)
-- **Mobbin.com**: Study existing app patterns
-- **FIFA/Madden**: Rating system inspiration
-- **AI Avatar Apps**: Upload image flow patterns
-- **Great designers screenshot**: Don't reinvent successful patterns
-
-#### Method 3: Study Viral Content First
-- **Work backwards**: Study viral TikTok content, then design screens to fit
-- **Content integration**: Design specifically for social media sharing
-- **Tens of hours**: Deep research into viral speech/rating content
-
-### Core Psychology (Blake Anderson Validated)
-- **Familiar Mental Model**: FIFA-style 1-100 scoring (users already understand)
-- **"Did You Hear About" Test**: "AI that rates your speaking" passes party test
-- **Social Media Native**: Designed for TikTok virality first
-- **Single Core Action**: One button, one result (like all Blake's apps)
+### Next Action Required
+**Start Figma design immediately** - all planning and research phases complete.
 
 ## Key UX Design Points
 

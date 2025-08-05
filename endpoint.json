@@ -1,0 +1,535 @@
+{
+  "info": {
+    "name": "RAG LLM Interface API",
+    "description": "API endpoints for the RAG LLM Interface application with Next.js 15, AI SDK, and Drizzle ORM",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{auth_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "auth_token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Send Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"chat-uuid\",\n  \"messages\": [\n    {\n      \"id\": \"message-uuid\",\n      \"role\": \"user\",\n      \"parts\": [\n        {\n          \"type\": \"text\",\n          \"text\": \"Hello, can you help me?\"\n        }\n      ]\n    }\n  ],\n  \"selectedChatModel\": \"chat-model\",\n  \"currentArtifact\": {\n    \"documentId\": \"doc-uuid\",\n    \"kind\": \"text\",\n    \"title\": \"Example Document\"\n  }\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/chat",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat"]
+            },
+            "description": "Send a message to the AI chat system. Requires authentication and credits."
+          }
+        },
+        {
+          "name": "Delete Chat",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/chat?id=chat-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "chat"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "chat-uuid"
+                }
+              ]
+            },
+            "description": "Delete a specific chat by ID. Only the chat owner can delete it."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Documents",
+      "item": [
+        {
+          "name": "Get Document",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/document?id=document-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "document"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "document-uuid"
+                }
+              ]
+            },
+            "description": "Get document by ID. Supports both public and private documents."
+          }
+        },
+        {
+          "name": "Update Document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"content\": \"Updated document content\",\n  \"title\": \"Updated Document Title\",\n  \"kind\": \"text\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/document?id=document-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "document"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "document-uuid"
+                }
+              ]
+            },
+            "description": "Update or create a document. Requires authentication."
+          }
+        },
+        {
+          "name": "Delete Document",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/document?id=document-uuid&timestamp=2024-01-01T00:00:00.000Z",
+              "host": ["{{base_url}}"],
+              "path": ["api", "document"],
+              "query": [
+                {
+                  "key": "id",
+                  "value": "document-uuid"
+                },
+                {
+                  "key": "timestamp",
+                  "value": "2024-01-01T00:00:00.000Z"
+                }
+              ]
+            },
+            "description": "Delete document versions after a specific timestamp. Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "File Upload",
+      "item": [
+        {
+          "name": "Upload File",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "description": "File to upload (JPEG, PNG, or PDF). Max 5MB for images, 10MB for PDFs."
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/files/upload",
+              "host": ["{{base_url}}"],
+              "path": ["api", "files", "upload"]
+            },
+            "description": "Upload a file (image or PDF). Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat History",
+      "item": [
+        {
+          "name": "Get Chat History",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/history?limit=10&starting_after=&ending_before=",
+              "host": ["{{base_url}}"],
+              "path": ["api", "history"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Number of chats to return (default: 10)"
+                },
+                {
+                  "key": "starting_after",
+                  "value": "",
+                  "description": "Chat ID to start after (for pagination)"
+                },
+                {
+                  "key": "ending_before",
+                  "value": "",
+                  "description": "Chat ID to end before (for pagination)"
+                }
+              ]
+            },
+            "description": "Get user's chat history with pagination. Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Suggestions",
+      "item": [
+        {
+          "name": "Get Suggestions",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/suggestions?documentId=document-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "suggestions"],
+              "query": [
+                {
+                  "key": "documentId",
+                  "value": "document-uuid"
+                }
+              ]
+            },
+            "description": "Get suggestions for a specific document. Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Voting",
+      "item": [
+        {
+          "name": "Get Votes",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/vote?chatId=chat-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vote"],
+              "query": [
+                {
+                  "key": "chatId",
+                  "value": "chat-uuid"
+                }
+              ]
+            },
+            "description": "Get votes for messages in a chat. Works for public chats or owned chats."
+          }
+        },
+        {
+          "name": "Vote on Message",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"chatId\": \"chat-uuid\",\n  \"messageId\": \"message-uuid\",\n  \"type\": \"up\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/vote",
+              "host": ["{{base_url}}"],
+              "path": ["api", "vote"]
+            },
+            "description": "Vote on a message (up or down). Only chat owners can vote."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "NextAuth Login",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/signin",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "signin"]
+            },
+            "description": "NextAuth.js signin endpoint"
+          }
+        },
+        {
+          "name": "NextAuth Callback",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/auth/callback/credentials",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "callback", "credentials"]
+            },
+            "description": "NextAuth.js callback endpoint for credentials"
+          }
+        },
+        {
+          "name": "Verify Email",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"verification-token\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/verify-email",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "verify-email"]
+            },
+            "description": "Verify user email with verification token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Password Management",
+      "item": [
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"user@example.com\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/forgot-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "forgot-password"]
+            },
+            "description": "Request password reset email"
+          }
+        },
+        {
+          "name": "Verify Reset Token",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/reset-password?token=reset-token",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reset-password"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "reset-token"
+                }
+              ]
+            },
+            "description": "Verify if a password reset token is valid"
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"token\": \"reset-token\",\n  \"password\": \"newPassword123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/reset-password",
+              "host": ["{{base_url}}"],
+              "path": ["api", "reset-password"]
+            },
+            "description": "Reset password using valid reset token"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Presentation Generation",
+      "item": [
+        {
+          "name": "Generate PPTX",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"presentationData\": \"{\\\"title\\\": \\\"Sample Presentation\\\", \\\"slides\\\": [{\\\"id\\\": \\\"slide1\\\", \\\"title\\\": \\\"Welcome\\\", \\\"content\\\": [\\\"Introduction\\\", \\\"Overview\\\"], \\\"layout\\\": \\\"title\\\"}]}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/generate-pptx",
+              "host": ["{{base_url}}"],
+              "path": ["api", "generate-pptx"]
+            },
+            "description": "Generate PowerPoint presentation from JSON data. Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "System Health",
+      "item": [
+        {
+          "name": "Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/health",
+              "host": ["{{base_url}}"],
+              "path": ["api", "health"]
+            },
+            "description": "Check system health including database and AI service connectivity"
+          }
+        }
+      ]
+    },
+    {
+      "name": "System Settings",
+      "item": [
+        {
+          "name": "Get System Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/system-settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "system-settings"]
+            },
+            "description": "Get current system settings (email, OAuth, external services)"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "Get Admin System Settings",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/admin/system-settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "system-settings"]
+            },
+            "description": "Get all system settings (admin access). Requires authentication."
+          }
+        },
+        {
+          "name": "Update System Setting",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"description\": \"ENABLE_EMAIL_SENDING\",\n  \"condition\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/admin/system-settings",
+              "host": ["{{base_url}}"],
+              "path": ["api", "admin", "system-settings"]
+            },
+            "description": "Create or update a system setting (admin access). Requires authentication."
+          }
+        }
+      ]
+    },
+    {
+      "name": "User Management",
+      "item": [
+        {
+          "name": "Get User Credits",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/user/credits?userId=user-uuid",
+              "host": ["{{base_url}}"],
+              "path": ["api", "user", "credits"],
+              "query": [
+                {
+                  "key": "userId",
+                  "value": "user-uuid"
+                }
+              ]
+            },
+            "description": "Get user credit information. Users can only access their own credits."
+          }
+        }
+      ]
+    }
+  ]
+}
