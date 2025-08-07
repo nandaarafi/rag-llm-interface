@@ -1,12 +1,14 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
-import { Search, Download, Share2, Eye, FileText, Calendar } from 'lucide-react';
+import { Search, Download, Share2, Eye, FileText, Calendar, ZoomIn } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import type { Document } from '@/lib/db/schema';
+import { DocumentPreviewModal } from './document-preview-modal';
+import { DocumentInlinePreview } from './document-inline-preview';
 
 type DocumentWithFormatted = Document & {
   formattedDate: string;
@@ -36,6 +38,8 @@ function getKindColor(kind: string): string {
 
 export function DocumentManagerClient({ documents: initialDocuments, error }: { documents: DocumentWithFormatted[], error: string | null }) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [previewDocument, setPreviewDocument] = useState<DocumentWithFormatted | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
 
   const filteredDocuments = useMemo(() => {
     if (!searchTerm) return initialDocuments;
@@ -47,8 +51,18 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
     );
   }, [searchTerm, initialDocuments]);
 
+  const handlePreview = (doc: DocumentWithFormatted) => {
+    setPreviewDocument(doc);
+    setIsPreviewOpen(true);
+  };
+
   const handleView = (doc: DocumentWithFormatted) => {
     window.open(`/document/${doc.id}`, '_blank');
+  };
+
+  const handleClosePreview = () => {
+    setIsPreviewOpen(false);
+    setPreviewDocument(null);
   };
 
   const handleDownload = (doc: DocumentWithFormatted) => {
@@ -120,8 +134,8 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
         {filteredDocuments.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredDocuments.map((doc) => (
-              <Card key={doc.id} className="hover:shadow-md transition-shadow w-50 h-60">
-                <CardHeader className="pb-2">
+              <Card key={doc.id} className="hover:shadow-md transition-shadow group relative flex flex-col h-80">
+                <CardHeader className="pb-2 flex-shrink-0">
                   <div className="flex justify-between items-start">
                     <div className="p-2 rounded-lg bg-secondary">
                       <FileText className="size-6 text-muted-foreground" />
@@ -131,28 +145,67 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
                     </Badge>
                   </div>
                   <CardTitle className="text-lg mt-4 line-clamp-1">{doc.title}</CardTitle>
-                  <CardDescription className="line-clamp-2">
-                    {doc.content ? doc.content.substring(0, 150) + (doc.content.length > 150 ? '...' : '') : 'No content available'}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent className="pt-0">
-                  <div className="flex items-center justify-between text-sm text-muted-foreground">
+
+                {/* Inline Preview Section */}
+                <CardContent className="flex-1 pt-0 pb-2 min-h-0">
+                  <div 
+                    className="h-24 cursor-pointer rounded-lg border border-dashed border-muted-foreground/20 hover:border-muted-foreground/40 transition-colors relative overflow-hidden"
+                    onClick={() => handlePreview(doc)}
+                  >
+                    <DocumentInlinePreview document={doc} className="h-full p-2" />
+                    
+                    {/* Hover overlay for modal preview */}
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors rounded-lg flex items-center justify-center">
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-background/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-lg">
+                        <div className="flex items-center gap-2 text-sm font-medium">
+                          <ZoomIn className="size-4" />
+                          Click for detailed preview
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Document metadata */}
+                  <div className="flex items-center justify-between text-sm text-muted-foreground mt-2">
                     <div className="flex items-center gap-1">
                       <Calendar className="size-4" />
                       <span>{doc.formattedDate}</span>
                     </div>
                   </div>
                 </CardContent>
-                <CardFooter className="flex justify-end gap-2 pt-0">
-                  <Button variant="outline" size="sm" onClick={() => handleDownload(doc)}>
+
+                <CardFooter className="flex justify-end gap-2 pt-0 flex-shrink-0">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload(doc);
+                    }}
+                  >
                     <Download className="size-4 mr-2" />
                     Download
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleShare(doc)}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleShare(doc);
+                    }}
+                  >
                     <Share2 className="size-4 mr-2" />
                     Share
                   </Button>
-                  <Button variant="outline" size="sm" onClick={() => handleView(doc)}>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleView(doc);
+                    }}
+                  >
                     <Eye className="size-4 mr-2" />
                     View
                   </Button>
@@ -178,6 +231,16 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
           </Card>
         )}
       </div>
+
+      {/* Document Preview Modal */}
+      <DocumentPreviewModal
+        document={previewDocument}
+        isOpen={isPreviewOpen}
+        onClose={handleClosePreview}
+        onView={handleView}
+        onDownload={handleDownload}
+        onShare={handleShare}
+      />
     </div>
   );
 }
