@@ -3,6 +3,7 @@ import { memo } from 'react';
 import type { ArtifactKind } from './artifact';
 import { FileIcon, LoaderIcon, MessageIcon, PencilEditIcon } from './icons';
 import { useArtifact } from '@/hooks/use-artifact';
+import { fetcher } from '@/lib/utils';
 
 const getActionText = (
   type: 'create' | 'update' | 'request-suggestions',
@@ -35,37 +36,53 @@ function PureDocumentToolResult({
 }: DocumentToolResultProps) {
   const { setArtifact } = useArtifact();
 
+  const handleClick = async (event: React.MouseEvent<HTMLButtonElement>) => {
+    // if (isReadonly) {
+    //   toast.error(
+    //     'Viewing files in shared chats is currently not supported.',
+    //   );
+    //   return;
+    // }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    const boundingBox = {
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+    };
+
+    let content = '';
+    
+    // For images, fetch the content from the database
+    if (result.kind === 'image') {
+      try {
+        const documents = await fetcher(`/api/document?id=${result.id}`);
+        if (documents && documents.length > 0) {
+          content = documents[0].content || '';
+        }
+      } catch (error) {
+        console.error('Failed to fetch document content:', error);
+      }
+    }
+
+    setArtifact({
+      documentId: result.id,
+      kind: result.kind,
+      content,
+      title: result.title,
+      isVisible: true,
+      status: 'idle',
+      boundingBox,
+    });
+  };
+
   return (
     <button
       type="button"
       className="bg-background cursor-pointer border py-2 px-3 rounded-xl w-fit flex flex-row gap-3 items-start"
-      onClick={(event) => {
-        // if (isReadonly) {
-        //   toast.error(
-        //     'Viewing files in shared chats is currently not supported.',
-        //   );
-        //   return;
-        // }
-
-        const rect = event.currentTarget.getBoundingClientRect();
-
-        const boundingBox = {
-          top: rect.top,
-          left: rect.left,
-          width: rect.width,
-          height: rect.height,
-        };
-
-        setArtifact({
-          documentId: result.id,
-          kind: result.kind,
-          content: '',
-          title: result.title,
-          isVisible: true,
-          status: 'idle',
-          boundingBox,
-        });
-      }}
+      onClick={handleClick}
     >
       <div className="text-muted-foreground mt-1">
         {type === 'create' ? (
