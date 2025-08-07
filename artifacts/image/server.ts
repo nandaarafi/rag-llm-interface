@@ -28,7 +28,7 @@ export const imageDocumentHandler = createDocumentHandler<'image'>({
       if (result.files && result.files.length > 0) {
         const imageFiles = result.files.filter(file => {
           return file.mimeType?.startsWith('image/') ||
-                 (!file.mimeType && !file.type);
+                 !file.mimeType;
         });
         
         if (imageFiles.length > 0) {
@@ -113,7 +113,7 @@ export const imageDocumentHandler = createDocumentHandler<'image'>({
       if (result.files && result.files.length > 0) {
         const imageFiles = result.files.filter(file => {
           return file.mimeType?.startsWith('image/') ||
-                 (!file.mimeType && !file.type);
+                 !file.mimeType;
         });
         
         if (imageFiles.length > 0) {
