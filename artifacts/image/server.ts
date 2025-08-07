@@ -35,7 +35,7 @@ export const imageDocumentHandler = createDocumentHandler<'image'>({
           const imageFile = imageFiles[0];
           
           // Get base64 data
-          let base64Data = imageFile.base64Data || imageFile.data || imageFile.content;
+          let base64Data = (imageFile as any).base64Data || (imageFile as any).data || (imageFile as any).content;
           
           if (base64Data) {
             // Clean up base64 data if it includes data URL prefix
@@ -120,7 +120,7 @@ export const imageDocumentHandler = createDocumentHandler<'image'>({
           const imageFile = imageFiles[0];
           
           // Get base64 data
-          let base64Data = imageFile.base64Data || imageFile.data || imageFile.content;
+          let base64Data = (imageFile as any).base64Data || (imageFile as any).data || (imageFile as any).content;
           
           if (base64Data) {
             // Clean up base64 data if it includes data URL prefix
