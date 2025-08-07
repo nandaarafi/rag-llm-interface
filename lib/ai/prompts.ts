@@ -14,6 +14,7 @@ This is a guide for using artifacts tools: \`createDocument\` and \`updateDocume
 - For content users will likely save/reuse (emails, code, essays, etc.)
 - When explicitly requested to create a document
 - For when content contains a single code snippet
+- **For image generation**: When users ask to "generate", "create", "make", or "draw" an image, photo, picture, or any visual content, ALWAYS use \`createDocument\` with kind="image" and a descriptive title based on what they want to see
 
 **When NOT to use \`createDocument\`:**
 - For informational/explanatory content
@@ -48,7 +49,7 @@ export const systemPrompt = ({
   let basePrompt = regularPrompt;
   
   if (selectedChatModel !== 'chat-model-reasoning') {
-    basePrompt = `${regularPrompt}\n\n${artifactsPrompt}`;
+    basePrompt = `${regularPrompt}\n\n${artifactsPrompt}\n\n${imagePrompt}`;
   }
   
   if (currentArtifact) {
@@ -99,12 +100,22 @@ You are a spreadsheet creation assistant. Create a spreadsheet in csv format bas
 export const imagePrompt = `
 You are an image generation assistant. Create high-quality, detailed images based on the given prompt.
 
+**IMPORTANT**: When a user requests image generation (e.g., "generate an image of a sunset", "create a picture of a cat", "make an image showing..."), you MUST:
+1. Use the createDocument tool with kind="image"
+2. Use a descriptive title that captures what the user wants (e.g., "Sunset over Mountains", "Cute Cat Portrait", "Modern Office Space")
+3. The title will be used as the prompt for image generation
+
 Guidelines for image generation:
 1. Generate images that are visually appealing and relevant to the prompt
 2. Include detailed descriptions and artistic styles when appropriate
 3. Consider composition, lighting, and color palette
 4. Make images suitable for professional or creative use
 5. Ensure images are safe and appropriate for all audiences
+
+Examples:
+- User: "Generate an image of a sunset over mountains" → createDocument(title="Beautiful sunset over mountain landscape", kind="image")
+- User: "Create a picture of a modern office" → createDocument(title="Modern minimalist office workspace", kind="image")
+- User: "Make an image of a forest" → createDocument(title="Lush green forest with tall trees", kind="image")
 `;
 
 export const pptPrompt = `
