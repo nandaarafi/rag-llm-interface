@@ -42,10 +42,10 @@ export const PRICING_PLANS: Record<PlanType, PricingPlan> = {
     },
     description: 'Free',
     features: [
-      "10 access requests to GPT-4o Mini.",
-      "Limited agent requests.",
-      "Limited tab completions.",
-      "Pro two-week trial."
+      "30 Credits access token",
+      "Generate 3 images",
+      "Generate 5 presentations",
+      "Generate 3 essays",
     ],
     credits: 0,
     hasAccess: false,
@@ -71,12 +71,10 @@ export const PRICING_PLANS: Record<PlanType, PricingPlan> = {
     },
     description: 'Everything in Hobby, plus',
     features: [
-      "200 access requests to OpenAI GPT-4.1, Claude, etc.",
-      "Extended limits on agent requests.",
-      "Unlimited tab completions.",
-      "Access to Background Agents.",
-      "Access to Bug Bot.",
-      "Access to maximum context windows."
+      "1000 Credits access token",
+      "Generate 100 images",
+      "Generate 150 presentations",
+      "Unlimited Essays",
     ],
     credits: 300,
     hasAccess: true,
