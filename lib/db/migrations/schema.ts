@@ -38,7 +38,7 @@ export const user = pgTable("User", {
 	image: text(),
 	variantId: varchar("variant_id", { length: 64 }),
 	hasAccess: boolean("has_access").default(false),
-	credits: integer().default(3).notNull(),
+	credits: integer().default(30).notNull(),
 	planType: varchar("plan_type").default('free').notNull(),
 	lastCreditReset: timestamp("last_credit_reset", { mode: 'string' }).defaultNow(),
 	resetToken: varchar("reset_token", { length: 255 }),

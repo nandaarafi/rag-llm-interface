@@ -24,7 +24,7 @@ export const user = pgTable('User', {
   hasAccess: boolean('has_access').default(false),
   
   // Credit system
-  credits: integer('credits').default(3).notNull(),
+  credits: integer('credits').default(30).notNull(),
   planType: varchar('plan_type', { enum: ['free', 'pro', 'ultra'] }).default('free').notNull(),
   lastCreditReset: timestamp('last_credit_reset').defaultNow(),
   
