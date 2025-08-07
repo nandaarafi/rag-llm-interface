@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { memo } from 'react';
 import type { UseChatHelpers } from '@ai-sdk/react';
 
@@ -22,21 +23,25 @@ function PureSuggestedActions({
 }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'What are the advantages',
-      label: 'of using Next.js?',
-      action: 'What are the advantages of using Next.js?',
+      badge: 'Image',
+      title: 'Generate an image',
+      label: 'of a sunset over mountains',
+      action: 'Generate an image of a sunset over mountains',
     },
     {
+      badge: 'Code',
       title: 'Write code to',
       label: `demonstrate djikstra's algorithm`,
       action: `Write code to demonstrate djikstra's algorithm`,
     },
     {
+      badge: 'Essay',
       title: 'Help me write an essay',
       label: `about silicon valley`,
       action: `Help me write an essay about silicon valley`,
     },
     {
+      badge: 'PPT',
       title: 'Help me to generate a PPT',
       label: 'about AI in general',
       action: 'Help me to generate a PPT about AI in general',
@@ -69,12 +74,19 @@ function PureSuggestedActions({
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-2 sm:flex-col w-full h-auto justify-start items-start"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground">
-              {suggestedAction.label}
-            </span>
+            <div className="flex justify-between items-start w-full">
+              <div className="flex flex-col gap-1">
+                <span className="font-medium">{suggestedAction.title}</span>
+                <span className="text-muted-foreground text-left">
+                  {suggestedAction.label}
+                </span>
+              </div>
+              <Badge variant="outline" className="text-xs bg-black text-white border-black shrink-0">
+                {suggestedAction.badge}
+              </Badge>
+            </div>
           </Button>
         </motion.div>
       ))}

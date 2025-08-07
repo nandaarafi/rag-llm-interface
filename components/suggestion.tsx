@@ -8,6 +8,7 @@ import type { UISuggestion } from '@/lib/editor/suggestions';
 
 import { CrossIcon, MessageIcon } from './icons';
 import { Button } from './ui/button';
+import { Badge } from './ui/badge';
 import { cn } from '@/lib/utils';
 import type { ArtifactKind } from './artifact';
 
@@ -49,10 +50,9 @@ export const Suggestion = ({
           whileHover={{ scale: 1.05 }}
         >
           <div className="flex flex-row items-center justify-between">
-            <div className="flex flex-row items-center gap-2">
-              <div className="size-4 bg-muted-foreground/25 rounded-full" />
-              <div className="font-medium">Assistant</div>
-            </div>
+            <Badge variant="secondary" className="text-xs">
+              Assistant
+            </Badge>
             <button
               type="button"
               className="text-xs text-gray-500 cursor-pointer"
