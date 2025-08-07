@@ -6,7 +6,7 @@ export default function LoadingDocument() {
     <div className="min-h-screen bg-background">
       {/* Header Skeleton */}
       <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-10">
-        <div className="container max-w-6xl mx-auto px-4 py-4">
+        <div className="container max-w-6xl mx-auto p-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Skeleton className="h-8 w-24" /> {/* Back button */}

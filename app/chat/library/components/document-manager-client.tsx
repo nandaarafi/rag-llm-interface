@@ -2,7 +2,7 @@
 
 import React, { useState, useMemo } from 'react';
 import { Search, Download, Share2, Eye, FileText, Calendar, ZoomIn } from 'lucide-react';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -135,7 +135,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredDocuments.map((doc) => (
               <Card key={doc.id} className="hover:shadow-md transition-shadow group relative flex flex-col h-80">
-                <CardHeader className="pb-2 flex-shrink-0">
+                <CardHeader className="pb-2 shrink-0">
                   <div className="flex justify-between items-start">
                     <div className="p-2 rounded-lg bg-secondary">
                       <FileText className="size-6 text-muted-foreground" />
@@ -175,7 +175,7 @@ export function DocumentManagerClient({ documents: initialDocuments, error }: { 
                   </div>
                 </CardContent>
 
-                <CardFooter className="flex justify-end gap-2 pt-0 flex-shrink-0">
+                <CardFooter className="flex justify-end gap-2 pt-0 shrink-0">
                   <Button 
                     variant="outline" 
                     size="sm" 

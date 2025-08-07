@@ -1,6 +1,4 @@
 'use client';
-
-import { artifactDefinitions } from '@/components/artifact';
 import type { Document } from '@/lib/db/schema';
 import { cn } from '@/lib/utils';
 

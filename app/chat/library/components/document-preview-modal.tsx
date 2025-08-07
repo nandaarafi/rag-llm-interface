@@ -1,10 +1,8 @@
 'use client';
-
-import { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Download, Share2, Eye, X } from 'lucide-react';
+import { Download, Share2, Eye, } from 'lucide-react';
 import { artifactDefinitions } from '@/components/artifact';
 import type { Document } from '@/lib/db/schema';
 import { cn } from '@/lib/utils';
@@ -58,7 +56,6 @@ function DocumentPreviewContent({ document }: { document: Document }) {
     <div className={cn(
       "w-full border rounded-lg overflow-hidden bg-background",
       {
-        'h-64': document.kind === 'text' || document.kind === 'code',
         'h-80': document.kind === 'image',
         'h-64': document.kind === 'sheet' || document.kind === 'ppt',
       }
@@ -95,7 +92,7 @@ export function DocumentPreviewModal({
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col">
-        <DialogHeader className="flex-shrink-0">
+        <DialogHeader className="shrink-0">
           <div className="flex items-start justify-between">
             <div className="flex-1 min-w-0 pr-4">
               <div className="flex items-center gap-2 mb-2">
@@ -119,7 +116,7 @@ export function DocumentPreviewModal({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex-shrink-0 flex justify-between items-center pt-4 border-t">
+        <div className="shrink-0 flex justify-between items-center pt-4 border-t">
           <Button variant="ghost" onClick={onClose} className="text-muted-foreground">
             Close Preview
           </Button>
