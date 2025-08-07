@@ -31,7 +31,7 @@ export const myProvider = isTestEnvironment
       },
       textEmbeddingModels: {},
       imageModels: {
-        'small-model': google('imagen-3.0-generate-001'),
+        'small-model': google('imagen-3.0-generate-001', { maxImagesPerCall: 1 }),
       },
     })
   : customProvider({
@@ -46,6 +46,6 @@ export const myProvider = isTestEnvironment
       },
       textEmbeddingModels: {},
       imageModels: {
-        'small-model': google('imagen-3.0-generate-001'),
+        'small-model': google('imagen-3.0-generate-001', { maxImagesPerCall: 1 }),
       },
     });
