@@ -1,4 +1,4 @@
-export type PlanType = 'free' | 'pro' | 'ultra';
+export type PlanType = 'free' | 'pro';
 
 export interface PricingPlan {
   id: PlanType;
@@ -89,37 +89,37 @@ export const PRICING_PLANS: Record<PlanType, PricingPlan> = {
       buttonText: 'Get Pro',
       buttonVariant: 'default',
     },
-  },
-  ultra: {
-    id: 'ultra',
-    name: 'Ultra',
-    displayName: 'Ultra',
-    price: {
-      monthly: 20,
-      yearly: 16,
-    },
-    priceDisplay: {
-      monthly: '$20',
-      yearly: '$16',
-    },
-    description: 'Everything in Pro, plus',
-    features: [
-      "20x usage on all OpenAI, Claude, Gemini models.",
-      "Priority access to new features.",
-      "Unlimited access to all models."
-    ],
-    credits: 1000,
-    hasAccess: true,
-    lemonsqueezy: {
-      variantId: '905815',
-    },
-    ui: {
-      popular: false,
-      proGlow: false,
-      buttonText: 'Get Ultra',
-      buttonVariant: 'default',
-    },
-  },
+  }
+  // ultra: {
+  //   id: 'ultra',
+  //   name: 'Ultra',
+  //   displayName: 'Ultra',
+  //   price: {
+  //     monthly: 20,
+  //     yearly: 16,
+  //   },
+  //   priceDisplay: {
+  //     monthly: '$20',
+  //     yearly: '$16',
+  //   },
+  //   description: 'Everything in Pro, plus',
+  //   features: [
+  //     "20x usage on all OpenAI, Claude, Gemini models.",
+  //     "Priority access to new features.",
+  //     "Unlimited access to all models."
+  //   ],
+  //   credits: 1000,
+  //   hasAccess: true,
+  //   lemonsqueezy: {
+  //     variantId: '905815',
+  //   },
+  //   ui: {
+  //     popular: false,
+  //     proGlow: false,
+  //     buttonText: 'Get Ultra',
+  //     buttonVariant: 'default',
+  //   },
+  // },
 } as const;
 
 // Helper functions

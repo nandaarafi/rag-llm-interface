@@ -77,8 +77,9 @@ export default function PricingPage() {
         </div>
 
         <section>
-          <h2 className="text-2xl font-semibold mb-8">Individual Plans</h2>
-          <div className="grid md:grid-cols-3 gap-8">
+          <h2 className="text-2xl font-semibold mb-8 text-center">Individual Plans</h2>
+          <div className="flex justify-center">
+            <div className="grid md:grid-cols-3 gap-8 max-w-4xl">
             {tiers.map((tier) => (
               <div key={tier.id} className={cn('relative', tier.ui.proGlow && 'p-[1px] rounded-2xl bg-gradient-to-b from-pink-500 via-purple-500 to-green-400')}>
                 <Card className="rounded-2xl h-full flex flex-col">
@@ -133,6 +134,7 @@ export default function PricingPage() {
                 </Card>
               </div>
             ))}
+            </div>
           </div>
         </section>
       </div>
