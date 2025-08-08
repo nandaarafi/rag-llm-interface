@@ -25,7 +25,7 @@ import {
 } from '@/components/ui/sidebar';
 import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
-import { ChatItem } from './sidebar-history-item';
+import { AgentEnhancedChatItem } from './agent-enhanced-chat-item';
 import useSWRInfinite from 'swr/infinite';
 import { LoaderIcon } from './icons';
 import { Button } from './ui/button';
@@ -51,6 +51,7 @@ interface CollapsibleSectionProps {
   setOpenMobile: (open: boolean) => void;
   defaultExpanded?: boolean;
   showCount?: boolean;
+  userId?: string;
 }
 
 const PAGE_SIZE = 20;
@@ -97,6 +98,7 @@ function CollapsibleSection({
   setOpenMobile,
   defaultExpanded = false,
   showCount = true,
+  userId,
 }: CollapsibleSectionProps) {
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [showAll, setShowAll] = useState(false);
@@ -146,11 +148,12 @@ function CollapsibleSection({
                   exit={{ opacity: 0, x: -10 }}
                   transition={{ duration: 0.15 }}
                 >
-                  <ChatItem
+                  <AgentEnhancedChatItem
                     chat={chat}
                     isActive={isActive(chat.id)}
                     onDelete={onDelete}
                     setOpenMobile={setOpenMobile}
+                    userId={userId}
                   />
                 </motion.div>
               ))}
@@ -389,6 +392,7 @@ export function EnhancedSidebarHistory({ user }: { user: User | undefined }) {
                         setOpenMobile={setOpenMobile}
                         defaultExpanded={true}
                         showCount={false} // Don't show count for today
+                        userId={user?.id}
                       />
 
                       <CollapsibleSection
@@ -401,6 +405,7 @@ export function EnhancedSidebarHistory({ user }: { user: User | undefined }) {
                         }}
                         setOpenMobile={setOpenMobile}
                         defaultExpanded={true}
+                        userId={user?.id}
                       />
 
                       <CollapsibleSection
@@ -413,6 +418,7 @@ export function EnhancedSidebarHistory({ user }: { user: User | undefined }) {
                         }}
                         setOpenMobile={setOpenMobile}
                         defaultExpanded={false}
+                        userId={user?.id}
                       />
 
                       <CollapsibleSection
@@ -425,6 +431,7 @@ export function EnhancedSidebarHistory({ user }: { user: User | undefined }) {
                         }}
                         setOpenMobile={setOpenMobile}
                         defaultExpanded={false}
+                        userId={user?.id}
                       />
 
                       <CollapsibleSection
@@ -437,6 +444,7 @@ export function EnhancedSidebarHistory({ user }: { user: User | undefined }) {
                         }}
                         setOpenMobile={setOpenMobile}
                         defaultExpanded={false}
+                        userId={user?.id}
                       />
                     </div>
                   );

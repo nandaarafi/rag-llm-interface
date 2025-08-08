@@ -5,6 +5,8 @@ import { useRouter, usePathname } from 'next/navigation';
 
 import { PlusIcon } from '@/components/icons';
 import { EnhancedSidebarHistory } from '@/components/enhanced-sidebar-history';
+import { AgentNewChatDropdown } from '@/components/agent-new-chat-dropdown';
+import { AgentManagementSection } from '@/components/agent-management-section';
 import { SidebarUserNav } from '@/components/sidebar-user-nav';
 import { Button } from '@/components/ui/button';
 import {
@@ -48,23 +50,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 Mindscribe
               </span>
             </Link>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="p-2 h-fit"
-                  onClick={() => {
-                    setOpenMobile(false);
-                    router.push('/chat');
-                    router.refresh();
-                  }}
-                >
-                  <PlusIcon />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent align="end">New Chat</TooltipContent>
-            </Tooltip>
+            <AgentNewChatDropdown userId={user?.id} />
             
           </div>
           
@@ -86,6 +72,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
           </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
+        <AgentManagementSection userId={user?.id} />
         <EnhancedSidebarHistory user={user} />
       </SidebarContent>
       <SidebarContent>
