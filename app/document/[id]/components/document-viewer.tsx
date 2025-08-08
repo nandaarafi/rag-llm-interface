@@ -97,12 +97,12 @@ export function DocumentViewer({ document, isReadonly = true }: DocumentViewerPr
       }
 
       const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
+      const a = globalThis.document.createElement('a');
       a.href = url;
       a.download = filename;
-      document.body.appendChild(a);
+      globalThis.document.body.appendChild(a);
       a.click();
-      document.body.removeChild(a);
+      globalThis.document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }
   };
@@ -201,7 +201,7 @@ export function DocumentViewer({ document, isReadonly = true }: DocumentViewerPr
                 isCurrentVersion={true}
                 getDocumentContentById={() => document.content ?? ''}
                 isLoading={false}
-                metadata={null}
+                metadata={{ suggestions: [], outputs: [] } as any}
                 setMetadata={() => {}}
               />
             </div>

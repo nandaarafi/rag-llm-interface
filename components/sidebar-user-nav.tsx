@@ -43,7 +43,7 @@ export function SidebarUserNav({ user }: { user: User }) {
           className="w-full justify-start h-auto p-2 hover:bg-gray-200 dark:hover:bg-gray-700"
         >
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0 flex-1">
               {!user.image ? (
                 <div className="size-9 rounded-md bg-gradient-to-r from-pink-500 to-purple-500 flex items-center justify-center overflow-hidden">
                   <span className="text-xs font-medium text-white">
@@ -62,9 +62,9 @@ export function SidebarUserNav({ user }: { user: User }) {
                 </Avatar>
               )}
               
-                <div className="flex flex-col items-start">
-                  <span className="text-sm font-medium">{user.name}</span>
-                  <span className="text-xs text-muted-foreground">{user.email}</span>
+                <div className="flex flex-col items-start min-w-0">
+                  <span className="text-sm font-medium truncate max-w-full">{user.name}</span>
+                  <span className="text-xs text-muted-foreground truncate max-w-full">{user.email}</span>
                 </div>
             </div>
             <Settings className="size-4 opacity-50" />
@@ -90,9 +90,9 @@ export function SidebarUserNav({ user }: { user: User }) {
               </AvatarFallback>
             </Avatar>
           )}
-          <div className="flex flex-col">
-            <span className="text-sm font-medium">{user.name}</span>
-            <span className="text-xs text-muted-foreground">{user.email}</span>
+          <div className="flex flex-col min-w-0 flex-1">
+            <span className="text-sm font-medium truncate">{user.name}</span>
+            <span className="text-xs text-muted-foreground truncate">{user.email}</span>
           </div>
         </div>
         <DropdownMenuSeparator />

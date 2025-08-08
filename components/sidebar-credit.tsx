@@ -14,7 +14,6 @@ export default function CreditProgress() {
   const getPlanColor = (plan: PlanType) => {
     switch (plan) {
       case 'pro': return 'bg-blue-600';
-      case 'ultra': return 'bg-purple-600';
       default: return 'bg-gray-600'; // free
     }
   };

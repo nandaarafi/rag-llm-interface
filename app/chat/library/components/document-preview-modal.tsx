@@ -72,7 +72,7 @@ function DocumentPreviewContent({ document }: { document: Document }) {
         isCurrentVersion={true}
         getDocumentContentById={() => document.content ?? ''}
         isLoading={false}
-        metadata={null}
+        metadata={{ suggestions: [], outputs: [] } as any}
         setMetadata={() => {}}
       />
     </div>

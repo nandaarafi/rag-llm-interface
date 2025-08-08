@@ -166,7 +166,6 @@ export const {
       return true;
     },
     async redirect({ url, baseUrl }) {
-      // console.log('NextAuth redirect callback:', { url, baseUrl });
       // Allows relative callback URLs
       if (url.startsWith("/")) return `${baseUrl}${url}`
       // Allows callback URLs on the same origin

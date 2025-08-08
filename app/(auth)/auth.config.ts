@@ -23,6 +23,7 @@ export const authConfig = {
       const isOnAuth = nextUrl.pathname.startsWith('/api/auth');
       const isOnRoot = nextUrl.pathname === '/';
 
+
       // Always allow access to NextAuth API routes
       if (isOnAuth) {
         return true;

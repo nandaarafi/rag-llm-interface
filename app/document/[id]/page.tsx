@@ -5,14 +5,15 @@ import { getDocumentById } from '@/lib/db/queries';
 import { auth } from '@/app/(auth)/auth';
 
 interface DocumentPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export async function generateMetadata({ params }: DocumentPageProps): Promise<Metadata> {
   try {
-    const document = await getDocumentById({ id: params.id, userId: undefined });
+    const { id } = await params;
+    const document = await getDocumentById({ id, userId: undefined });
     
     if (!document) {
       return {
@@ -41,7 +42,7 @@ export async function generateMetadata({ params }: DocumentPageProps): Promise<M
 export default async function DocumentPage({ params }: DocumentPageProps) {
   const session = await auth();
   const document = await getDocumentById({ 
-    id: params.id, 
+    id: (await params).id, 
     userId: session?.user?.id 
   });
 

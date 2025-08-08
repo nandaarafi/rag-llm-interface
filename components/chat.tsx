@@ -183,7 +183,7 @@ export function Chat({
               append={append}
               credits={credits}
               planType={planType}
-              hasAccess={planType === 'pro' || planType === 'ultra'}
+              hasAccess={planType === 'pro'}
               onShowPaywall={handleShowPaywall}
             />
           )}
