@@ -1,7 +1,5 @@
 'use client';
 
-import type { Agent } from '@/lib/db/agent-schema';
-
 const STORAGE_KEYS = {
   LAST_USED_AGENT: 'mindscribe_last_used_agent',
   AGENT_USAGE_HISTORY: 'mindscribe_agent_usage',
@@ -29,7 +27,7 @@ export class AgentMemory {
     
     try {
       localStorage.setItem(STORAGE_KEYS.LAST_USED_AGENT, agentId);
-      this.updateUsageHistory(agentId);
+      AgentMemory.updateUsageHistory(agentId);
     } catch {
       // Handle localStorage errors gracefully
     }
@@ -56,7 +54,7 @@ export class AgentMemory {
     if (typeof window === 'undefined') return;
     
     try {
-      const history = this.getUsageHistory();
+      const history = AgentMemory.getUsageHistory();
       const existingIndex = history.findIndex(record => record.agentId === agentId);
       
       if (existingIndex >= 0) {
@@ -80,15 +78,15 @@ export class AgentMemory {
     }
   }
 
-  static getMostUsedAgents(limit: number = 5): AgentUsageRecord[] {
-    const history = this.getUsageHistory();
+  static getMostUsedAgents(limit = 5): AgentUsageRecord[] {
+    const history = AgentMemory.getUsageHistory();
     return history
       .sort((a, b) => b.usageCount - a.usageCount)
       .slice(0, limit);
   }
 
-  static getRecentlyUsedAgents(limit: number = 5): AgentUsageRecord[] {
-    const history = this.getUsageHistory();
+  static getRecentlyUsedAgents(limit = 5): AgentUsageRecord[] {
+    const history = AgentMemory.getUsageHistory();
     return history
       .sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
       .slice(0, limit);

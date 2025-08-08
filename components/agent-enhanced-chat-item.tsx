@@ -27,7 +27,6 @@ import { memo } from 'react';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { AgentIndicator } from '@/components/agent-indicator';
 import { getMockAgents } from '@/lib/default-agents';
-import type { Agent } from '@/lib/db/agent-schema';
 
 interface ChatWithAgentInfo extends Chat {
   agentId?: string | null;
@@ -83,14 +82,12 @@ const PureAgentEnhancedChatItem = ({
         <DropdownMenuContent side="bottom" align="end">
           {/* Agent Info Section */}
           {chatAgent && (
-            <>
-              <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
+            <div className="px-2 py-1.5 text-xs text-muted-foreground border-b">
                 <div className="flex items-center gap-2">
                   <AgentIndicator agent={chatAgent} size="sm" showTooltip={false} />
                   <span>{chatAgent.name}</span>
                 </div>
               </div>
-            </>
           )}
 
           <DropdownMenuSub>

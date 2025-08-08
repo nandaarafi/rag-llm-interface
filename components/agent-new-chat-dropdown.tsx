@@ -15,7 +15,7 @@ import {
 import { useSidebar } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getMockAgents } from '@/lib/default-agents';
-import { AgentMemory, useAgentMemory } from '@/lib/agent-memory';
+import { useAgentMemory } from '@/lib/agent-memory';
 import type { Agent } from '@/lib/db/agent-schema';
 
 interface AgentNewChatDropdownProps {

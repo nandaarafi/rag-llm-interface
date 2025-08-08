@@ -1,6 +1,6 @@
 import { pgTable, uuid, text, timestamp, json, varchar, boolean } from 'drizzle-orm/pg-core';
 import { user } from './schema';
-import { InferSelectModel, InferInsertModel } from 'drizzle-orm';
+import type { InferSelectModel, InferInsertModel } from 'drizzle-orm';
 
 export const agent = pgTable('Agent', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),

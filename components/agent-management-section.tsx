@@ -14,7 +14,6 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { AgentIndicator } from '@/components/agent-indicator';
 import { getMockAgents } from '@/lib/default-agents';
-import type { Agent } from '@/lib/db/agent-schema';
 
 interface AgentManagementSectionProps {
   userId?: string;

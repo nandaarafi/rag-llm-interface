@@ -2,13 +2,10 @@
 
 import type { User } from 'next-auth';
 import { useRouter, usePathname } from 'next/navigation';
-
-import { PlusIcon } from '@/components/icons';
 import { EnhancedSidebarHistory } from '@/components/enhanced-sidebar-history';
 import { AgentNewChatDropdown } from '@/components/agent-new-chat-dropdown';
 import { AgentManagementSection } from '@/components/agent-management-section';
 import { SidebarUserNav } from '@/components/sidebar-user-nav';
-import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -20,7 +17,6 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import SidebarCredit from './sidebar-credit';
 import { FileText } from 'lucide-react';
 const NAVIGATION_ITEMS = [
