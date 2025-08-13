@@ -30,7 +30,7 @@ export default function PrivacyPolicy() {
       
       <div className="prose prose-neutral dark:prose-invert max-w-none">
         <p className="text-sm text-muted-foreground mb-6">
-          <strong>Last updated:</strong> {new Date().toLocaleDateString()}
+          <strong>Last updated:</strong> 06/07/2025
         </p>
 
         <h2>Introduction</h2>

@@ -33,7 +33,7 @@ export function CreditProvider({
     }
 
     try {
-      setLoading(true);
+      // setLoading(true);
       setError(null);
       
       const response = await fetch(`/api/user/credits?userId=${userId}`);

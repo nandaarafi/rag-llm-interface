@@ -71,7 +71,6 @@ export function Chat({
       setTimeout(async () => {
         try {
           await refetchCredits();
-          console.log('✅ Credits refetched successfully after message');
         } catch (error) {
           console.error('❌ Failed to refetch credits after message:', error);
           // Retry once more after 3 seconds if first attempt fails
@@ -80,16 +79,13 @@ export function Chat({
       }, 1000);
     },
     onError: (error: any) => {
-      console.log('💥 Chat Error:', error);
       
       const isCreditError = 
         error?.message?.includes('credit limit');
       if (isCreditError) {
-        // console.log('💳 Credit error detected, showing paywall and stopping any ongoing requests');
         
         // Stop any ongoing streaming/generation
         if (status === 'streaming') {
-          // console.log('🛑 Stopping ongoing chat request due to credit error');
           stop();
         }
         
@@ -98,7 +94,6 @@ export function Chat({
         // Refetch credits to ensure UI is in sync
         refetchCredits();
       } else {
-        console.log('⚠️ Other error:', error);
         toast.error('An error occurred, please try again!');
       }
     },
@@ -117,7 +112,6 @@ export function Chat({
   const shouldShowPaywall = showPaywall;
 
   // Debug logging
-  // console.log('🔍 Chat Component State:', {
   //   showPaywall,
   //   paywallDismissed,
   //   shouldShowPaywall,
@@ -125,13 +119,10 @@ export function Chat({
   // });
 
   const handlePaywallClose = (open: boolean) => {
-    console.log('🔧 handlePaywallClose called with:', open);
     if (!open) {
-      console.log('✅ Setting showPaywall to false and marking as dismissed');
       
       // Stop any ongoing streaming/generation when modal is closed
       if (status === 'streaming') {
-        console.log('🛑 Stopping ongoing chat request due to modal close');
         stop();
       }
       
@@ -141,7 +132,6 @@ export function Chat({
   };
 
   const handleShowPaywall = () => {
-    console.log('🎭 Showing paywall from UI-level check');
     setShowPaywall(true);
     setPaywallDismissed(false);
   };

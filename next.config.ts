@@ -21,6 +21,9 @@ const nextConfig: NextConfig = {
       {
         hostname: 'pbs.twimg.com',
       },
+      {
+        hostname: '36qnrr0vnr.ufs.sh',
+      },
     ],
   },
 };

@@ -41,7 +41,7 @@ export default function CTA() {
                 <Button 
                   variant="outline" 
                   size="lg" 
-                  className="text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform" 
+                  className="text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform shadow-lg border-t border-l border-gray-600 shadow-black/50" 
                   onClick={handleGoogleSignIn}
                 >
                   <GoogleIcon />
@@ -50,16 +50,16 @@ export default function CTA() {
                 <Button 
                   asChild 
                   size="lg" 
-                  className="text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform"
+                  className="text-lg px-8 py-6 rounded-full hover:scale-105 transition-transform shadow-lg border-t border-l border-gray-600 shadow-black/50"
                 >
-                  <Link href="/register">Start Free Trial</Link>
+                  <Link href="/register">Start With Free Credits</Link>
                 </Button>
               </div>
               
               <div className="flex items-center justify-center gap-8 pt-4 text-sm text-muted-foreground">
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-green-500 rounded-full animate-pulse" />
-                  3-day free trial
+                  Free Credits
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-blue-500 rounded-full animate-pulse" />

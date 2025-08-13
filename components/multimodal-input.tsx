@@ -115,7 +115,6 @@ function PureMultimodalInput({
 
   const submitForm = useCallback(() => {
     // Remove client-side credit checking - let server handle it
-    // console.log('✅ Submitting message (server will validate credits):', { credits, planType, hasAccess });
     window.history.replaceState({}, '', `/chat/${chatId}`);
 
     handleSubmit(undefined, {

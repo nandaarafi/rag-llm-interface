@@ -40,19 +40,16 @@ export async function POST(req: NextRequest) {
     "sha256",
     signingSecret
   );
-  const digest = Buffer.from(hmac.update(text).digest("hex"), "utf8");
-  const signature = Buffer.from((await headers()).get("x-signature") || "", "utf8");
+  const digest = hmac.update(text).digest("hex");
+  const signature = (await headers()).get("x-signature") || "";
 
   // Verify the signature
   console.log("🔥 SIGNATURE VERIFICATION:");
-  console.log("🔥 Expected digest:", digest.toString('hex'));
-  console.log("🔥 Received signature:", signature.toString('hex'));
+  console.log("🔥 Expected digest:", digest);
+  console.log("🔥 Received signature:", signature);
   console.log("🔥 X-Signature header:", (await headers()).get("x-signature"));
   
-  if (!crypto.timingSafeEqual(
-    new Uint8Array(digest),
-    new Uint8Array(signature)
-  )) {
+  if (digest !== signature) {
     console.log("🔥 SIGNATURE MISMATCH - Invalid signature.");
     
     // TEMPORARY: Skip signature validation for debugging
@@ -141,6 +138,57 @@ export async function POST(req: NextRequest) {
         
         // Trigger session refresh for this user
         console.log("🔥 PAYMENT SUCCESS - User should refresh session");
+
+        break;
+      }
+
+      case "subscription_created": {
+        // Handle subscription creation (similar to order_created but for subscriptions)
+        const email = payload.data.attributes.user_email;
+        const variantId = payload.data.attributes.variant_id.toString();
+        const userId = payload.meta?.custom_data?.user_id;
+
+        // Determine plan type from variant ID
+        const planType = getPlanByVariantId(variantId);
+        
+        if (!planType) {
+          console.error('🔥 Unknown variant ID:', variantId);
+          return new Response("Unknown variant ID", { status: 400 });
+        }
+        
+        // Find or create user
+        let foundUser;
+        if (userId) {
+          foundUser = (await db.select().from(user).where(eq(user.id, userId)))[0];
+        } else if (email) {
+          foundUser = (await getUser(email))[0];
+          if (!foundUser) {
+            // Create new user if not exists
+            foundUser = (await db.insert(user).values({
+              email,
+              customerId,
+              hasAccess: true,
+              variantId,
+            }).returning())[0];
+          }
+        }
+
+        if (!foundUser) {
+          return new Response("User not found", { status: 404 });
+        }
+
+        // Update user with subscription details and plan
+        console.log("🔥 UPDATING USER (SUBSCRIPTION):", foundUser.id, "with plan:", planType);
+        
+        await updateUser(foundUser.id, {
+          customerId,
+          variantId,
+          hasAccess: true,
+          updatedAt: new Date(),
+        });
+        
+        await updateUserPlan(foundUser.id, planType);
+        console.log("🔥 USER SUBSCRIPTION UPDATED SUCCESSFULLY with plan:", planType);
 
         break;
       }

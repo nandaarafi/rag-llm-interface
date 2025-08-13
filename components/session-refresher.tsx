@@ -9,7 +9,6 @@ export function SessionRefresher() {
   useEffect(() => {
     // Listen for payment success events
     const handlePaymentSuccess = () => {
-      console.log('Payment success detected, refreshing page...');
       // Force a full page refresh to get updated session
       window.location.reload();
     };

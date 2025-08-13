@@ -28,7 +28,6 @@ export function SidebarUserNav({ user }: { user: User }) {
       callbackUrl: '/',
       redirect: true 
     });
-    console.log('signed out');
   };
 
   const handleUpgradeToPro = () => {

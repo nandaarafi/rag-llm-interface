@@ -26,8 +26,8 @@ MinimalCard.displayName = "MinimalCard"
 
 const MinimalCardImage = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & { src: string; alt: string }
->(({ className, alt, src, ...props }, ref) => (
+  React.HTMLAttributes<HTMLDivElement> & { src: string; alt: string; isVideo?: boolean }
+>(({ className, alt, src, isVideo = false, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
@@ -38,13 +38,25 @@ const MinimalCardImage = React.forwardRef<
     )}
     {...props}
   >
-    <Image
-      src={src}
-      alt={alt}
-      width={200}
-      height={200}
-      className="absolute inset-0 size-full rounded-[16px] object-cover "
-    />
+    {isVideo ? (
+      <video
+        src={src}
+        className="absolute inset-0 size-full rounded-[16px] object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="metadata"
+      />
+    ) : (
+      <Image
+        src={src}
+        alt={alt}
+        width={200}
+        height={200}
+        className="absolute inset-0 size-full rounded-[16px] object-cover "
+      />
+    )}
     <div className="absolute inset-0 rounded-[16px]">
       <div
         className={cn(

@@ -8,22 +8,18 @@ import {
   export function MinimalCardDemo() {
     const cards = [
       {
-        title: "Sick title",
+        title: "Generate PPT",
         description:
-          "How to design with gestures and motion that feel intuitive and natural.",
-        src: "https://pbs.twimg.com/media/GgMiuRpa4AAoW2y?format=jpg&name=medium",
+          "Create stunning presentations instantly. From business pitches to educational slides - just describe your content and watch it come to life.",
+        src: "https://36qnrr0vnr.ufs.sh/f/IU6ZTbnkqLizVS6KIos3jQM7WcduKztmEP8CwX6U1qeIhgFi",
+        isVideo: true,
       },
       {
-        title: "Sick title",
+        title: "Generate Image",
         description:
-          "How to design with gestures and motion that feel intuitive and natural.",
-        src: "https://pbs.twimg.com/media/GgHZJN0aoAA__92?format=jpg&name=medium",
-      },
-      {
-        title: "Sick title",
-        description:
-          "How to design with gestures and motion that feel intuitive and natural.",
-        src: "https://pbs.twimg.com/media/GgCPjsQacAAWvm3?format=jpg&name=medium",
+          "Turn your ideas into visuals in seconds. Generate custom images, illustrations, and graphics that perfectly match your vision.",
+        src: "https://36qnrr0vnr.ufs.sh/f/IU6ZTbnkqLizcTuMNHz0v1kRHOmdP4ZuWsMoyKDFilaXjSwV",
+        isVideo: true,
       },
     ]
     return (
@@ -36,6 +32,7 @@ import {
                   className="h-[320px]"
                   src={card.src}
                   alt={card.title}
+                  isVideo={card.isVideo}
                 />
                 <MinimalCardTitle>{card.title}</MinimalCardTitle>
                 <MinimalCardDescription>

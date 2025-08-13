@@ -29,7 +29,6 @@ export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
   const pathname = usePathname();
-  // console.log(user)
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>

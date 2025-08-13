@@ -47,11 +47,11 @@ export default function MarketingPage() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
-              <Button variant="outline" size="sm" className="text-lg px-8 py-6 rounded-full" onClick={handleGoogleSignIn}>
+              <Button variant="outline" size="sm" className="text-lg px-8 py-6 rounded-full shadow-lg border-t border-l border-gray-600 shadow-black/50" onClick={handleGoogleSignIn}>
                 <GoogleIcon /> Join With Google
               </Button>
-              <Button asChild size="sm" className="text-lg px-8 py-6 rounded-full">
-                <Link href="/blog">Start 3 Day Free Trial</Link>
+              <Button asChild size="sm" className="text-lg px-8 py-6 rounded-full shadow-lg border-t border-l border-gray-600 shadow-black/50">
+                <Link href="/blog">Start With Free Credits</Link>
               </Button>
             </div>
             

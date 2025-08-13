@@ -145,16 +145,16 @@ export default function Header({ isAuthenticated }: HeaderProps) {
         <div className="flex items-center gap-2">
           {isAuthenticated ? (
             // Authenticated user - Show Dashboard button
-            <Button asChild size="sm" className="text-md">
+            <Button asChild size="sm" className="text-md shadow-lg border-t border-l border-gray-600 shadow-black/50">
               <a href="/chat">Dashboard</a>
             </Button>
           ) : (
             // Unauthenticated user - Show Sign In and Get Started buttons
             <>
-              <Button asChild variant="ghost" size="sm" className="text-md">
+              <Button asChild variant="ghost" size="sm" className="text-md shadow-lg border-t border-l border-gray-600 shadow-black/50">
                 <a href="/login">Sign In</a>
               </Button>
-              <Button asChild size="sm" className="text-md">
+              <Button asChild size="sm" className="text-md shadow-lg border-t border-l border-gray-600 shadow-black/50">
                 <a href="/register">Get Started Free</a>
               </Button>
             </>

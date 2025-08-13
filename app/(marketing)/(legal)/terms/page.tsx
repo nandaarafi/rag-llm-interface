@@ -31,7 +31,7 @@ export default function TermsOfService() {
       
       <div className="prose prose-neutral dark:prose-invert max-w-none">
         <p className="text-sm text-muted-foreground mb-6">
-          <strong>Last updated:</strong> {new Date().toLocaleDateString()}
+          <strong>Last updated:</strong> 06/07/2025
         </p>
 
         <h2>1. Acknowledgment</h2>
@@ -105,7 +105,7 @@ export default function TermsOfService() {
         </p>
 
         <p className="text-sm text-muted-foreground mt-8">
-          This document was last updated on {new Date().toLocaleDateString()}.
+          This document was last updated on 06/07/2025.
         </p>
       </div>
     </div>
