@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { ThemeProvider } from '@/components/theme-provider';
 import NextJSTopLoader from 'nextjs-toploader';
+import Script from 'next/script';
 
 import './globals.css';
 
@@ -70,6 +71,20 @@ export default async function RootLayout({
         />
       </head>
       <body className="antialiased">
+        {/* Google Analytics */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-22CVL9EJBD"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-22CVL9EJBD');
+          `}
+        </Script>
         <NextJSTopLoader color='#000000' showSpinner={false} />
         <ThemeProvider
           attribute="class"
